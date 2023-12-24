@@ -8,8 +8,7 @@
 
 
 .search{
-    margin-top: 50px;
-    margin-left: 500px;
+  display: inline-flex;
 }
 
 .events-container{

@@ -2,7 +2,7 @@ import React from 'react'
 import Logo from 'A://Trip partner internship project//Trip partner office branch//Trip-Partner-//main-front-end//src//Assests//logo.svg'
 import './Events.css'
 import '../styleguide.css'
-function Events() {
+function Events({eventName}) {
   return (
     <div>
       <div className="list-card">
@@ -14,7 +14,7 @@ function Events() {
                     <div className="div-2">
                         <div className="div">
                             <div className="div-4">
-                                <div className="text-wrapper-3">Flores Road Trip 3D2N</div>
+                                <div className="text-wrapper-3">{eventName}</div>
                             </div>
                         </div>
                         <p className="join-organize-button">

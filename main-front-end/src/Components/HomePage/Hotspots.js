@@ -2,7 +2,7 @@ import React from 'react'
 import Logo from 'A://Trip partner internship project//Trip partner office branch//Trip-Partner-//main-front-end//src//Assests//Modules.png'
 import './Hotspots.css'
 import '../styleguide.css'
-function Hotspots() {
+function Hotspots({spotName}) {
   return (
     <div>
       <div className="list-card">
@@ -14,7 +14,7 @@ function Hotspots() {
                         <div className="div-2">
                             <div className="div">
                                 <div className="div-4">
-                                    <div className="text-wrapper-3">Flores Road Trip 3D2N</div>
+                                    <div className="text-wrapper-3">{spotName}</div>
                                 </div>
                             </div>
                             <p className="join-organize-button">
