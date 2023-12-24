@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
 import axios from 'axios';
+import 'bootstrap'
+
 function LoginPage({ onClose }) {
   const [otpInput, setOtpInput] = useState(false);
-  const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isPopupVisible, setPopupVisible] = useState(false);
 
@@ -13,7 +14,6 @@ function LoginPage({ onClose }) {
   const [userEmail,setUserEmail]=useState("");
   const [userotp,setUserOtp]=useState("");
   const [otp,setOtp] = useState("");
-  const [showOtpInput, setShowOtpInput] = useState(false);
 
   const getOtp=async()=>{
     toggleOTPinput();
@@ -37,8 +37,6 @@ function LoginPage({ onClose }) {
 
 const handleSubmit=async()=>{
   console.log('Current state values:', { otp, userotp, userPassword, userPasswordC });
-  alert(otp);
-  alert(userotp);
   if(otp == userotp){
       if(userPassword === userPasswordC){
           try {
@@ -60,31 +58,19 @@ const handleSubmit=async()=>{
       alert("Entered otp is wrong.");
   }
 }
-const handleOtpChange = (e) => {
-  const value = e.target.value;
-  if (/^\d*$/.test(value)) {
-    const formattedOtp = value.slice(0, 6);
-    setUserOtp(formattedOtp);
-    const formattedDisplay = formattedOtp
-      .split('')
-      .map((digit, index) => (index === 5 ? digit : digit + '-'))
-      .join('');
-    e.target.value = formattedDisplay;
-  }
-};
 
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(email)) {
+    if (!emailRegex.test(userEmail)) {
       setErrorMessage('Invalid email address.');
       setPopupVisible(true);
     } else {
       getOtp();
-      
     }
-    
   };
-
+  
+  const passwordRegx = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$/ ;
+  const isPasswordValid=passwordRegx.test(userPassword);
   const closePopup = () => {
     setPopupVisible(false);
   };
@@ -103,29 +89,37 @@ const handleOtpChange = (e) => {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     zIndex: 1000,
   };
+  const handleLogin=async()=>{
+    axios.get(`http://localhost:8080/User/email/${userEmail}`) 
+    .then(response => {
+      const message = userPassword === response.data.userPassword
+      ? "Login successful"
+      : "Incorrect password";
+alert(message);
+setErrorMessage(message);
+    })
+    .catch(error=>{
+      alert("email not found");
+    })
+  }
 
   return (
     <div className='login-page-overlay' onClick={onClose}>
       <div className="login-signup-container" onClick={(e)=> e.stopPropagation()}>
     <input type="checkbox" id="chk" aria-hidden="true" />
-
-
-
-
     <div className="login">
-      <form className="form">
+      <form className="login-form" onSubmit={handleLogin}>
         <label htmlFor="chk" aria-hidden="true">Log in</label>
         <input
           className="input"
           type="email"
           name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onBlur={validateEmail}
+          value={userEmail}
+          onChange={(e) => setUserEmail(e.target.value)}
           required
         />
-        <input className="input" type="password" name="pswd" placeholder="Password" required />
+        <input className="input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
         <button>Log in</button>
       </form>
     </div>
@@ -136,7 +130,7 @@ const handleOtpChange = (e) => {
 
 
     <div className="register">
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="reg-form" onSubmit={handleSubmit}>
         <label htmlFor="chk" aria-hidden="true">Register</label>
         <input className="input" type="text" value={userName} name="userName" placeholder="Username" required onChange={(e)=>setUserName(e.target.value)}/>
         <div className='reg' style={{ display: "flex", flexDirection: "row" }}>
@@ -181,11 +175,23 @@ const handleOtpChange = (e) => {
         >
           Get otp
         </button></>
-            
-           )} 
-          
+
+           )}
+
         </div>
         <input className="input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
+        <div className='pass-detail-container'>
+        {isPasswordValid ? (<><svg className='pass-detail' xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16" style={{color:'green'}}>
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+</svg></>):<><svg className='pass-detail' xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+</svg></>}
+      <div className='tooltip'>
+        Password must contain at least one uppercase letter, one numeric digit, and one special character.
+      </div>
+    </div>
         <input className="input" type="password" value={userPasswordC} name="cpswd" placeholder="Confirm Password" required onChange={(e)=>setUserPasswordC(e.target.value)}/>
         <button >Register</button>
       </form>

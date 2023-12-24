@@ -19,7 +19,7 @@
   outline: none;
   border-radius: 4px;
 }
-.form {
+.login-form, .reg-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -29,7 +29,7 @@
 #chk {
   display: none;
 }
-.form .verify-button{
+.reg-form .verify-button{
   width: 50px;
   height: 25px;
   margin: 12px auto;
@@ -106,8 +106,45 @@ label {
   transform: scale(.6);
   margin: 5% 0 5%;
 }   
+.pass-detail-container {
+  position: absolute;
+  right: 30px;
+  top: 330px;
+  transform: translateY(-204%) translateX(-151%);
+  tab-size: 30px;
+  color:red;
+}
+
+.pass-detail {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.tooltip {
+  visibility: hidden;
+  width: 150px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -125px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pass-detail-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
 /*Button*/
-.form button {
+.login-form button,.reg-form button {
   width: 85%;
   height: 40px;
   margin: 12px auto 10%;
