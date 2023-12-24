@@ -1,0 +1,29 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+    
+  }
+
+
+.search{
+    margin-top: 50px;
+    margin-left: 500px;
+}
+
+.events-container{
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 20px;
+}
+
+
+
+.hotspots{
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 20px;
+}
