@@ -8,7 +8,7 @@ function Home() {
   return (
     <div className='home'>
         <div className='nav'><NavBar/></div>
-        <div className='search'><SearchBar/></div>
+        <SearchBar/>
         <div><h3>Events</h3>
           <div className='events-container'>
           <Events/>

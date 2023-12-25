@@ -111,7 +111,7 @@ setErrorMessage(message);
       <form className="login-form" onSubmit={handleLogin}>
         <label htmlFor="chk" aria-hidden="true">Log in</label>
         <input
-          className="input"
+          className="login-input"
           type="email"
           name="email"
           placeholder="Email"
@@ -119,7 +119,7 @@ setErrorMessage(message);
           onChange={(e) => setUserEmail(e.target.value)}
           required
         />
-        <input className="input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
+        <input className="login-input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
         <button>Log in</button>
       </form>
     </div>
@@ -132,10 +132,10 @@ setErrorMessage(message);
     <div className="register">
       <form className="reg-form" onSubmit={handleSubmit}>
         <label htmlFor="chk" aria-hidden="true">Register</label>
-        <input className="input" type="text" value={userName} name="userName" placeholder="Username" required onChange={(e)=>setUserName(e.target.value)}/>
+        <input className="reg-input" type="text" value={userName} name="userName" placeholder="Username" required onChange={(e)=>setUserName(e.target.value)}/>
         <div className='reg' style={{ display: "flex", flexDirection: "row" }}>
          {otpInput ? (<><input
-      className="input"
+      className="reg-input"
       type="text"
       name="otpreg"
       placeholder="Enter OTP"
@@ -156,7 +156,7 @@ setErrorMessage(message);
           </button></>
             
            ) : (<><input
-            className="input"
+            className="reg-input"
             type="email"
             name="email"
             placeholder="Email"
@@ -179,7 +179,7 @@ setErrorMessage(message);
            )}
 
         </div>
-        <input className="input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
+        <input className="reg-input" type="password" value={userPassword} name="pswd" placeholder="Password" required onChange={(e)=>setUserPassword(e.target.value)}/>
         <div className='pass-detail-container'>
         {isPasswordValid ? (<><svg className='pass-detail' xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16" style={{color:'green'}}>
   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -192,7 +192,7 @@ setErrorMessage(message);
         Password must contain at least one uppercase letter, one numeric digit, and one special character.
       </div>
     </div>
-        <input className="input" type="password" value={userPasswordC} name="cpswd" placeholder="Confirm Password" required onChange={(e)=>setUserPasswordC(e.target.value)}/>
+        <input className="reg-input" type="password" value={userPasswordC} name="cpswd" placeholder="Confirm Password" required onChange={(e)=>setUserPasswordC(e.target.value)}/>
         <button >Register</button>
       </form>
     </div>

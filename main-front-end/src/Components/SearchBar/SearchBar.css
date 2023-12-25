@@ -1,16 +1,17 @@
 .input-container {
-    width: 420px;
+    width: 300px;
     position: relative;
+    padding: 15px;
   }
   
-  .icon {
+  .input-container .icon {
     position: absolute;
-    right: 10px;
+    right: 75px;
     top: calc(50% + 5px);
     transform: translateY(calc(-50% - 5px));
   }
   
-  .search {
+  .input-container .search-input{
     height: 15px;
     padding: 10px;
     transition: .2s linear;
@@ -20,7 +21,7 @@
     letter-spacing: 1px;
   }
   
-  .input:focus {
+  .input-container .search-input:focus {
     outline: none;
     border: 0.5px solid black;
     box-shadow: -5px -5px 0px black;
