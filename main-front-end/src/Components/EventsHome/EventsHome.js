@@ -22,7 +22,11 @@ function EventsHome() {
       <div className='nav'><NavBar/></div>
       <div className='event'>
         {events.map(event=>(<>
+<<<<<<< HEAD
         <Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description }/>
+=======
+        <Events key={event.eventId} eventName={event.eventName}/>
+>>>>>>> 98a1db2bea441de136e4cb7c6d43454aa9761ffa
         </>
         ))}
       </div>
