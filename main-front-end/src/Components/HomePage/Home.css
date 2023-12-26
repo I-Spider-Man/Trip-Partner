@@ -1,0 +1,24 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+    
+  }
+
+
+.events-container{
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 20px;
+}
+
+
+
+.hotspots-container{
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 20px;
+}
