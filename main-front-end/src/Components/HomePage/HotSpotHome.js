@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import NavBar from '../NavBar/NavBar'
 import Hotspots from './Hotspots'
 import axios from 'axios';
-
+import './HotSpotsHome.css';
 function HotSpotHome() {
   const [spots,setSpots] =useState([]);
   useEffect(()=>{
@@ -22,7 +22,7 @@ function HotSpotHome() {
       <div className='nav'>
         <NavBar/>
       </div>
-      <div className='hotspot'>
+      <div className='hotspot-container'>
         {spots.map(spot=>(<>
         <Hotspots key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description}/></>))
 
