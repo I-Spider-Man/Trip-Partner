@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import NavBar from '../NavBar/NavBar'
-import Events from '../Events/Events'
+import Events from './EventComponent'
 import './EventsHome.css';
 import axios from 'axios';
 

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import Loading from '../Loading';
 
-function Spot() {
+function TouristSpot() {
   const {spotId} = useParams();
   const [spot,setSpot]=useState();
   useEffect(() => {
@@ -36,4 +36,4 @@ function Spot() {
   )
 }
 
-export default Spot
+export default TouristSpot

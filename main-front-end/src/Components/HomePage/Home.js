@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import NavBar from '../NavBar/NavBar'
 import SearchBar from '../SearchBar/SearchBar'
 import './Home.css'
-import Events from '../Events/Events'
-import Hotspots from './Hotspots'
+import Events from '../Events/EventComponent'
 import axios from 'axios'
+import TouristSpotComponent from '../TouristSpots/TouristSpotComponent'
 function Home() {
   const [events,setEvents]=useState([]);
   const [spots,setSpots]=useState([]);
@@ -42,7 +42,7 @@ function Home() {
           </div>
         </div>
         <div><h3>Popular Spots</h3><div className='popular-hotspot-container'>
-          {spots.map(spot=>(<><Hotspots key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
+          {spots.map(spot=>(<><TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
         </div>
     </div>
     </div>

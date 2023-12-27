@@ -1,9 +1,9 @@
 import React from 'react'
 import Logo from 'C://Users//alfredeins_gabriel//Desktop//React//Trip-Partner-front-end//main-front-end//src//Assests//Modules.png'
-import './Hotspots.css'
 import '../styleguide.css'
+import './TouristSpotComponent.css'
 import { Link } from 'react-router-dom'
-function Hotspots({spotId,spotName,spotDescription}) {
+function TouristSpotComponent({spotId,spotName,spotDescription}) {
   return (
     <div>
       <div className="spot-card">
@@ -21,4 +21,4 @@ function Hotspots({spotId,spotName,spotDescription}) {
   )
 }
 
-export default Hotspots
+export default TouristSpotComponent

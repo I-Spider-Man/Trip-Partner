@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import NavBar from '../NavBar/NavBar'
-import Hotspots from './Hotspots'
+import NavBar from '../NavBar/NavBar';
 import axios from 'axios';
-import './HotSpotsHome.css';
-function HotSpotHome() {
+import './TouristSpotsHomePage.css';
+import TouristSpotComponent from './TouristSpotComponent';
+function TouristSpotHomePage() {
   const [spots,setSpots] =useState([]);
   useEffect(()=>{
     const fetchSpot=async()=>{
@@ -24,7 +24,7 @@ function HotSpotHome() {
       </div>
       <div className='hotspot-container'>
         {spots.map(spot=>(<>
-        <Hotspots key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description}/></>))
+        <TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description}/></>))
 
         }
       </div>
@@ -32,4 +32,4 @@ function HotSpotHome() {
   )
 }
 
-export default HotSpotHome
+export default TouristSpotHomePage;

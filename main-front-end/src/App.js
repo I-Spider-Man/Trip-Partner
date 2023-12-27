@@ -1,11 +1,11 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Components/HomePage/Home';
-import OrganizerHome from './Components/HomePage/OrganizerHome';
-import EventsHome from './Components/EventsHome/EventsHome';
-import HotSpotHome from './Components/HomePage/HotSpotHome';
-import Event from './Components/IndividualPages/Event';
-import Spot from './Components/IndividualPages/Spot';
+import OrganizerHome from './Components/Organizer/OrganizerHome';
+import EventsHome from './Components/Events/EventsHome';
+import HotSpotHome from './Components/TouristSpots/TouristSpotHomePage';
+import Event from './Components/Events/Event';
+import TouristSpot from './Components/TouristSpots/TouristSpot';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path="/EventsHome" element={<EventsHome/>}/>
         <Route path="/HotSpotsHome" element={<HotSpotHome/>}/>
         <Route path='/Events/:eventId' element={<Event/>}/>
-        <Route path='/Spot/:spotId' element={<Spot/>}/>
+        <Route path='/Spot/:spotId' element={<TouristSpot/>}/>
       </Routes>
     </div>
   </Router>

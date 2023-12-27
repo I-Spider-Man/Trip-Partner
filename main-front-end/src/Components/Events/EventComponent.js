@@ -1,13 +1,13 @@
 import React from 'react'
 import Logo from 'C://Users//alfredeins_gabriel//Desktop//React//Trip-Partner-front-end//main-front-end//src//Assests//logo.svg'
-import './Events.css'
+import './EventComponent.css'
 import '../styleguide.css'
 import { Link } from 'react-router-dom'
 function Events({eventId,eventName,eventDiscription}) {
 
   return (
     <div className="event-card">
-  <img src={Logo} alt='Event image'/>
+  <img src={Logo} alt='event images'/>
   <div className="event-card__content">
     
     <p className="event-card__title">{eventName}</p>
