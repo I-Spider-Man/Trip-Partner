@@ -5,6 +5,7 @@ import OrganizerHome from './Components/HomePage/OrganizerHome';
 import EventsHome from './Components/EventsHome/EventsHome';
 import HotSpotHome from './Components/HomePage/HotSpotHome';
 import Event from './Components/IndividualPages/Event';
+import Spot from './Components/IndividualPages/Spot';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/EventsHome" element={<EventsHome/>}/>
         <Route path="/HotSpotsHome" element={<HotSpotHome/>}/>
         <Route path='/Events/:eventId' element={<Event/>}/>
+        <Route path='/Spot/:spotId' element={<Spot/>}/>
       </Routes>
     </div>
   </Router>

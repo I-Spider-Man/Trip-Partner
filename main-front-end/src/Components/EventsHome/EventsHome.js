@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import NavBar from '../NavBar/NavBar'
 import Events from '../Events/Events'
+import './EventsHome.css';
 import axios from 'axios';
 
 function EventsHome() {
@@ -20,9 +21,9 @@ function EventsHome() {
   return (
     <div>
       <div className='nav'><NavBar/></div>
-      <div className='event'>
+      <div className='event-container'>
         {events.map(event=>(<>
-        <Events key={event.eventId} eventName={event.eventName}/>
+        <Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description}/>
         </>
         ))}
       </div>

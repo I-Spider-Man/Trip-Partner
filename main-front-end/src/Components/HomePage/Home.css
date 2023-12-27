@@ -1,13 +1,17 @@
 .home {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
+    /* align-items: center;  */
     justify-content: center;
     
   }
 
+.searchContainer{
+  display: flex;
+  align-items: center;
+}
 
-.events-container{
+.popular-event-container{
   display: flex;
   overflow-x: auto;
   overflow-y: hidden;
@@ -16,7 +20,7 @@
 
 
 
-.hotspots-container{
+.popular-hotspot-container{
   display: flex;
   overflow-x: auto;
   overflow-y: hidden;

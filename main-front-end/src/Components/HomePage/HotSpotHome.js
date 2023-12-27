@@ -24,7 +24,7 @@ function HotSpotHome() {
       </div>
       <div className='hotspot'>
         {spots.map(spot=>(<>
-        <Hotspots key={spot.spotId} spotName={spot.spotName}/></>))
+        <Hotspots key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description}/></>))
 
         }
       </div>
