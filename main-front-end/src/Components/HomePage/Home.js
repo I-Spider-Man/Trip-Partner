@@ -7,6 +7,7 @@ import Hotspots from './Hotspots'
 import axios from 'axios'
 function Home() {
   const [events,setEvents]=useState([]);
+  const [spots,setSpots]=useState([]);
   useEffect(()=>{
     const fetchEvents=async()=>{
       try{
@@ -17,6 +18,15 @@ function Home() {
       console.error(error);
     }
   };
+  const fetchSpots=async()=>{
+    try{
+      const response=await axios.get('http://localhost:8080/PopularSpots');
+      setSpots(response.data);
+    }catch(error){
+      console.error();
+    }
+  };
+  fetchSpots();
   fetchEvents();
 },[]);
   return (
@@ -31,7 +41,9 @@ function Home() {
             {events.map(event=>(<><Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description} /></>))}
           </div>
         </div>
-        <div><h3>Popular Spots</h3><div className='popular-hotspot-container'><Hotspots/><Hotspots/><Hotspots/><Hotspots/><Hotspots/><Hotspots/></div>
+        <div><h3>Popular Spots</h3><div className='popular-hotspot-container'>
+          {spots.map(spot=>(<><Hotspots key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
+        </div>
     </div>
     </div>
   )
