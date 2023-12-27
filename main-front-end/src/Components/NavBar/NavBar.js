@@ -2,11 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
 import Login from "C://Users//alfredeins_gabriel//Desktop//React//Trip-Partner-front-end//main-front-end//src//Assests//login_signUp.svg";
-=======
-import Login from "A://Trip partner internship project//Trip partner office branch//Trip-Partner-//main-front-end//src//Assests//login_signUp.svg";
->>>>>>> 98a1db2bea441de136e4cb7c6d43454aa9761ffa
 import './NavBar.css';
 import '../styleguide.css';
 import LoginPage from '../LoginPage/LoginPage';

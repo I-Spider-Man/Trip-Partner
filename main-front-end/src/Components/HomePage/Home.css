@@ -7,10 +7,6 @@
   }
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 98a1db2bea441de136e4cb7c6d43454aa9761ffa
 .events-container{
   display: flex;
   overflow-x: auto;
@@ -20,11 +16,7 @@
 
 
 
-<<<<<<< HEAD
 .hotspots-container{
-=======
-.hotspots{
->>>>>>> 98a1db2bea441de136e4cb7c6d43454aa9761ffa
   display: flex;
   overflow-x: auto;
   overflow-y: hidden;
