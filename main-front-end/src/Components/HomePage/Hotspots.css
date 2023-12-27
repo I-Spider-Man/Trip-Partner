@@ -14,8 +14,9 @@
     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   
-  .spot-card svg {
-    width: 48px;
+  .spot-card img {
+    width: 365px;
+    height: 200px;
     fill: #333;
     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
@@ -50,7 +51,7 @@
     font-weight: 700;
   }
   
-  .spot-card:hover svg {
+  .spot-card:hover img {
     scale: 0;
   }
   
