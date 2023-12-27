@@ -35,6 +35,7 @@ public interface AdminService {
 
 
     String removeUserById(Integer userId);
+    String removeAllUser();
     String removeParticipantById(Integer participantId);
     String removeGroupById(Integer groupId);
     String removeEventById(Integer eventId);

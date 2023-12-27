@@ -15,9 +15,29 @@ public class User {
 	private String userEmail;
 	private String aboutUser;
 	private Role role=Role.User_Role;
+
+	public User(Integer userId, String userName, String userEmail, String aboutUser, Role role, String userPassword, String userProfile) {
+		this.userId = userId;
+		this.userName = userName;
+		this.userEmail = userEmail;
+		this.aboutUser = aboutUser;
+		this.role = role;
+		this.userPassword = userPassword;
+		this.userProfile = userProfile;
+	}
+
 	private String userPassword;
+	private String userProfile;
 	public User() {
 		super();
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	@Override
@@ -29,24 +49,16 @@ public class User {
 				", aboutUser='" + aboutUser + '\'' +
 				", role=" + role +
 				", userPassword='" + userPassword + '\'' +
+				", userProfile='" + userProfile + '\'' +
 				'}';
 	}
 
-	public Role getRole() {
-		return role;
+	public String getUserProfile() {
+		return userProfile;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
-	public User(Integer userId, String userName, String userEmail, String aboutUser, Role role, String userPassword) {
-		this.userId = userId;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.aboutUser = aboutUser;
-		this.role = role;
-		this.userPassword = userPassword;
+	public void setUserProfile(String userProfile) {
+		this.userProfile = userProfile;
 	}
 
 	public Integer getUserId() {

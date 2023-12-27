@@ -144,6 +144,13 @@ public class AdminServiceImpl implements AdminService{
     public String removeUserById(Integer userId) {
         return userService.removeUserById(userId);
     }
+
+    @Override
+    public String removeAllUser() {
+        userRepository.deleteAll();
+        return "removed all users";
+    }
+
     @Override
     public String removeParticipantById(Integer participantId) {
         return participantService.removeParticipantById(participantId);

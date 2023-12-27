@@ -18,7 +18,10 @@ public class AdminController {
     private AdminService adminService;
     @PostMapping("/manyUsers")
     public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
-    
+    @DeleteMapping("/removeAllUsers")
+    public String removeAllUsers(){
+        return adminService.removeAllUser();
+    }
     @PostMapping("/events")
     public String addEvent(@RequestBody Event newEvent){
         return adminService.addEvent(newEvent);
