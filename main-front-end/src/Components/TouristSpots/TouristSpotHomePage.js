@@ -3,6 +3,7 @@ import NavBar from '../NavBar/NavBar';
 import axios from 'axios';
 import './TouristSpotsHomePage.css';
 import TouristSpotComponent from './TouristSpotComponent';
+import Loading from '../LoadingComponents/Loading';
 function TouristSpotHomePage() {
   const [spots,setSpots] =useState([]);
   useEffect(()=>{
@@ -23,10 +24,15 @@ function TouristSpotHomePage() {
         <NavBar/>
       </div>
       <div className='hotspot-container'>
-        {spots.map(spot=>(<>
-        <TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description}/></>))
-
-        }
+      {spots && spots.length > 0 ? (
+            <>          
+            {spots.map(spot=>(<><TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
+            </>
+          ):(
+            <div className='loading-container'>
+              <Loading/>
+            </div>
+          )}
       </div>
     </div>
   )

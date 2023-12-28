@@ -1,0 +1,5 @@
+.event-content{
+    display: flex;
+    margin-left: 35%;
+    flex-direction: column;
+}

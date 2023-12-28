@@ -3,6 +3,7 @@ import NavBar from '../NavBar/NavBar'
 import Events from './EventComponent'
 import './EventsHome.css';
 import axios from 'axios';
+import Loading from '../LoadingComponents/Loading';
 
 function EventsHome() {
   const [events,setEvents]=useState([]);
@@ -22,10 +23,15 @@ function EventsHome() {
     <div>
       <div className='nav'><NavBar/></div>
       <div className='event-container'>
-        {events.map(event=>(<>
-        <Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description}/>
-        </>
-        ))}
+      {events && events.length > 0 ? (
+              <>
+              {events.map(event=>(<><Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description} /></>))}
+              </>
+            ):(
+              <div className='loading-container'>
+              <Loading/>
+              </div>
+            )}
       </div>
     </div>
   )

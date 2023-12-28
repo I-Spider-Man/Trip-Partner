@@ -47,7 +47,16 @@
   background-color: #240046;
 }
 
-label {
+.login-form label {
+  color: #4b41a1;
+  font-size: 2rem;
+  justify-content: center;
+  display: flex;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .5s ease-in-out;
+}
+.reg-form label {
   color: #4b41a1;
   font-size: 2rem;
   justify-content: center;

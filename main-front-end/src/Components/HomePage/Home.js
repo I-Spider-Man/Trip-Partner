@@ -5,6 +5,7 @@ import './Home.css'
 import Events from '../Events/EventComponent'
 import axios from 'axios'
 import TouristSpotComponent from '../TouristSpots/TouristSpotComponent'
+import Loading from '../LoadingComponents/Loading'
 function Home() {
   const [events,setEvents]=useState([]);
   const [spots,setSpots]=useState([]);
@@ -28,7 +29,7 @@ function Home() {
   };
   fetchSpots();
   fetchEvents();
-},[]);
+},[events.length]);
   return (
     <div className='home'>
         <div className='nav-container'><NavBar/></div>
@@ -38,11 +39,27 @@ function Home() {
         <div>
           <h3>Events</h3>
           <div className='popular-event-container'>
-            {events.map(event=>(<><Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description} /></>))}
+            {events && events.length > 0 ? (
+              <>
+              {events.map(event=>(<><Events key={event.eventId} eventId={event.eventId} eventName={event.eventName} eventDiscription={event.description} /></>))}
+              </>
+            ):(
+              <div className='loading-container'>
+              <Loading/>
+              </div>
+            )}
           </div>
         </div>
         <div><h3>Popular Spots</h3><div className='popular-hotspot-container'>
-          {spots.map(spot=>(<><TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
+          {spots && spots.length > 0 ? (
+            <>          
+            {spots.map(spot=>(<><TouristSpotComponent key={spot.spotId} spotId={spot.spotId} spotName={spot.spotName} spotDescription={spot.description} /></>))}
+            </>
+          ):(
+            <div className='loading-container'>
+              <Loading/>
+            </div>
+          )}
         </div>
     </div>
     </div>

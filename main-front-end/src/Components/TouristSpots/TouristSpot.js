@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import NavBar from '../NavBar/NavBar'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
-import Loading from '../Loading';
-
+import ContentLoading from '../LoadingComponents/ContentLoading';
+import './TouristSpot.css'
 function TouristSpot() {
   const {spotId} = useParams();
   const [spot,setSpot]=useState();
@@ -22,16 +22,19 @@ function TouristSpot() {
   return (
     <div className='home'>
     <div className='nav'><NavBar/></div>
-    {spot ? (
-        <div>
+    <div className='spot-content'>
+      {spot ? (
+        <>
           <label>spot Name: {spot.spotName}</label>
           <label>spot location: {spot.location}</label>
           <label>spot description: {spot.description}</label>
           <label>Population level: {(spot.peopleCount>50)?"high":"low"}</label>
-        </div>
+        </>
       ) : (
-        <Loading/>
+        <div className='loading-container'><ContentLoading/></div>
       )}
+      </div>
+    
     </div>
   )
 }
