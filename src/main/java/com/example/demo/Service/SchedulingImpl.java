@@ -3,6 +3,7 @@ package com.example.demo.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import com.example.demo.Model.*;
@@ -95,7 +96,7 @@ public class SchedulingImpl implements Scheduling{
         allActiveEvent=eventRepository.findAllByEventStatus(EventStatus.Active);
         allActiveEvent.forEach(event -> addActiveEventId(event.getEventId()));
         allActiveEvent.forEach(event->{
-            if(currentDate.isAfter(event.getEndDate())){
+            if(event.getEndDate() != null && currentDate.isAfter(event.getEndDate())){
                 activeEvents.remove(event.getEventId());
                 event.setEventStatus(EventStatus.InActive);
                 eventRepository.save(event);

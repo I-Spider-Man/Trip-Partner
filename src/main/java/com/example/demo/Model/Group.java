@@ -19,7 +19,7 @@ public class Group {
 	private String spotName;
 	private String about;
 	private GroupStatus groupStatus=GroupStatus.Active;
-	private Integer participantsLimit;
+	private Integer participantsLimit=0;
 	private Integer participantsCount=0;
 
 	@Override

@@ -13,7 +13,7 @@ public class TouristSpot {
     private String spotName;
     private String location;
     private String description;
-    private Integer peopleCount;
+    private Integer peopleCount=0;
 
     @Override
     public String toString() {

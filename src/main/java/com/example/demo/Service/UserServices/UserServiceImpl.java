@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.User;
@@ -19,6 +20,8 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepo;
 	@Autowired
 	private SMTP_mailService mailService;
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
 	@Override
 	public List<User> getAllUser() {
 		return (List<User>) userRepo.findAll(); 
@@ -34,6 +37,7 @@ public class UserServiceImpl implements UserService {
 		if (user.isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("User mail already exists");
 		} else {
+//			newUser.setUserPassword(passwordEncoder.encode(newUser.getUserPassword()));
 			userRepo.save(newUser);
 			try {
 				String mail = newUser.getUserEmail();

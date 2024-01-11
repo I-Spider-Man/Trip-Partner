@@ -118,7 +118,7 @@ public class OrganizerServiceImpl implements OrganizerService{
                     eventRepository.save(event.get());
                 }else{
                     Optional<TouristSpot> spot=spotRepository.findBySpotName(value.getSpotName());
-                    spot.get().increasePeopleCount(value.getParticipantsLimit());
+                    spot.get().decreasePeopleCount(value.getParticipantsLimit());
                     spotRepository.save(spot.get());
                 }
                 List<Participant> participants=participantRepository.findAllByGroupId(value.getGroupId());

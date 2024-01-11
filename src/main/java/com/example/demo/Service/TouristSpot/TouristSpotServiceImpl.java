@@ -5,8 +5,10 @@ import com.example.demo.Repository.TouristSpotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TouristSpotServiceImpl implements TouristSpotService{
@@ -35,8 +37,24 @@ public class TouristSpotServiceImpl implements TouristSpotService{
     }
 
     @Override
+    public String addAllSpots(List<TouristSpot> spots) {
+        touristSpotRepository.saveAll(spots);
+        return "Success";
+    }
+
+    @Override
     public String removeSpotById(Integer spotId) {
         touristSpotRepository.deleteById(spotId);
         return "Tourist spot with id "+spotId+" is removed successfully.";
+    }
+
+    @Override
+    public List<TouristSpot> getAllPopularTouristSpot() {
+        List<TouristSpot> popularSpots = touristSpotRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingInt(TouristSpot::getPeopleCount).reversed())
+                .toList();
+
+        return popularSpots.stream().limit(5).collect(Collectors.toList());
     }
 }

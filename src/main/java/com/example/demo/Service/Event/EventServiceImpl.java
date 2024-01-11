@@ -9,8 +9,10 @@ import com.example.demo.Service.SchedulingImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService{
@@ -21,6 +23,20 @@ public class EventServiceImpl implements EventService{
     @Override
     public List<Event> getAllEvents() {
         return (List<Event>) eventRepository.findAll();
+    }
+
+    @Override
+    public List<Event> getAllActiveEvents() {
+        return eventRepository.findAllByEventStatus(EventStatus.Active);
+    }
+
+    @Override
+    public List<Event> getAllPopularEvents() {
+        List<Event> popularEvents=eventRepository.findAllByEventStatus(EventStatus.Active)
+                .stream()
+                .sorted(Comparator.comparingInt(Event::getPeopleCount).reversed())
+                .toList();
+        return popularEvents.stream().limit(5).collect(Collectors.toList());
     }
 
     @Override
@@ -43,6 +59,12 @@ public class EventServiceImpl implements EventService{
             return "Event "+newEvent.getEventId()+" Added Successfully ";
         }
 
+    }
+
+    @Override
+    public String addAllEvents(List<Event> events) {
+        eventRepository.saveAll(events);
+        return "Success";
     }
 
     @Override

@@ -19,6 +19,8 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     private UserService userService;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private ParticipantRepository participantRepository;
     @Autowired
     private ParticipantService participantService;
@@ -38,13 +40,29 @@ public class AdminServiceImpl implements AdminService{
     private OrganizerRepository organizerRepository;
 
     @Override
+    public String addManyUsers(List<User> users) {
+        userRepository.saveAll(users);
+        return "Success";
+    }
+
+    @Override
     public String addEvent(Event newEvent) {
         return eventService.addEvent(newEvent);
     }
 
     @Override
+    public String addAllEvents(List<Event> events) {
+        return eventService.addAllEvents(events);
+    }
+
+    @Override
     public String addSpot(TouristSpot spot) {
         return touristSpotService.addSpot(spot);
+    }
+
+    @Override
+    public String addAllSpots(List<TouristSpot> spots) {
+        return touristSpotService.addAllSpots(spots);
     }
 
     @Override
@@ -126,6 +144,13 @@ public class AdminServiceImpl implements AdminService{
     public String removeUserById(Integer userId) {
         return userService.removeUserById(userId);
     }
+
+    @Override
+    public String removeAllUser() {
+        userRepository.deleteAll();
+        return "removed all users";
+    }
+
     @Override
     public String removeParticipantById(Integer participantId) {
         return participantService.removeParticipantById(participantId);

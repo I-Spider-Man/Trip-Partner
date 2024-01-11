@@ -6,6 +6,7 @@ import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.Organizer.OrganizerService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +16,26 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private AdminService adminService;
-    
+    @PostMapping("/manyUsers")
+    public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
+    @DeleteMapping("/removeAllUsers")
+    public String removeAllUsers(){
+        return adminService.removeAllUser();
+    }
     @PostMapping("/events")
     public String addEvent(@RequestBody Event newEvent){
         return adminService.addEvent(newEvent);
+    }
+    @PostMapping("/manyEvents")
+    public String addManyEvents(@RequestBody List<Event> events){
+        return adminService.addAllEvents(events);
     }
     @PostMapping("/touristSpot")
     public String addTouristSpot(@RequestBody TouristSpot newSpot){
         return adminService.addSpot(newSpot);
     }
+    @PostMapping("/manySpots")
+    public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
 
     @GetMapping("/participants")
     public List<Participant> getAllParticipants(){
