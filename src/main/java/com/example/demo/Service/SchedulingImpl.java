@@ -90,7 +90,7 @@ public class SchedulingImpl implements Scheduling{
 
 
     @Override
-    @Scheduled(fixedRate=60000)//(cron="0 0 0 * * *")
+//    @Scheduled(fixedRate=60000)//(cron="0 0 0 * * *")
     public void checkGroupStatus() {
         LocalDate currentDate = LocalDate.now();
         allActiveEvent=eventRepository.findAllByEventStatus(EventStatus.Active);
