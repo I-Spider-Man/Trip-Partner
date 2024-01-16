@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
+import com.example.demo.Service.StorageService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,22 +14,39 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.User;
 import com.example.demo.Repository.UserRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private StorageService storageService;
 	@Autowired
 	private SMTP_mailService mailService;
-//	@Autowired
-//	private PasswordEncoder passwordEncoder;
+
 	@Override
 	public List<User> getAllUser() {
 		return (List<User>) userRepo.findAll(); 
 	}
+
+	@Override
+	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) {
+		String fileName = System.currentTimeMillis() + "_" + userId;
+		if(storageService.uploadFile(fileName, file)){
+			User user=getUserById(userId);
+			user.setUserProfile(fileName);
+			userRepo.save(user);
+			return new ResponseEntity<>("User profile updated",HttpStatus.OK)  ;
+		}
+		return new ResponseEntity<>("problem in updating userProfile",HttpStatus.NOT_MODIFIED);
+	}
+
 	@Override
 	public User getUserById(Integer userId) {
-		return userRepo.findById(userId).get();
+		Optional<User> user=userRepo.findById(userId);
+		return user.orElse(null);
 	}
 	
 	@Override
