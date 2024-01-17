@@ -4,18 +4,28 @@ import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.AdminService;
 import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.Organizer.OrganizerService;
+import com.example.demo.Service.StorageService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.FileStore;
 import java.util.List;
 @RestController
 @RequestMapping("/Admin")
 public class AdminController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private StorageService storageService;
+
     @PostMapping("/manyUsers")
     public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
     @DeleteMapping("/removeAllUsers")
@@ -36,7 +46,17 @@ public class AdminController {
     }
     @PostMapping("/manySpots")
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
+//    @PostMapping("/S3")
+//    public ResponseEntity<String> uploadPhoto(@RequestParam(value = "file")MultipartFile file){
+//        return new ResponseEntity<>(storageService.uploadFile(file), HttpStatus.OK);
+//    }
+    @GetMapping("/S3/{fileName}")
+    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
 
+        byte [] data=storageService.viewFile(fileName);
+        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
+    }
     @GetMapping("/participants")
     public List<Participant> getAllParticipants(){
         return adminService.getAllParticipant();
@@ -147,5 +167,10 @@ public class AdminController {
     @DeleteMapping("/organizers/{organizerId}")
     public String removeOrganizer(@PathVariable Integer organizerId) {
     	return adminService.removeOrganizerById(organizerId);
+    }
+
+    @DeleteMapping("/S3/{fileName}")
+    public ResponseEntity<String> photoDelete(@PathVariable String fileName){
+        return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
     }
 }
