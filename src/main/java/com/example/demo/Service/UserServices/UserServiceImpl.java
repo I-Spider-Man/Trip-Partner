@@ -1,5 +1,6 @@
 package com.example.demo.Service.UserServices;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +10,6 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.User;
@@ -86,9 +86,41 @@ public class UserServiceImpl implements UserService {
 		Optional<User> user=userRepo.findByUserEmail(userEmail);
 		return user.orElse(null);
 	}
+
+	@Override
+	public ResponseEntity<String> forgotPassword(String userEmail) {
+		Optional<User> user=userRepo.findByUserEmail(userEmail);
+		if(user.isPresent()){
+			String Password=PasswordGenerator();
+			user.get().setUserPassword(Password);
+			try{
+				mailService.sendMailService(userEmail,"Password Changed","Your new Password is : "+user.get().getUserPassword());
+				userRepo.save(user.get());
+				return new ResponseEntity<>("New password has been sent to the user's email",HttpStatus.ACCEPTED);
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
+        }
+		else{
+			return new ResponseEntity<>("User with this email not found",HttpStatus.NOT_FOUND);
+		}
+
+	}
+
 	@Override
 	public List<User> getAllByUserName(String userName) {
 		return userRepo.findAllByUserName(userName);
 	}
-
+	public String PasswordGenerator(){
+		String Alpha="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		String Numbers="1234567890";
+		String Characters=Alpha+Numbers;
+		SecureRandom random=new SecureRandom();
+		StringBuilder Password=new StringBuilder();
+		for(int i=0;i<8;i++){
+			int index=random.nextInt(Characters.length());
+			Password.append(Characters.charAt(index));
+		}
+		return Password.toString();
+	}
 }
