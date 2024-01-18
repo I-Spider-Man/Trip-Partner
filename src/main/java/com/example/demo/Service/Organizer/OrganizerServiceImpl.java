@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.amazonaws.services.route53domains.model.ReachabilityStatus;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
 import com.example.demo.Service.Scheduling;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Service.GroupServices.GroupService;
@@ -55,7 +58,7 @@ public class OrganizerServiceImpl implements OrganizerService{
     }
     
     @Override
-    public Group addOrganizer(Organizer newOrganizer, Group newGroup) {
+    public ResponseEntity<?> addOrganizer(Organizer newOrganizer, Group newGroup) {
         Optional<Organizer> organizer=organizerRepository.findByUserId(newOrganizer.getUserId());
         User user=userService.getUserById(newOrganizer.getUserId());
         String organizerEmail=user.getUserEmail();
@@ -76,10 +79,10 @@ public class OrganizerServiceImpl implements OrganizerService{
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }
-                    return newGroup;
+                    return new ResponseEntity<>(newGroup, HttpStatus.CREATED);
                 }
                 else {
-                    return null;//"organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId());
+                    return new ResponseEntity<>("organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId()),HttpStatus.CONFLICT);//;
                 }
             }
             else {
@@ -97,10 +100,10 @@ public class OrganizerServiceImpl implements OrganizerService{
                     e.printStackTrace();
                 }
 
-                return  newGroup;
+                return  new ResponseEntity<>(newGroup,HttpStatus.CREATED) ;
             }
         }else{
-            return null;
+            return new ResponseEntity<>("User already participating",HttpStatus.CONFLICT);
         }
     }
 
