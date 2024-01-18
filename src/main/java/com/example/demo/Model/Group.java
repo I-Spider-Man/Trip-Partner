@@ -6,7 +6,7 @@ import java.util.Objects;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Party")
+@Table(name = "Group")
 public class Group {
 	@Id
 	@GeneratedValue
