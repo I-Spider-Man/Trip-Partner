@@ -23,7 +23,14 @@ public class UserController {
 	public List<User> getAllUser(){
 		return userServ.getAllUser();
 	}
-	
+	@GetMapping("/{userId}")
+	public ResponseEntity<User> getUserById(@PathVariable Integer userId){
+		User user=userServ.getUserById(userId);
+		if(user!=null)
+			return new ResponseEntity<>(user,HttpStatus.OK);
+		else
+			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+	}
 	@PostMapping
 	public ResponseEntity<String> addUser(@RequestBody User newUser) {
 		return userServ.addUser(newUser);
@@ -31,13 +38,7 @@ public class UserController {
 
 	@GetMapping("/otp/{email}")
 	public String sendEmail(@PathVariable String email){
-		User user=userServ.getByUserEmail(email);
-		if(user==null){
 			return mailService.sendOTPService(email);
-		}
-		else {
-			return null;
-		}
 	}
 	@PostMapping("/forgotPassword")
 	public ResponseEntity<String> forgotPassword(@RequestParam(name = "userEmail",required = true) String userEmail){
