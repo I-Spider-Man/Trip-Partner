@@ -40,7 +40,8 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public String addGroup(Group newGroup) {
-		Optional<Group> grp=grpRepo.findByOrganizerId(newGroup.getOrganizerId());
+		List<Group> activeGrp=grpRepo.findAllByGroupStatus(GroupStatus.Active);
+		Optional<Group> grp=activeGrp.stream().filter(group -> group.getOrganizerId().equals(newGroup.getOrganizerId())).findAny();
 		if(newGroup.getEventName()!=null){
 			Optional<Event> event=eventRepository.findByEventName(newGroup.getEventName());
 			event.get().increasePeopleCount(newGroup.getParticipantsLimit());
@@ -60,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
 				return "GROUP SUCCESSFULLY CREATED";
 			}
 			else {
-				return "YOU ARE ALREADY ORGANIZING ONE EVENT";
+				return "YOU ARE ALREADY ORGANIZING ONE GROUP";
 			}
 		}
 		else {

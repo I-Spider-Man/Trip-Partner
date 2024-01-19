@@ -15,6 +15,7 @@ public class TouristSpot {
     private String description;
     private Integer peopleCount=0;
 
+    private String spotPicture;
     @Override
     public String toString() {
         return "TouristSpot{" +
