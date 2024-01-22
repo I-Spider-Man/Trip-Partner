@@ -172,13 +172,11 @@ public class AdminServiceImpl implements AdminService{
     public String removeOrganizerById(Integer organizerId) {
         return organizerService.removeOrganizerById(organizerId);
     }
-
     @Override
     public String removeAllInActiveEvents() {
         eventRepository.deleteAll(getAllInActiveEvents());
         return "InActive Events removed successfully";
     }
-
     @Override
     public User getUserById(Integer userId) {
         return userService.getUserById(userId);

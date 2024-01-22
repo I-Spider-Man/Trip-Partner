@@ -1,13 +1,17 @@
 package com.example.demo.Service.Event;
 
+
 import com.example.demo.Model.Event;
 import com.example.demo.Model.EventStatus;
-import com.example.demo.Model.GroupStatus;
 import com.example.demo.Repository.EventRepository;
 import com.example.demo.Service.Scheduling;
-import com.example.demo.Service.SchedulingImpl;
+import com.example.demo.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +24,8 @@ public class EventServiceImpl implements EventService{
     private EventRepository eventRepository;
     @Autowired
     private Scheduling scheduling;
+    @Autowired
+    private StorageService storageService;
     @Override
     public List<Event> getAllEvents() {
         return (List<Event>) eventRepository.findAll();
@@ -82,5 +88,29 @@ public class EventServiceImpl implements EventService{
     public Event getEventById(Integer eventId) {
         Optional<Event> event=eventRepository.findById(eventId);
         return event.orElse(null);
+    }
+
+    @Override
+    public ResponseEntity<?> uploadEventPicture(Integer EventId, MultipartFile file) {
+        Optional<Event> event=eventRepository.findById(EventId);
+        if(event.isPresent()){
+            String fileName=System.currentTimeMillis()+"_"+EventId+"_"+event.get().getEventName();
+            if(storageService.uploadFile(fileName,file)){
+                event.get().setEventPicture(fileName);
+                eventRepository.save(event.get());
+                return new ResponseEntity<>("File uploaded successfully", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("Event not found in database",HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<?> viewEventPicture(Integer EventId) {
+        Optional<Event> event=eventRepository.findById(EventId);
+        if(event.isPresent()){
+            storageService.viewFile(event.get().getEventPicture());
+        }
+        return null;
     }
 }
