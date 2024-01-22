@@ -48,6 +48,7 @@ public class AdminController {
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
 //    @PostMapping("/S3")
 //    public ResponseEntity<String> uploadPhoto(@RequestParam(value = "file")MultipartFile file){
+//
 //        return new ResponseEntity<>(storageService.uploadFile(file), HttpStatus.OK);
 //    }
     @GetMapping("/S3/{fileName}")

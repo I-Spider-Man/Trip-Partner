@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Model.User;
 import com.example.demo.Service.UserServices.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/User")
@@ -35,7 +36,10 @@ public class UserController {
 	public ResponseEntity<String> addUser(@RequestBody User newUser) {
 		return userServ.addUser(newUser);
 	}
-
+	@PostMapping("/updateProfile/{userId}")
+	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profile")MultipartFile profilePicture){
+		return userServ.updateUserProfile(userId,profilePicture);
+	}
 	@GetMapping("/otp/{email}")
 	public String sendEmail(@PathVariable String email){
 			return mailService.sendOTPService(email);
