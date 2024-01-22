@@ -25,6 +25,8 @@ public class AdminController {
     private AdminService adminService;
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private EventService eventService;
 
     @PostMapping("/manyUsers")
     public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
@@ -33,7 +35,7 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public String addEvent(@RequestBody Event newEvent){
+    public String addEvent(@RequestBody Event newEvent,@RequestParam(value = "eventPicture") MultipartFile file){
         return adminService.addEvent(newEvent);
     }
     @PostMapping("/manyEvents")
