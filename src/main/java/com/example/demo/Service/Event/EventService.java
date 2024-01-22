@@ -10,7 +10,7 @@ public interface EventService {
     List<Event> getAllEvents();
     List<Event> getAllActiveEvents();
     List<Event> getAllPopularEvents();
-    String addEvent(Event newEvent);
+    ResponseEntity<String> addEvent(Event newEvent,MultipartFile eventImage);
     String addAllEvents(List<Event> events);
     String deleteEventById(Integer eventId);
     Event getEventById(Integer eventId);

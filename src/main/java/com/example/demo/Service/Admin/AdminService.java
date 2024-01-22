@@ -1,19 +1,14 @@
 package com.example.demo.Service.Admin;
 
 import com.example.demo.Model.*;
-import com.example.demo.Service.Organizer.OrganizerService;
-import com.example.demo.Service.TouristSpot.TouristSpotService;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.jws.soap.SOAPBinding;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.servlet.http.Part;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AdminService {
     String addManyUsers(List<User> users);
-    String addEvent(Event newEvent);
+    ResponseEntity<String> addEvent(Event newEvent, MultipartFile file);
     String addAllEvents(List<Event> events);
     String addSpot(TouristSpot spot);
     String addAllSpots(List<TouristSpot> spots);

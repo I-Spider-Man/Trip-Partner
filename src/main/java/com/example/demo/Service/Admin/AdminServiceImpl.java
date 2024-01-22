@@ -9,10 +9,11 @@ import com.example.demo.Service.ParticipantServices.ParticipantService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import com.example.demo.Service.UserServices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -46,8 +47,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public String addEvent(Event newEvent) {
-        return eventService.addEvent(newEvent);
+    public ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) {
+        return eventService.addEvent(newEvent,file);
     }
 
     @Override

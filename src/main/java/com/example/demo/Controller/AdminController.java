@@ -35,8 +35,8 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public String addEvent(@RequestBody Event newEvent,@RequestParam(value = "eventPicture") MultipartFile file){
-        return adminService.addEvent(newEvent);
+    public ResponseEntity<String> addEvent(@RequestBody Event newEvent,@RequestParam(value = "eventPicture") MultipartFile file){
+        return adminService.addEvent(newEvent,file);
     }
     @PostMapping("/manyEvents")
     public String addManyEvents(@RequestBody List<Event> events){

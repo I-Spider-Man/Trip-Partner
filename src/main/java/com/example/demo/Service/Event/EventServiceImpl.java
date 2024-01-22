@@ -45,24 +45,42 @@ public class EventServiceImpl implements EventService{
         return popularEvents.stream().limit(5).collect(Collectors.toList());
     }
 
+
+
     @Override
-    public String addEvent(Event newEvent) {
+    public ResponseEntity<String> addEvent(Event newEvent,MultipartFile eventImage) {
         newEvent.setEventStatus(EventStatus.Active);
         Optional<Event> event=eventRepository.findByEventName(newEvent.getEventName());
         if(event.isPresent()) {
             if(event.get().getEventStatus() == EventStatus.InActive){
                 eventRepository.save(newEvent);
+                String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName();
+                if(storageService.uploadFile(fileName,eventImage)){
+                    event.get().setEventPicture(fileName);
+                    eventRepository.save(event.get());
+                }
+                else {
+                    return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
+                }
                 scheduling.addActiveEventId(newEvent.getEventId());
-                return "Event "+newEvent.getEventName()+" Added Successfully";
+                return new ResponseEntity<>("Event added successfully", HttpStatus.CREATED);
             }
             else{
-                return "there is already one event is happening with the same name";
+                return new ResponseEntity<>("there is already one event is happening with the same name",HttpStatus.CONFLICT) ;
             }
         }
         else{
             eventRepository.save(newEvent);
+            String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName();
+            if(storageService.uploadFile(fileName,eventImage)){
+                event.get().setEventPicture(fileName);
+                eventRepository.save(event.get());
+            }
+            else {
+                return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
+            }
             scheduling.addActiveEventId(newEvent.getEventId());
-            return "Event "+newEvent.getEventId()+" Added Successfully ";
+            return new ResponseEntity<>("Event "+newEvent.getEventId()+" Added Successfully ",HttpStatus.CREATED);
         }
 
     }
