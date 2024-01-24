@@ -2,10 +2,12 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.Event;
 import com.example.demo.Model.EventStatus;
+import com.example.demo.Model.Group;
 import com.example.demo.Model.TouristSpot;
 import com.example.demo.Repository.EventRepository;
 import com.example.demo.Repository.TouristSpotRepository;
 import com.example.demo.Service.Event.EventService;
+import com.example.demo.Service.GroupServices.GroupService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.AccessType;
@@ -20,6 +22,8 @@ import java.util.Optional;
 public class EventSpotController {
     @Autowired
     private EventService eventService;
+    @Autowired
+    private GroupService groupService;
 
     @Autowired
     private TouristSpotService spotService;
@@ -33,7 +37,10 @@ public class EventSpotController {
     public Event getEventById(@PathVariable Integer id){
         return eventService.getEventById(id);
     }
-
+    @GetMapping("/event/group/{eventName}")
+    public List<Group> getGrpByEventName(@PathVariable String eventName){
+        return groupService.getAllGroupByEventName(eventName);
+    }
     @GetMapping("/Spots")
     public List<TouristSpot> getAllSpots(){
         return spotService.getAllSpots();
@@ -41,6 +48,10 @@ public class EventSpotController {
     @GetMapping("/Spots/{id}")
     public TouristSpot getSpotById(@PathVariable Integer id){
         return spotService.getSpotById(id);
+    }
+    @GetMapping("/spot/group/{spotName}")
+    public List<Group> getGrpBySpotName(@PathVariable String spotName){
+        return groupService.getAllGroupBySpotName(spotName);
     }
     @GetMapping("/PopularSpots")
      public List<TouristSpot> getAllPopularSpots(){

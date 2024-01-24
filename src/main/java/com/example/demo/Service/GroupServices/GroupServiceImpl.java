@@ -111,4 +111,14 @@ public class GroupServiceImpl implements GroupService {
 		Optional<Group> grp=activeGrp.stream().filter(group -> group.getOrganizerId().equals(orgId)).findAny();
         return grp.orElse(null);
 	}
+
+	@Override
+	public List<Group> getAllGroupBySpotName(String spotName) {
+		return grpRepo.findAllBySpotName(spotName);
+	}
+
+	@Override
+	public List<Group> getAllGroupByEventName(String eventName) {
+		return grpRepo.findAllByEventName(eventName);
+	}
 }

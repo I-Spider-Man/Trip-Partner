@@ -6,6 +6,8 @@ import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.Organizer.OrganizerService;
 import com.example.demo.Service.StorageService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,14 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public ResponseEntity<String> addEvent(@RequestBody Event newEvent,@RequestParam(value = "eventPicture") MultipartFile file){
-        return adminService.addEvent(newEvent,file);
+    public ResponseEntity<String> addEvent(@RequestBody String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
+        ObjectMapper objectMapper=new ObjectMapper();
+        try{
+            Event newEvent=objectMapper.readValue(newEventJson,Event.class);
+            return adminService.addEvent(newEvent,file);
+        }catch(JsonProcessingException e){
+            return ResponseEntity.badRequest().body("Invalid JSON format fro newEvent");
+        }
     }
     @PostMapping("/manyEvents")
     public String addManyEvents(@RequestBody List<Event> events){

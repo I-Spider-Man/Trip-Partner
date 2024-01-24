@@ -11,4 +11,6 @@ public interface GroupService {
 	String removeGroupById(Integer groupId);
 	Group getGroupById(Integer grpId);
 	Group getGroupByOrganizerId(Integer orgId);
+	List<Group> getAllGroupBySpotName(String spotName);
+	List<Group> getAllGroupByEventName(String eventName);
 }

@@ -82,7 +82,7 @@ public class OrganizerServiceImpl implements OrganizerService{
                     return new ResponseEntity<>(newGroup, HttpStatus.CREATED);
                 }
                 else {
-                    return new ResponseEntity<>("organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId()),HttpStatus.CONFLICT);//;
+                    return new ResponseEntity<>("organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId()).getGroupName(),HttpStatus.CONFLICT);//;
                 }
             }
             else {
