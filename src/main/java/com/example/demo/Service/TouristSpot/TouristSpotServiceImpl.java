@@ -1,9 +1,14 @@
 package com.example.demo.Service.TouristSpot;
 
+import com.example.demo.Model.Event;
 import com.example.demo.Model.TouristSpot;
 import com.example.demo.Repository.TouristSpotRepository;
+import com.example.demo.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +19,8 @@ import java.util.stream.Collectors;
 public class TouristSpotServiceImpl implements TouristSpotService{
     @Autowired
     private TouristSpotRepository touristSpotRepository;
+    @Autowired
+    private StorageService storageService;
     @Override
     public List<TouristSpot> getAllSpots() {
         return (List<TouristSpot>) touristSpotRepository.findAll();
@@ -35,7 +42,20 @@ public class TouristSpotServiceImpl implements TouristSpotService{
             return "Tourist spot "+newSpot.getSpotName()+" added Successfully";
         }
     }
-
+    @Override
+    public ResponseEntity<?> uploadSpotPicture(Integer SpotId, MultipartFile file) {
+        Optional<TouristSpot> spot=touristSpotRepository.findById(SpotId);
+        if(spot.isPresent()){
+            String fileName=System.currentTimeMillis()+"_"+SpotId+"_"+spot.get().getSpotName();
+            if(storageService.uploadFile(fileName,file)){
+                spot.get().setSpotPicture(fileName);
+                touristSpotRepository.save(spot.get());
+                return new ResponseEntity<>("File uploaded successfully", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("Event not found in database",HttpStatus.NOT_FOUND);
+    }
     @Override
     public String addAllSpots(List<TouristSpot> spots) {
         touristSpotRepository.saveAll(spots);

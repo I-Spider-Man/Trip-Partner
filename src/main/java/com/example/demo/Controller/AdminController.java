@@ -3,13 +3,10 @@ package com.example.demo.Controller;
 import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.AdminService;
 import com.example.demo.Service.Event.EventService;
-import com.example.demo.Service.Organizer.OrganizerService;
 import com.example.demo.Service.StorageService;
-import com.example.demo.Service.TouristSpot.TouristSpotService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.apache.logging.log4j.util.PerformanceSensitive;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -17,9 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.FileStore;
 import java.util.List;
+
 @RestController
 @RequestMapping("/Admin")
 public class AdminController {
@@ -37,13 +33,17 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public ResponseEntity<String> addEvent(@RequestBody String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
-        ObjectMapper objectMapper=new ObjectMapper();
+    public ResponseEntity<String> addEvent(@RequestParam(value = "newEventJson") String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        System.out.println(newEventJson);
         try{
             Event newEvent=objectMapper.readValue(newEventJson,Event.class);
+            System.out.println(newEventJson);
             return adminService.addEvent(newEvent,file);
         }catch(JsonProcessingException e){
-            return ResponseEntity.badRequest().body("Invalid JSON format fro newEvent");
+            System.out.println(newEventJson);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     @PostMapping("/manyEvents")
@@ -52,7 +52,7 @@ public class AdminController {
     }
     @PostMapping("/touristSpot")
     public String addTouristSpot(@RequestBody TouristSpot newSpot){
-        return adminService.addSpot(newSpot);
+        System.out.println(newSpot);return adminService.addSpot(newSpot);
     }
     @PostMapping("/manySpots")
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
@@ -63,7 +63,6 @@ public class AdminController {
 //    }
     @GetMapping("/S3/{fileName}")
     public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
-
         byte [] data=storageService.viewFile(fileName);
         ByteArrayResource byteArrayResource=new ByteArrayResource(data);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);

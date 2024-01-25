@@ -71,10 +71,10 @@ public class EventServiceImpl implements EventService{
         }
         else{
             eventRepository.save(newEvent);
-            String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName();
+            String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName();
             if(storageService.uploadFile(fileName,eventImage)){
-                event.get().setEventPicture(fileName);
-                eventRepository.save(event.get());
+                newEvent.setEventPicture(fileName);
+                eventRepository.save(newEvent);
             }
             else {
                 return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
