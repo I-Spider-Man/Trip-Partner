@@ -10,9 +10,12 @@ public interface UserService {
 	List<User> getAllUser();
 	ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file);
 	User getUserById(Integer userId);
-	ResponseEntity<String> addUser(User user);
+	AuthResponse addUser(User user) throws Exception;
 	String removeUserById(Integer userId);
 	List<User> getAllByUserName(String userName);
 	User getByUserEmail(String userEmail);
 	ResponseEntity<String> forgotPassword(String userEmail);
+//	ResponseEntity<String> loginUser(String userEmail, String userPassword);
+	AuthResponse sigin(LoginRequest LoginRequest);
+	User findUserByJwt(String jwt);
 }

@@ -14,7 +14,10 @@ public class User {
 	private String userName;
 	private String userEmail;
 	private String aboutUser;
-	private Role role=Role.User_Role;
+	private Role role;
+	private String userPassword;
+	private String userProfile;
+	
 
 	public User(Integer userId, String userName, String userEmail, String aboutUser, Role role, String userPassword, String userProfile) {
 		this.userId = userId;
@@ -26,8 +29,7 @@ public class User {
 		this.userProfile = userProfile;
 	}
 
-	private String userPassword;
-	private String userProfile;
+	
 	public User() {
 		super();
 	}

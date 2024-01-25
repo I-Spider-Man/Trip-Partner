@@ -18,6 +18,7 @@ public class Event {
     private String description;
     private EventStatus eventStatus=EventStatus.Active;
     private Integer peopleCount=0;
+    private String eventUrl;
 
     @Override
     public String toString() {
@@ -44,18 +45,23 @@ public class Event {
         this.peopleCount -= peopleCount;
     }
 
-    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount) {
-        this.eventId = eventId;
-        this.eventName = eventName;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.eventStatus = eventStatus;
-        this.peopleCount = peopleCount;
-    }
+   
 
-    public EventStatus getEventStatus() {
+    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate,
+			String description, EventStatus eventStatus, Integer peopleCount, String eventUrl) {
+		super();
+		this.eventId = eventId;
+		this.eventName = eventName;
+		this.location = location;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.description = description;
+		this.eventStatus = eventStatus;
+		this.peopleCount = peopleCount;
+		this.eventUrl = eventUrl;
+	}
+
+	public EventStatus getEventStatus() {
         return eventStatus;
     }
 
@@ -113,5 +119,13 @@ public class Event {
     public void setDescription(String description) {
         this.description = description;
     }
+
+	public String getEventUrl() {
+		return eventUrl;
+	}
+
+	public void setEventUrl(String eventUrl) {
+		this.eventUrl = eventUrl;
+	}
 
 }
