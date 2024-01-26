@@ -57,8 +57,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public String addSpot(TouristSpot spot) {
-        return touristSpotService.addSpot(spot);
+    public ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture ) {
+        return touristSpotService.addSpot(spot, spotPicture);
     }
 
     @Override

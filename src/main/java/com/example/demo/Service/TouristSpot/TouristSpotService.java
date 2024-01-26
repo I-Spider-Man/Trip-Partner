@@ -9,7 +9,8 @@ import java.util.List;
 public interface TouristSpotService {
     List<TouristSpot> getAllSpots();
     TouristSpot getSpotById(Integer spotId);
-    String addSpot(TouristSpot newSpot);
+    ResponseEntity<?> addSpot(TouristSpot newSpot, MultipartFile spotPicture);
+
     String addAllSpots(List<TouristSpot> spots);
     String removeSpotById(Integer spotId);
     List<TouristSpot> getAllPopularTouristSpot();

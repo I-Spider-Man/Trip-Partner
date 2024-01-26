@@ -12,6 +12,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -39,7 +40,7 @@ public class AdminController {
         System.out.println(newEventJson);
         try{
             Event newEvent=objectMapper.readValue(newEventJson,Event.class);
-            System.out.println(newEventJson);
+
             return adminService.addEvent(newEvent,file);
         }catch(JsonProcessingException e){
             System.out.println(newEventJson);
@@ -51,8 +52,17 @@ public class AdminController {
         return adminService.addAllEvents(events);
     }
     @PostMapping("/touristSpot")
-    public String addTouristSpot(@RequestBody TouristSpot newSpot){
-        System.out.println(newSpot);return adminService.addSpot(newSpot);
+    public ResponseEntity<?> addTouristSpot(@RequestParam(value = "newSpot") String newTouristSpot,@RequestParam(value = "spotPicture") MultipartFile spotSpicture){
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try{
+            TouristSpot newSpot=objectMapper.readValue(newTouristSpot,TouristSpot.class);
+
+            return adminService.addSpot(newSpot,spotSpicture);
+        }catch(JsonProcessingException e){
+            return ResponseEntity.badRequest().body("Entered newSpot values are not correct.");
+        }
+
     }
     @PostMapping("/manySpots")
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}

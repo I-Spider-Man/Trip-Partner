@@ -50,11 +50,18 @@ public class EventSpotController {
         return groupService.getAllGroupByEventName(eventName);
     }
     @GetMapping("/eventPicture/{fileName}")
-    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
+    public ResponseEntity<?> viewEventPhoto(@PathVariable String fileName){
         byte [] data=storageService.viewFile(fileName);
         ByteArrayResource byteArrayResource=new ByteArrayResource(data);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
     }
+    @GetMapping("/spotPicture/{fileName}")
+    public ResponseEntity<?> viewSpotPhoto(@PathVariable String fileName){
+        byte [] data=storageService.viewFile(fileName);
+        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
+    }
+
     @PostMapping("/updateEventPicture")
     public ResponseEntity<?> updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture){
         return eventService.uploadEventPicture(eventId,eventPicture);

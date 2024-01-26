@@ -10,7 +10,7 @@ public interface AdminService {
     String addManyUsers(List<User> users);
     ResponseEntity<String> addEvent(Event newEvent, MultipartFile file);
     String addAllEvents(List<Event> events);
-    String addSpot(TouristSpot spot);
+    ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture);
     String addAllSpots(List<TouristSpot> spots);
     List<Participant> getAllParticipant();
     List<Participant> getAllBusyParticipants();

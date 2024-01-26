@@ -33,13 +33,22 @@ public class TouristSpotServiceImpl implements TouristSpotService{
     }
 
     @Override
-    public String addSpot(TouristSpot newSpot) {
+    public ResponseEntity<?> addSpot(TouristSpot newSpot,MultipartFile spotPicture) {
         Optional<TouristSpot> touristSpot=touristSpotRepository.findBySpotName(newSpot.getSpotName());
         if(touristSpot.isPresent()){
-            return "Spot Already Present";
+            return ResponseEntity.badRequest().body("spot already present");
         }else{
             touristSpotRepository.save(newSpot);
-            return "Tourist spot "+newSpot.getSpotName()+" added Successfully";
+            String fileName=System.currentTimeMillis()+"_"+newSpot.getSpotId()+"_"+newSpot.getSpotName()+"_Spot";
+            if(storageService.uploadFile(fileName,spotPicture)){
+                newSpot.setSpotPicture(fileName);
+                touristSpotRepository.save(newSpot);
+                return ResponseEntity.ok().body("Event Uploaded with event Picture");
+            }else{
+                touristSpotRepository.delete(newSpot);
+                return new ResponseEntity<>("Error on Uploading new Spot",HttpStatus.CONFLICT);
+            }
+
         }
     }
     @Override
