@@ -34,7 +34,7 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public ResponseEntity<String> addEvent(@RequestParam(value = "newEventJson") String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
+    public ResponseEntity<String> addEvent(@RequestParam(value = "newEvent") String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         System.out.println(newEventJson);
