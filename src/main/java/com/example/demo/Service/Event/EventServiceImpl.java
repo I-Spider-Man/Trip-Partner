@@ -56,7 +56,8 @@ public class EventServiceImpl implements EventService{
                 eventRepository.save(newEvent);
                 String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName();
                 if(storageService.uploadFile(fileName,eventImage)){
-                    event.get().setEventPicture(fileName);
+
+                    event.get().setEventPicture(String.valueOf(storageService.getPublicUrl(fileName)));
                     eventRepository.save(event.get());
                 }
                 else {
@@ -73,7 +74,7 @@ public class EventServiceImpl implements EventService{
             eventRepository.save(newEvent);
             String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName();
             if(storageService.uploadFile(fileName,eventImage)){
-                newEvent.setEventPicture(fileName);
+                newEvent.setEventPicture(String.valueOf(storageService.getPublicUrl(fileName)));
                 eventRepository.save(newEvent);
             }
             else {
@@ -95,11 +96,12 @@ public class EventServiceImpl implements EventService{
     public String deleteEventById(Integer eventId) {
         Optional<Event> event=eventRepository.findById(eventId);
         if(event.isPresent()){
-        eventRepository.deleteById(eventId);
-        return "Event "+event.get().getEventName()+" Removed Successfully";
-    }else{
-            return "Event with id "+eventId+" not present in database";
-        }
+            storageService.deleteFile(event.get().getEventPicture());
+            eventRepository.deleteById(eventId);
+            return "Event "+event.get().getEventName()+" Removed Successfully";
+        }else{
+                return "Event with id "+eventId+" not present in database";
+            }
     }
 
     @Override

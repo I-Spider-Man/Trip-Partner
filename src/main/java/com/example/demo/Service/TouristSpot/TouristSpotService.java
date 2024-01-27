@@ -12,7 +12,7 @@ public interface TouristSpotService {
     ResponseEntity<?> addSpot(TouristSpot newSpot, MultipartFile spotPicture);
 
     String addAllSpots(List<TouristSpot> spots);
-    String removeSpotById(Integer spotId);
+    ResponseEntity<String> removeSpotById(Integer spotId);
     List<TouristSpot> getAllPopularTouristSpot();
     public ResponseEntity<?> uploadSpotPicture(Integer SpotId, MultipartFile file);
 

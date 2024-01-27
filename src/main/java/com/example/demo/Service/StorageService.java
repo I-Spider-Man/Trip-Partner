@@ -1,6 +1,8 @@
 package com.example.demo.Service;
 
+
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -15,6 +17,7 @@ import software.amazon.awssdk.utils.IoUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
 @Service
 public class StorageService {
@@ -39,9 +42,14 @@ public class StorageService {
         }
 
     }
+    public URL getPublicUrl(String objectKey){
+        GeneratePresignedUrlRequest request=new GeneratePresignedUrlRequest(bucketName,objectKey);
+        URL path= (s3Client.generatePresignedUrl(request));
+        System.out.println(path);
+        return path;
+    }
     public byte[] viewFile(String fileName) {
         try {
-
             S3Object s3Object = s3Client.getObject(bucketName, fileName);
             try (S3ObjectInputStream inputStream = s3Object.getObjectContent()) {
                 return IoUtils.toByteArray(inputStream);
@@ -53,12 +61,16 @@ public class StorageService {
     }
 
     public String deleteFile(String fileName) {
-        try {
-            s3Client.deleteObject(bucketName, fileName);
-            return "File " + fileName + " deleted.";
-        } catch (Exception e) {
-            logger.error("Error deleting file", e);
-            throw new RuntimeException("Error deleting file", e);
+        if(!fileName.isEmpty()){
+            try {
+                s3Client.deleteObject(bucketName, fileName);
+                return "File " + fileName + " deleted.";
+            } catch (Exception e) {
+                logger.error("Error deleting file", e);
+                throw new RuntimeException("Error deleting file", e);
+            }
+        }else {
+            return "file name is empty";
         }
     }
 

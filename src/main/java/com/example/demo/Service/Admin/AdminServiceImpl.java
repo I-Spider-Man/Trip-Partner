@@ -166,7 +166,7 @@ public class AdminServiceImpl implements AdminService{
         return eventService.deleteEventById(eventId);
     }
     @Override
-    public String removeTouristSpotById(Integer spotId) {
+    public ResponseEntity<String> removeTouristSpotById(Integer spotId) {
         return touristSpotService.removeSpotById(spotId);
     }
     @Override

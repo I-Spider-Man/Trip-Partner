@@ -72,9 +72,16 @@ public class TouristSpotServiceImpl implements TouristSpotService{
     }
 
     @Override
-    public String removeSpotById(Integer spotId) {
-        touristSpotRepository.deleteById(spotId);
-        return "Tourist spot with id "+spotId+" is removed successfully.";
+    public ResponseEntity<String> removeSpotById(Integer spotId) {
+        Optional<TouristSpot> spot=touristSpotRepository.findById(spotId);
+        if(spot.isPresent()){
+            storageService.deleteFile(spot.get().getSpotPicture());
+            touristSpotRepository.deleteById(spotId);
+            return ResponseEntity.ok().body("Tourist spot with id "+spotId+" is removed successfully.");
+        }
+        else{
+            return new ResponseEntity<>("spot not found",HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override

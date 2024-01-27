@@ -3,7 +3,6 @@ package com.example.demo.Service.Admin;
 import com.example.demo.Model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 public interface AdminService {
@@ -34,7 +33,7 @@ public interface AdminService {
     String removeParticipantById(Integer participantId);
     String removeGroupById(Integer groupId);
     String removeEventById(Integer eventId);
-    String removeTouristSpotById(Integer spotId);
+    ResponseEntity<String> removeTouristSpotById(Integer spotId);
     String removeOrganizerById(Integer organizerId);
     String removeAllInActiveEvents();
 

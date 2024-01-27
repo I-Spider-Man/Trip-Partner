@@ -181,7 +181,7 @@ public class AdminController {
         return adminService.removeAllInActiveEvents();
     }
     @DeleteMapping("/touristSpots/{spotId}")
-    public String removeTouristSpot(@PathVariable Integer spotId){
+    public ResponseEntity<String> removeTouristSpot(@PathVariable Integer spotId){
         return adminService.removeTouristSpotById(spotId);
     }
     @DeleteMapping("/organizers/{organizerId}")
