@@ -1,5 +1,6 @@
 package com.example.demo.Service.ParticipantServices;
 
+import com.amazonaws.Response;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.GroupRepository;
 import com.example.demo.Repository.ParticipantRepository;
@@ -8,6 +9,8 @@ import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.Scheduling;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +45,7 @@ public class ParticipantServiceImpl implements ParticipantService{
     }
 
     @Override
-    public String addParticipant(Participant newParticipant) {
+    public ResponseEntity<String> addParticipant(Participant newParticipant) {
 
         Optional<Participant> participant = participantRepo.findByUserId(newParticipant.getUserId());
         Optional<User> user=userRepository.findById(newParticipant.getUserId());
@@ -68,9 +71,9 @@ public class ParticipantServiceImpl implements ParticipantService{
                         } catch (MessagingException e) {
                             e.printStackTrace();
                         }
-                        return "Participant added to group " + grp.get().getGroupName();
+                        return new ResponseEntity<>("Participant added to group " + grp.get().getGroupName(), HttpStatus.OK) ;
                     } else {
-                        return "Participant is already joined in a grp : " + grpRepo.findById(participant.get().getGroupId()).get().getGroupName();
+                        return new ResponseEntity<>("Participant is already joined in a grp : " + grpRepo.findById(participant.get().getGroupId()).get().getGroupName(),HttpStatus.CONFLICT) ;
                     }
                 } else {
                     grp.get().participantAdded(grp.get().getParticipantsCount());
@@ -84,14 +87,14 @@ public class ParticipantServiceImpl implements ParticipantService{
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }
-                    return "participant added successfully to the group " + grp.get().getGroupName();
+                    return new ResponseEntity<>("participant added successfully to the group " + grp.get().getGroupName(),HttpStatus.OK);
                 }
             }else{
-                return "you already organizing one group so you cannot join here";
+                return new ResponseEntity<>("you already organizing one group so you cannot join here",HttpStatus.CONFLICT) ;
             }
         }
         else{
-             return "check Group details";
+             return new ResponseEntity<>("check Group details",HttpStatus.BAD_REQUEST);
         }
     }
     @Override
