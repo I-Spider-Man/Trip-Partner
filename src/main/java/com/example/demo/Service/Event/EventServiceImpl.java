@@ -111,6 +111,12 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
+    public ResponseEntity<Event> getEventByEventName(String eventName) {
+        Optional<Event> event=eventRepository.findByEventName(eventName);
+        return new ResponseEntity<>(event.orElse(null),HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<?> uploadEventPicture(Integer EventId, MultipartFile file) {
         Optional<Event> event=eventRepository.findById(EventId);
         if(event.isPresent()){

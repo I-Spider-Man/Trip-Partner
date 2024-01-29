@@ -35,7 +35,10 @@ public class EventSpotController {
     public List<Event> getAllActiveEvents(){
         return eventService.getAllActiveEvents();
     }
-
+    @GetMapping("/activeEvent/{eventName}")
+    public ResponseEntity<Event> getEventByName(@PathVariable String eventName){
+        return eventService.getEventByEventName(eventName);
+    }
     @GetMapping("/activeEvents/{id}")
     public Event getEventById(@PathVariable Integer id){
         return eventService.getEventById(id);
@@ -71,6 +74,10 @@ public class EventSpotController {
     @GetMapping("/spots/{id}")
     public TouristSpot getSpotById(@PathVariable Integer id){
         return spotService.getSpotById(id);
+    }
+    @GetMapping("/spot/{spotName}")
+    public ResponseEntity<TouristSpot> getSpotBySpotName(@PathVariable String spotName){
+        return spotService.getSpotBySpotName(spotName);
     }
     @GetMapping("/spot/group/{spotName}")
     public List<Group> getGrpBySpotName(@PathVariable String spotName){

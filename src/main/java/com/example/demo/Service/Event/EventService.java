@@ -14,6 +14,7 @@ public interface EventService {
     String addAllEvents(List<Event> events);
     String deleteEventById(Integer eventId);
     Event getEventById(Integer eventId);
+    ResponseEntity<Event> getEventByEventName(String eventName);
     ResponseEntity<?> uploadEventPicture(Integer EventId, MultipartFile file);
     ResponseEntity<?> viewEventPicture(Integer EventId);
 }

@@ -51,6 +51,13 @@ public class TouristSpotServiceImpl implements TouristSpotService{
 
         }
     }
+
+    @Override
+    public ResponseEntity<TouristSpot> getSpotBySpotName(String spotName) {
+        Optional<TouristSpot> spot=touristSpotRepository.findBySpotName(spotName);
+        return new ResponseEntity<>(spot.orElse(null),HttpStatus.OK);
+    }
+
     @Override
     public ResponseEntity<?> uploadSpotPicture(Integer SpotId, MultipartFile file) {
         Optional<TouristSpot> spot=touristSpotRepository.findById(SpotId);
