@@ -43,7 +43,7 @@ public class TouristSpotServiceImpl implements TouristSpotService{
             if(storageService.uploadFile(fileName,spotPicture)){
                 newSpot.setSpotPicture(fileName);
                 touristSpotRepository.save(newSpot);
-                return ResponseEntity.ok().body("Event Uploaded with event Picture");
+                return new ResponseEntity<>("New spot added",HttpStatus.CREATED);
             }else{
                 touristSpotRepository.delete(newSpot);
                 return new ResponseEntity<>("Error on Uploading new Spot",HttpStatus.CONFLICT);

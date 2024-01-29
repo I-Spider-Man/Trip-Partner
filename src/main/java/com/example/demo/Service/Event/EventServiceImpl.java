@@ -50,14 +50,13 @@ public class EventServiceImpl implements EventService{
     @Override
     public ResponseEntity<String> addEvent(Event newEvent,MultipartFile eventImage) {
         newEvent.setEventStatus(EventStatus.Active);
-        Optional<Event> event=eventRepository.findByEventName(newEvent.getEventName());
+        Optional<Event> event=eventRepository.findAllByEventStatus(EventStatus.Active).stream().filter(event1 -> event1.getEventName().equals(newEvent.getEventName())).findAny();
         if(event.isPresent()) {
             if(event.get().getEventStatus() == EventStatus.InActive){
                 eventRepository.save(newEvent);
-                String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName();
+                String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName()+"_event";
                 if(storageService.uploadFile(fileName,eventImage)){
-
-                    event.get().setEventPicture(String.valueOf(storageService.getPublicUrl(fileName)));
+                    event.get().setEventPicture(fileName);
                     eventRepository.save(event.get());
                 }
                 else {
@@ -72,12 +71,13 @@ public class EventServiceImpl implements EventService{
         }
         else{
             eventRepository.save(newEvent);
-            String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName();
+            String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName()+"_event";
             if(storageService.uploadFile(fileName,eventImage)){
-                newEvent.setEventPicture(String.valueOf(storageService.getPublicUrl(fileName)));
+                newEvent.setEventPicture(fileName);
                 eventRepository.save(newEvent);
             }
             else {
+                eventRepository.delete(newEvent);
                 return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
             }
             scheduling.addActiveEventId(newEvent.getEventId());
@@ -115,6 +115,7 @@ public class EventServiceImpl implements EventService{
         Optional<Event> event=eventRepository.findById(EventId);
         if(event.isPresent()){
             String fileName=System.currentTimeMillis()+"_"+EventId+"_"+event.get().getEventName();
+            storageService.deleteFile(event.get().getEventPicture());
             if(storageService.uploadFile(fileName,file)){
                 event.get().setEventPicture(fileName);
                 eventRepository.save(event.get());

@@ -49,6 +49,9 @@ public class StorageService {
         return path;
     }
     public byte[] viewFile(String fileName) {
+        if(fileName.isEmpty()){
+            return null;
+        }
         try {
             S3Object s3Object = s3Client.getObject(bucketName, fileName);
             try (S3ObjectInputStream inputStream = s3Object.getObjectContent()) {
@@ -61,7 +64,7 @@ public class StorageService {
     }
 
     public String deleteFile(String fileName) {
-        if(!fileName.isEmpty()){
+        if(fileName!=null){
             try {
                 s3Client.deleteObject(bucketName, fileName);
                 return "File " + fileName + " deleted.";
