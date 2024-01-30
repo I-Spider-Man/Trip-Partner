@@ -2,6 +2,8 @@ package com.example.demo.Controller;
 
 import java.util.List;
 
+import com.example.demo.Model.Organizer;
+import com.example.demo.Model.Participant;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,18 @@ public class UserController {
 			return new ResponseEntity<>(user,HttpStatus.OK);
 		else
 			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+	}
+	@PutMapping("/updateUser/{userId}")
+	public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User updatedUser){
+		return userServ.updateUser(userId,updatedUser);
+	}
+	@GetMapping("/Organizer/{userId}")
+	public ResponseEntity<Organizer> getOrganizerData(@PathVariable Integer userId){
+		return userServ.getOrganizerData(userId);
+	}
+	@GetMapping("/Participant/{userId}")
+	public ResponseEntity<Participant> getParticipantData(@PathVariable Integer userId){
+		return userServ.getParticipantData(userId);
 	}
 	@PostMapping
 	public ResponseEntity<String> addUser(@RequestBody User newUser) {

@@ -4,6 +4,10 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.Model.Organizer;
+import com.example.demo.Model.Participant;
+import com.example.demo.Repository.OrganizerRepository;
+import com.example.demo.Repository.ParticipantRepository;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
 import jakarta.mail.MessagingException;
@@ -20,7 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
-
+	@Autowired
+	private OrganizerRepository organizerRepository;
+	@Autowired
+	private ParticipantRepository participantRepository;
 	@Autowired
 	private StorageService storageService;
 	@Autowired
@@ -48,7 +55,30 @@ public class UserServiceImpl implements UserService {
 		Optional<User> user=userRepo.findById(userId);
 		return user.orElse(null);
 	}
-	
+
+	@Override
+	public ResponseEntity<User> updateUser(Integer userId, User updateUser) {
+		Optional<User> user=userRepo.findById(userId);
+		if(user.isPresent()){
+			userRepo.save(updateUser);
+			Optional<User> user1=userRepo.findById(userId);
+			return new ResponseEntity<>(user1.get(),HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+	}
+
+	@Override
+	public ResponseEntity<Organizer> getOrganizerData(Integer userId) {
+		Optional<Organizer> organizer=organizerRepository.findByUserId(userId);
+		return new ResponseEntity<>(organizer.orElse(null),HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Participant> getParticipantData(Integer userId) {
+		Optional<Participant> participant=participantRepository.findByUserId(userId);
+		return new ResponseEntity<>(participant.orElse(null),HttpStatus.OK);
+	}
+
 	@Override
 	public ResponseEntity<String> addUser(User newUser) {
 		Optional<User> user = userRepo.findByUserEmail(newUser.getUserEmail());

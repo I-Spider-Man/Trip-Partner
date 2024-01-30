@@ -46,6 +46,7 @@ public class GroupServiceImpl implements GroupService {
 			Optional<Event> event=eventRepository.findByEventName(newGroup.getEventName());
 			event.get().increasePeopleCount(newGroup.getParticipantsLimit());
 			eventRepository.save(event.get());
+
 		}else{
 			Optional<TouristSpot> spot=spotRepository.findBySpotName(newGroup.getSpotName());
 			spot.get().increasePeopleCount(newGroup.getParticipantsLimit());
@@ -55,9 +56,11 @@ public class GroupServiceImpl implements GroupService {
 			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
 				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
 				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
-				organizerRepository.save(organizer.get());
 				grpRepo.save(newGroup);
+				organizer.get().setGroupId(newGroup.getGroupId());
+				organizerRepository.save(organizer.get());
 				scheduling.addActiveGrpId(newGroup.getGroupId());
+
 				return "GROUP SUCCESSFULLY CREATED";
 			}
 			else {
@@ -68,6 +71,7 @@ public class GroupServiceImpl implements GroupService {
 			grpRepo.save(newGroup);
 			Optional<Organizer> organizer=organizerRepository.findById(newGroup.getOrganizerId());
 			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
+			organizer.get().setGroupId(newGroup.getGroupId());
 			organizerRepository.save(organizer.get());
 			scheduling.addActiveGrpId(newGroup.getGroupId());
 			return "GROUP SUCCESSFULLY CREATED";

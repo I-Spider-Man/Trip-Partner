@@ -10,8 +10,8 @@ public class Organizer {
     @Column(name = "user_id", unique = true)
     private Integer userId;
     private UserStatus organizerStatus=UserStatus.Busy;
+    private Integer groupId;
     private Integer organizedCount=0;
-    private Role role=Role.Organizer_Role;
 
     @Override
     public String toString() {
@@ -19,10 +19,30 @@ public class Organizer {
                 "organizerId=" + organizerId +
                 ", userId=" + userId +
                 ", organizerStatus=" + organizerStatus +
+                ", groupId=" + groupId +
                 ", organizedCount=" + organizedCount +
                 ", role=" + role +
                 '}';
     }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public Organizer(Integer organizerId, Integer userId, UserStatus organizerStatus, Integer groupId, Integer organizedCount, Role role) {
+        this.organizerId = organizerId;
+        this.userId = userId;
+        this.organizerStatus = organizerStatus;
+        this.groupId = groupId;
+        this.organizedCount = organizedCount;
+        this.role = role;
+    }
+
+    private Role role=Role.Organizer_Role;
 
     public Role getRole() {
         return role;
@@ -62,14 +82,6 @@ public class Organizer {
 
     public void setOrganizerStatus(UserStatus organizerStatus) {
         this.organizerStatus = organizerStatus;
-    }
-
-    public Organizer(Integer organizerId, Integer userId, UserStatus organizerStatus, Integer organizedCount, Role role) {
-        this.organizerId = organizerId;
-        this.userId = userId;
-        this.organizerStatus = organizerStatus;
-        this.organizedCount = organizedCount;
-        this.role = role;
     }
 
     public Integer getOrganizedCount() {
