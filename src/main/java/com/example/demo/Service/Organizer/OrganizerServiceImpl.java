@@ -115,7 +115,7 @@ public class OrganizerServiceImpl implements OrganizerService{
             Optional<Group> group=groupRepository.findByOrganizerId(organizer.get().getOrganizerId());
             group.ifPresent(value -> {
                 value.setGroupStatus(GroupStatus.InActive);
-                if(value.getEventName()!=null){
+                if(!value.getEventName().isEmpty()){
                     Optional<Event> event=eventRepository.findByEventName(value.getEventName());
                     event.get().decreasePeopleCount(value.getParticipantsLimit());
                     eventRepository.save(event.get());

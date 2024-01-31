@@ -43,11 +43,10 @@ public class GroupServiceImpl implements GroupService {
 	public String addGroup(Group newGroup) {
 		List<Group> activeGrp=grpRepo.findAllByGroupStatus(GroupStatus.Active);
 		Optional<Group> grp=activeGrp.stream().filter(group -> group.getOrganizerId().equals(newGroup.getOrganizerId())).findAny();
-		if(newGroup.getEventName()!=null){
+		if(!newGroup.getEventName().isEmpty()){
 			Optional<Event> event=eventRepository.findByEventName(newGroup.getEventName());
 			event.get().increasePeopleCount(newGroup.getParticipantsLimit());
 			eventRepository.save(event.get());
-
 		}else{
 			Optional<TouristSpot> spot=spotRepository.findBySpotName(newGroup.getSpotName());
 			spot.get().increasePeopleCount(newGroup.getParticipantsLimit());
