@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.Model.Group;
 import com.example.demo.Model.Organizer;
 import com.example.demo.Model.Participant;
 import com.example.demo.Repository.OrganizerRepository;
@@ -103,6 +104,14 @@ public class UserServiceImpl implements UserService {
 	public String removeUserById(Integer userId) {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
+			Optional<Organizer> organizer=organizerRepository.findByUserId(userId);
+			Optional<Participant> participant=participantRepository.findByUserId(userId);
+			if(organizer.isPresent()){
+				organizerRepository.delete(organizer.get());
+			}
+			if(participant.isPresent()) {
+				participantRepository.delete((participant.get()));
+			}
 			userRepo.deleteById(userId);
 			return "user with id: "+userId+" is removed successfully";
 		}
