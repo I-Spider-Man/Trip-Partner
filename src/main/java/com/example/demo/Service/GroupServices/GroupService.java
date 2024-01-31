@@ -10,6 +10,7 @@ public interface GroupService {
 	String addGroup(Group newGroup);
 	String removeGroupById(Integer groupId);
 	Group getGroupById(Integer grpId);
+	Group getActiveGroupById(Integer grpId);
 	Group getGroupByOrganizerId(Integer orgId);
 	List<Group> getAllGroupBySpotName(String spotName);
 	List<Group> getAllGroupByEventName(String eventName);

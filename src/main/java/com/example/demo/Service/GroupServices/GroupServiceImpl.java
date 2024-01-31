@@ -3,6 +3,7 @@ package com.example.demo.Service.GroupServices;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.example.demo.Model.*;
@@ -109,6 +110,13 @@ public class GroupServiceImpl implements GroupService {
 		Optional<Group> grp=grpRepo.findById(grpId);
         return grp.orElse(null);
 	}
+
+	@Override
+	public Group getActiveGroupById(Integer grpId) {
+		Optional<Group> group=grpRepo.findAllByGroupStatus(GroupStatus.Active).stream().filter(group1 -> Objects.equals(group1.getGroupId(), grpId)).findAny();
+		 return group.orElse(null);
+	}
+
 	@Override
 	public Group getGroupByOrganizerId(Integer orgId) {
 		 List<Group> activeGrp=grpRepo.findAllByGroupStatus(GroupStatus.Active);
