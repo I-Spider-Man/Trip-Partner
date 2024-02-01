@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.AdminService;
 import com.example.demo.Service.Event.EventService;
+import com.example.demo.Service.GroupMessage.MessageService;
 import com.example.demo.Service.StorageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +13,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -22,6 +22,8 @@ import java.util.List;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private MessageService messageService;
     @Autowired
     private StorageService storageService;
     @Autowired
@@ -162,7 +164,6 @@ public class AdminController {
     public String removeUser(@PathVariable Integer userId){
         return adminService.removeUserById(userId);
     }
-
 
     @DeleteMapping("/participants/{participantId}")
     public String removeParticipant(@PathVariable Integer participantId){
