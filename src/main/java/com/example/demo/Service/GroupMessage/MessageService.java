@@ -10,16 +10,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MessageService {
+public class MessageService implements GroupMessageService{
     @Autowired
     private MessagesRepository messagesRepository;
-    public List<GroupMessage.Message> getAllMessages(Integer grpId){
-        System.out.println(messagesRepository.findByGroupId(grpId));
-        Optional<GroupMessage> groupMessage=messagesRepository.findByGroupId(grpId);
+    @Override
+    public List<GroupMessage.Message> getAllMessageByGroupId(Integer groupId) {
+        Optional<GroupMessage> groupMessage=messagesRepository.findByGroupId(groupId);
         if(groupMessage.isPresent()){
             return groupMessage.get().getMessages();
         }else{
             return null;
         }
+    }
+    @Override
+    public void saveMessageToGroupId(Integer groupId, GroupMessage.Message message) {
+        Optional<GroupMessage> groupMessage1=messagesRepository.findByGroupId(groupId);
+        groupMessage1.ifPresent(groupMessage -> {
+            List<GroupMessage.Message> messages = groupMessage.getMessages();
+            messages.add(message);
+            messagesRepository.save(groupMessage);
+        });
     }
 }

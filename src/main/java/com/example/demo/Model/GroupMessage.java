@@ -10,6 +10,7 @@ import java.util.List;
 @Document("messages")
 public class GroupMessage {
     @Id
+    private String id;
     private Integer groupId;
     private List<Message> messages;
 
@@ -43,7 +44,6 @@ public class GroupMessage {
     }
 
     public static class Message{
-        private String messageId;
         private Integer userId;
         private String content;
         private Date time;
@@ -51,19 +51,10 @@ public class GroupMessage {
         @Override
         public String toString() {
             return "Message{" +
-                    "messageId='" + messageId + '\'' +
                     ", userId=" + userId +
                     ", content='" + content + '\'' +
                     ", time=" + time +
                     '}';
-        }
-
-        public String getMessageId() {
-            return messageId;
-        }
-
-        public void setMessageId(String messageId) {
-            this.messageId = messageId;
         }
 
         public Integer getUserId() {
@@ -90,8 +81,7 @@ public class GroupMessage {
             this.time = new Date();
         }
 
-        public Message(String messageId, Integer userId, String content) {
-            this.messageId = messageId;
+        public Message(Integer userId, String content) {
             this.userId = userId;
             this.content = content;
             this.time = new Date();

@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface MessagesRepository extends MongoRepository<GroupMessage,Integer> {
     Optional<GroupMessage> findByGroupId(Integer groupId);
+    void deleteByGroupId(Integer groupId);
 }

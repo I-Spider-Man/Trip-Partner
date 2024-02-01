@@ -26,6 +26,8 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private OrganizerRepository organizerRepository;
 	@Autowired
+	private MessagesRepository messagesRepository;
+	@Autowired
 	private EventRepository eventRepository;
 	@Autowired
 	private TouristSpotRepository spotRepository;
@@ -54,13 +56,18 @@ public class GroupServiceImpl implements GroupService {
 		}
 		if(grp.isPresent()) {
 			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
+
 				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
 				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
 				grpRepo.save(newGroup);
 				organizer.get().setGroupId(newGroup.getGroupId());
+				GroupMessage.Message message=new GroupMessage.Message(0,"");
+				List<GroupMessage.Message> ml=new ArrayList<>();
+				ml.add(message);
+				GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
+				messagesRepository.save(groupMessage);
 				organizerRepository.save(organizer.get());
 				scheduling.addActiveGrpId(newGroup.getGroupId());
-
 				return "GROUP SUCCESSFULLY CREATED";
 			}
 			else {
@@ -72,6 +79,11 @@ public class GroupServiceImpl implements GroupService {
 			Optional<Organizer> organizer=organizerRepository.findById(newGroup.getOrganizerId());
 			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
 			organizer.get().setGroupId(newGroup.getGroupId());
+			GroupMessage.Message message=new GroupMessage.Message(0,"");
+			List<GroupMessage.Message> ml=new ArrayList<>();
+			ml.add(message);
+			GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
+			messagesRepository.save(groupMessage);
 			organizerRepository.save(organizer.get());
 			scheduling.addActiveGrpId(newGroup.getGroupId());
 			return "GROUP SUCCESSFULLY CREATED";
@@ -81,7 +93,7 @@ public class GroupServiceImpl implements GroupService {
 	public String removeGroupById(Integer groupId) {
 		Optional<Group> grp=grpRepo.findById(groupId);
 		if(grp.isPresent()){
-			if(grp.get().getEventName()!=null){
+			if(!grp.get().getEventName().isEmpty()){
 				Optional<Event> event=eventRepository.findByEventName(grp.get().getEventName());
 				event.get().decreasePeopleCount(grp.get().getParticipantsLimit());
 				eventRepository.save(event.get());
@@ -97,6 +109,7 @@ public class GroupServiceImpl implements GroupService {
 			organizer.get().setOrganizerStatus(UserStatus.Free);
 			organizerRepository.save(organizer.get());
 			scheduling.getActiveGrpId().remove(groupId);
+			messagesRepository.deleteByGroupId(groupId);
 			grpRepo.deleteById(groupId);
 			return "Group with id: "+groupId+" is removed successfully";
 		}

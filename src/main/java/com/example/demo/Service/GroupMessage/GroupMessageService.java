@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface GroupMessageService {
     List<GroupMessage.Message> getAllMessageByGroupId(Integer groupId);
-    void saveMessageToGroupId(GroupMessage groupMessage);
+    void saveMessageToGroupId(Integer groupId, GroupMessage.Message message);
 }
