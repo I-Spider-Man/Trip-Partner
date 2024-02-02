@@ -168,23 +168,33 @@ public class EventServiceImpl implements EventService,EventPictureService{
     }
 
     @Override
-    public void saveEventPicture(Integer eventId, URL eventPictureUrl) {
+    public void addEventPicture(Integer eventId, MultipartFile file) {
         Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
-        if(eventPicture.isPresent()){
-            EventPicture.EventPictures pic=new EventPicture.EventPictures();
-            pic.setEventPicture(eventPictureUrl);
-            eventPicture.get().setEventPictures(pic);
-            eventImageRepository.save(eventPicture.get());
+        Optional<Event> event=eventRepository.findById(eventId);
+        if(event.isPresent()) {
+            String fileName = System.currentTimeMillis() + "_" + eventId + "_" + event.get().getEventName() + "_event";
+            if(storageService.uploadFile(fileName,file)) {
+                URL eventPictureUrl=storageService.getPublicUrl(fileName);
+                if (eventPicture.isPresent()) {
+                    EventPicture.EventPictures pic = new EventPicture.EventPictures();
+                    pic.setEventPicture(eventPictureUrl);
+                    eventPicture.get().setEventPictures(pic);
+                    eventImageRepository.save(eventPicture.get());
+                }
+            }
         }
     }
 
     @Override
     public List<EventPicture.EventPictures> getAllPicturesByEventId(Integer eventId) {
         Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
-        if(eventPicture.isPresent()) {
-            return eventPicture.get().getEventPictures();
-        }else {
-            return null;
-        }
+
+            if(eventPicture.isPresent()) {
+                return eventPicture.get().getEventPictures();
+            }else {
+                return null;
+            }
+
+
     }
 }
