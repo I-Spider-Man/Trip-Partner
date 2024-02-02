@@ -2,9 +2,11 @@ package com.example.demo.Controller;
 
 
 import com.example.demo.Model.Event;
+import com.example.demo.Model.EventPicture;
 import com.example.demo.Model.Group;
 import com.example.demo.Model.TouristSpot;
 import com.example.demo.Service.Event.EventService;
+import com.example.demo.Service.Event.EventServiceImpl;
 import com.example.demo.Service.GroupServices.GroupService;
 import com.example.demo.Service.StorageService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
@@ -20,7 +22,7 @@ import java.util.List;
 @RestController
 public class EventSpotController {
     @Autowired
-    private EventService eventService;
+    private EventServiceImpl eventService;
     @Autowired
     private StorageService storageService;
     @Autowired
@@ -46,6 +48,10 @@ public class EventSpotController {
     @GetMapping("/event/group/{eventName}")
     public List<Group> getGrpByEventName(@PathVariable String eventName){
         return groupService.getAllGroupByEventName(eventName);
+    }
+    @GetMapping("/event/pictureList/{eventId}")
+    public List<EventPicture.EventPictures> getAllEventPictureById(@PathVariable Integer eventId){
+        return eventService.getAllPicturesByEventId(eventId);
     }
     @GetMapping("/Picture/{fileName}")
     public ResponseEntity<?> viewEventPhoto(@PathVariable String fileName){

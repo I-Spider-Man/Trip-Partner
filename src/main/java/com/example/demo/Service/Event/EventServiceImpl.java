@@ -2,7 +2,9 @@ package com.example.demo.Service.Event;
 
 
 import com.example.demo.Model.Event;
+import com.example.demo.Model.EventPicture;
 import com.example.demo.Model.EventStatus;
+import com.example.demo.Repository.EventImageRepository;
 import com.example.demo.Repository.EventRepository;
 import com.example.demo.Service.Scheduling;
 import com.example.demo.Service.StorageService;
@@ -13,15 +15,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class EventServiceImpl implements EventService{
+public class EventServiceImpl implements EventService,EventPictureService{
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EventImageRepository eventImageRepository;
     @Autowired
     private Scheduling scheduling;
     @Autowired
@@ -57,6 +63,15 @@ public class EventServiceImpl implements EventService{
                 String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName()+"_event";
                 if(storageService.uploadFile(fileName,eventImage)){
                     event.get().setEventPicture(fileName);
+                    URL pictureURL=storageService.getPublicUrl(fileName);
+                    EventPicture.EventPictures pic=new EventPicture.EventPictures();
+                    pic.setEventPicture(pictureURL);
+                    eventRepository.save(event.get());
+                    EventPicture eventPicture=new EventPicture();
+                    eventPicture.setEventId(event.get().getEventId());
+                    eventPicture.setEventPictures(pic);
+                    eventImageRepository.save(eventPicture);
+                    event.get().setEventPicture(eventPicture.getId());
                     eventRepository.save(event.get());
                 }
                 else {
@@ -74,6 +89,17 @@ public class EventServiceImpl implements EventService{
             String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName()+"_event";
             if(storageService.uploadFile(fileName,eventImage)){
                 newEvent.setEventPicture(fileName);
+                URL pictureURL=storageService.getPublicUrl(fileName);
+                eventRepository.save(newEvent);
+                EventPicture.EventPictures pic=new EventPicture.EventPictures();
+                pic.setEventPicture(pictureURL);
+                List<EventPicture.EventPictures> pictures=new ArrayList<>();
+                pictures.add(pic);
+                EventPicture eventPicture=new EventPicture();
+                eventPicture.setEventId(newEvent.getEventId());
+                eventPicture.setEventPictures(pictures);
+                eventImageRepository.save(eventPicture);
+                newEvent.setEventPicture(eventPicture.getId());
                 eventRepository.save(newEvent);
             }
             else {
@@ -139,5 +165,26 @@ public class EventServiceImpl implements EventService{
             storageService.viewFile(event.get().getEventPicture());
         }
         return null;
+    }
+
+    @Override
+    public void saveEventPicture(Integer eventId, URL eventPictureUrl) {
+        Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
+        if(eventPicture.isPresent()){
+            EventPicture.EventPictures pic=new EventPicture.EventPictures();
+            pic.setEventPicture(eventPictureUrl);
+            eventPicture.get().setEventPictures(pic);
+            eventImageRepository.save(eventPicture.get());
+        }
+    }
+
+    @Override
+    public List<EventPicture.EventPictures> getAllPicturesByEventId(Integer eventId) {
+        Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
+        if(eventPicture.isPresent()) {
+            return eventPicture.get().getEventPictures();
+        }else {
+            return null;
+        }
     }
 }

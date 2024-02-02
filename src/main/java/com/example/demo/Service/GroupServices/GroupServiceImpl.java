@@ -56,7 +56,6 @@ public class GroupServiceImpl implements GroupService {
 		}
 		if(grp.isPresent()) {
 			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
-
 				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
 				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
 				grpRepo.save(newGroup);
