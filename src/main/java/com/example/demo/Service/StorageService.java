@@ -2,10 +2,7 @@ package com.example.demo.Service;
 
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +26,17 @@ public class StorageService {
 
     @Autowired
     private AmazonS3 s3Client;
-
-    public boolean uploadFile(String fileName, MultipartFile file) {
+    public URL uploadFile(String fileName, MultipartFile file) {
         File objFile=convertMultipartFileToFile(file);
         try {
-            s3Client.putObject(new PutObjectRequest(bucketName, fileName,objFile));
+            AccessControlList acl=new AccessControlList();
+            acl.grantPermission(GroupGrantee.AllUsers,Permission.Read);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, fileName,objFile);
+            putObjectRequest.setAccessControlList(acl);
+            s3Client.putObject(putObjectRequest);
+            URL pictureUrl=new URL("https://"+bucketName+".s3.amazonaws.com/"+fileName);
             objFile.delete();
-            return true;
+            return pictureUrl;
         } catch (Exception e) {
             logger.error("Error uploading file", e);
             throw new RuntimeException("Error uploading file", e);

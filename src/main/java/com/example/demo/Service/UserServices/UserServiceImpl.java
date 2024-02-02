@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) {
 		String fileName = System.currentTimeMillis() + "_" + userId;
-		if(storageService.uploadFile(fileName, file)){
+		if(true){
 			User user=getUserById(userId);
 			user.setUserProfile(fileName);
 			userRepo.save(user);

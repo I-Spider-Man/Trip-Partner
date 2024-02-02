@@ -14,6 +14,5 @@ public interface TouristSpotService {
     String addAllSpots(List<TouristSpot> spots);
     ResponseEntity<String> removeSpotById(Integer spotId);
     List<TouristSpot> getAllPopularTouristSpot();
-    public ResponseEntity<?> uploadSpotPicture(Integer SpotId, MultipartFile file);
 
 }

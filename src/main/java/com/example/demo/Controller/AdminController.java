@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -47,6 +49,8 @@ public class AdminController {
         }catch(JsonProcessingException e){
             System.out.println(newEventJson);
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
     }
     @PostMapping("/manyEvents")

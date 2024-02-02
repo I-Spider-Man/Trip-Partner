@@ -10,6 +10,7 @@ import com.example.demo.Service.Event.EventServiceImpl;
 import com.example.demo.Service.GroupServices.GroupService;
 import com.example.demo.Service.StorageService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
+import com.example.demo.Service.TouristSpot.TouristSpotServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -29,7 +32,7 @@ public class EventSpotController {
     private GroupService groupService;
 
     @Autowired
-    private TouristSpotService spotService;
+    private TouristSpotServiceImpl spotService;
 
 
 
@@ -53,25 +56,29 @@ public class EventSpotController {
     public List<EventPicture.EventPictures> getAllEventPictureById(@PathVariable Integer eventId){
         return eventService.getAllPicturesByEventId(eventId);
     }
-    @GetMapping("/Picture/{fileName}")
-    public ResponseEntity<?> viewEventPhoto(@PathVariable String fileName){
-        byte [] data=storageService.viewFile(fileName);
-        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
-        return ResponseEntity.status(HttpStatus.OK).contentType(findMedia(fileName)).body(data);
-    }
-    private MediaType findMedia(String fileName){
-        if(fileName.toLowerCase().endsWith(".png")){
-            return MediaType.IMAGE_PNG;
-        } else if (fileName.toLowerCase().endsWith(".jpeg")) {
-            return MediaType.IMAGE_JPEG;
-        }
-        else{
-            return MediaType.IMAGE_PNG;
-        }
-    }
+//    @GetMapping("/Picture/{fileName}")
+//    public ResponseEntity<?> viewEventPhoto(@PathVariable String fileName){
+//        byte [] data=storageService.viewFile(fileName);
+//        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
+//        return ResponseEntity.status(HttpStatus.OK).contentType(findMedia(fileName)).body(data);
+//    }
+//    private MediaType findMedia(String fileName){
+//        if(fileName.toLowerCase().endsWith(".png")){
+//            return MediaType.IMAGE_PNG;
+//        } else if (fileName.toLowerCase().endsWith(".jpeg")) {
+//            return MediaType.IMAGE_JPEG;
+//        }
+//        else{
+//            return MediaType.IMAGE_PNG;
+//        }
+//    }
     @PostMapping("/updateEventPicture")
-    public ResponseEntity<?> updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture){
-        return eventService.uploadEventPicture(eventId,eventPicture);
+    public void updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture) throws MalformedURLException {
+        eventService.addEventPicture(eventId,eventPicture);
+    }
+    @PostMapping("/updateSpotPicture")
+    public void updateSpotPicture(@RequestParam(value = "spotId") Integer spotId, @RequestParam(value = "picture") MultipartFile spotPicture) throws MalformedURLException {
+        spotService.addSpotPictures(spotId,spotPicture);
     }
     @GetMapping("/spots")
     public List<TouristSpot> getAllSpots(){

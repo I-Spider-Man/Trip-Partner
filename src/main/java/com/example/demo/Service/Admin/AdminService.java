@@ -3,11 +3,13 @@ package com.example.demo.Service.Admin;
 import com.example.demo.Model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.MalformedURLException;
 import java.util.List;
 
 public interface AdminService {
     String addManyUsers(List<User> users);
-    ResponseEntity<String> addEvent(Event newEvent, MultipartFile file);
+    ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) throws MalformedURLException;
     String addAllEvents(List<Event> events);
     ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture);
     String addAllSpots(List<TouristSpot> spots);

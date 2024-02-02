@@ -9,12 +9,14 @@ import com.example.demo.Repository.EventRepository;
 import com.example.demo.Service.Scheduling;
 import com.example.demo.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService,EventPictureService{
+    @Value("${application.bucket.name}")
+    private String bucketName;
     @Autowired
     private EventRepository eventRepository;
     @Autowired
@@ -54,18 +58,16 @@ public class EventServiceImpl implements EventService,EventPictureService{
 
 
     @Override
-    public ResponseEntity<String> addEvent(Event newEvent,MultipartFile eventImage) {
+    public ResponseEntity<String> addEvent(Event newEvent,MultipartFile eventImage) throws MalformedURLException {
         newEvent.setEventStatus(EventStatus.Active);
         Optional<Event> event=eventRepository.findAllByEventStatus(EventStatus.Active).stream().filter(event1 -> event1.getEventName().equals(newEvent.getEventName())).findAny();
         if(event.isPresent()) {
             if(event.get().getEventStatus() == EventStatus.InActive){
                 eventRepository.save(newEvent);
                 String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+event.get().getEventName()+"_event";
-                if(storageService.uploadFile(fileName,eventImage)){
-                    event.get().setEventPicture(fileName);
-                    URL pictureURL=storageService.getPublicUrl(fileName);
+                URL eventPicURL=storageService.uploadFile(fileName,eventImage);
                     EventPicture.EventPictures pic=new EventPicture.EventPictures();
-                    pic.setEventPicture(pictureURL);
+                    pic.setEventPicture(eventPicURL);
                     eventRepository.save(event.get());
                     EventPicture eventPicture=new EventPicture();
                     eventPicture.setEventId(event.get().getEventId());
@@ -73,10 +75,7 @@ public class EventServiceImpl implements EventService,EventPictureService{
                     eventImageRepository.save(eventPicture);
                     event.get().setEventPicture(eventPicture.getId());
                     eventRepository.save(event.get());
-                }
-                else {
-                    return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
-                }
+
                 scheduling.addActiveEventId(newEvent.getEventId());
                 return new ResponseEntity<>("Event added successfully", HttpStatus.CREATED);
             }
@@ -87,25 +86,23 @@ public class EventServiceImpl implements EventService,EventPictureService{
         else{
             eventRepository.save(newEvent);
             String fileName=System.currentTimeMillis()+"_"+newEvent.getEventId()+"_"+newEvent.getEventName()+"_event";
-            if(storageService.uploadFile(fileName,eventImage)){
-                newEvent.setEventPicture(fileName);
-                URL pictureURL=storageService.getPublicUrl(fileName);
+            URL eventPicUrl=storageService.uploadFile(fileName,eventImage);
                 eventRepository.save(newEvent);
+
                 EventPicture.EventPictures pic=new EventPicture.EventPictures();
-                pic.setEventPicture(pictureURL);
+                pic.setEventPicture(eventPicUrl);
+
                 List<EventPicture.EventPictures> pictures=new ArrayList<>();
                 pictures.add(pic);
+
                 EventPicture eventPicture=new EventPicture();
                 eventPicture.setEventId(newEvent.getEventId());
                 eventPicture.setEventPictures(pictures);
                 eventImageRepository.save(eventPicture);
+
                 newEvent.setEventPicture(eventPicture.getId());
                 eventRepository.save(newEvent);
-            }
-            else {
-                eventRepository.delete(newEvent);
-                return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
-            }
+
             scheduling.addActiveEventId(newEvent.getEventId());
             return new ResponseEntity<>("Event "+newEvent.getEventId()+" Added Successfully ",HttpStatus.CREATED);
         }
@@ -142,48 +139,45 @@ public class EventServiceImpl implements EventService,EventPictureService{
         return new ResponseEntity<>(event.orElse(null),HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<?> uploadEventPicture(Integer EventId, MultipartFile file) {
-        Optional<Event> event=eventRepository.findById(EventId);
-        if(event.isPresent()){
-            String fileName=System.currentTimeMillis()+"_"+EventId+"_"+event.get().getEventName();
-            storageService.deleteFile(event.get().getEventPicture());
-            if(storageService.uploadFile(fileName,file)){
-                event.get().setEventPicture(fileName);
-                eventRepository.save(event.get());
-                return new ResponseEntity<>("File uploaded successfully", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Conflict on uploading picture",HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>("Event not found in database",HttpStatus.NOT_FOUND);
-    }
+//    @Override
+//    public ResponseEntity<?> uploadEventPicture(Integer EventId, MultipartFile file) {
+//        Optional<Event> event=eventRepository.findById(EventId);
+//        if(event.isPresent()){
+//            String fileName=System.currentTimeMillis()+"_"+EventId+"_"+event.get().getEventName();
+//            storageService.deleteFile(event.get().getEventPicture());
+//            URL eventPicUrl=storageService.uploadFile(fileName,file);
+//                event.get().setEventPicture();
+//                eventRepository.save(event.get());
+//                return new ResponseEntity<>("File uploaded successfully", HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("Event not found in database",HttpStatus.NOT_FOUND);
+//    }
+
+//    @Override
+//    public ResponseEntity<?> viewEventPicture(Integer EventId) {
+//        Optional<Event> event=eventRepository.findById(EventId);
+//        if(event.isPresent()){
+//            storageService.viewFile(event.get().getEventPicture());
+//        }
+//        return null;
+//    }
 
     @Override
-    public ResponseEntity<?> viewEventPicture(Integer EventId) {
-        Optional<Event> event=eventRepository.findById(EventId);
-        if(event.isPresent()){
-            storageService.viewFile(event.get().getEventPicture());
-        }
-        return null;
-    }
-
-    @Override
-    public void addEventPicture(Integer eventId, MultipartFile file) {
+    public void addEventPicture(Integer eventId, MultipartFile file) throws MalformedURLException {
         Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
         Optional<Event> event=eventRepository.findById(eventId);
         if(event.isPresent()) {
             String fileName = System.currentTimeMillis() + "_" + eventId + "_" + event.get().getEventName() + "_event";
-            if(storageService.uploadFile(fileName,file)) {
-                URL eventPictureUrl=storageService.getPublicUrl(fileName);
+            URL eventPicUrl=storageService.uploadFile(fileName,file);
                 if (eventPicture.isPresent()) {
                     EventPicture.EventPictures pic = new EventPicture.EventPictures();
-                    pic.setEventPicture(eventPictureUrl);
+                    pic.setEventPicture(eventPicUrl);
                     eventPicture.get().setEventPictures(pic);
                     eventImageRepository.save(eventPicture.get());
                 }
             }
         }
-    }
+
 
     @Override
     public List<EventPicture.EventPictures> getAllPicturesByEventId(Integer eventId) {
