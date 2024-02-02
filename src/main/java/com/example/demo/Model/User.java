@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.net.URL;
 import java.time.LocalDate;
 
 @Entity
@@ -20,7 +21,7 @@ public class User {
 	private LocalDate dateOfBirth;
 	private Role role=Role.User_Role;
 	private String userPassword;
-	private String userProfile;
+	private URL userProfile;
 	public User() {
 		super();
 	}
@@ -104,15 +105,15 @@ public class User {
 		this.userPassword = userPassword;
 	}
 
-	public String getUserProfile() {
+	public URL getUserProfile() {
 		return userProfile;
 	}
 
-	public void setUserProfile(String userProfile) {
+	public void setUserProfile(URL userProfile) {
 		this.userProfile = userProfile;
 	}
 
-	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, String userProfile) {
+	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, URL userProfile) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userEmail = userEmail;

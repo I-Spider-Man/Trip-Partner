@@ -1,5 +1,6 @@
 package com.example.demo.Service.UserServices;
 
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +43,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) {
 		String fileName = System.currentTimeMillis() + "_" + userId;
-		if(true){
+		URL userProfileUrl=storageService.uploadFile(fileName,file);
 			User user=getUserById(userId);
-			user.setUserProfile(fileName);
+			user.setUserProfile(userProfileUrl);
 			userRepo.save(user);
-			return new ResponseEntity<>("User profile updated",HttpStatus.OK)  ;
-		}
-		return new ResponseEntity<>("problem in updating userProfile",HttpStatus.NOT_MODIFIED);
+			return new ResponseEntity<>("User profile updated",HttpStatus.OK);
 	}
 
 	@Override
