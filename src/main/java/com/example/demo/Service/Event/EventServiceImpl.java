@@ -119,7 +119,8 @@ public class EventServiceImpl implements EventService,EventPictureService{
     public String deleteEventById(Integer eventId) {
         Optional<Event> event=eventRepository.findById(eventId);
         if(event.isPresent()){
-            storageService.deleteFile(event.get().getEventPicture());
+            Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);
+            eventPicture.ifPresent(picture -> storageService.deleteFile(picture));
             eventRepository.deleteById(eventId);
             return "Event "+event.get().getEventName()+" Removed Successfully";
         }else{

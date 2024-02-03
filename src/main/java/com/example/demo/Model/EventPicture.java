@@ -13,28 +13,15 @@ public class EventPicture {
     private Integer eventId;
     private List<EventPictures> eventPictures;
     public static class EventPictures{
-        @Id
-        private String id;
         private URL eventPicture;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
         public URL getEventPicture() {
             return eventPicture;
         }
-
         public void setEventPicture(URL eventPicture) {
             this.eventPicture = eventPicture;
         }
 
-        public EventPictures(String id, URL eventPicture) {
-            this.id = id;
+        public EventPictures(URL eventPicture) {
             this.eventPicture = eventPicture;
         }
 
@@ -44,7 +31,6 @@ public class EventPicture {
         @Override
         public String toString() {
             return "EventPictures{" +
-                    "id='" + id + '\'' +
                     ", eventPicture=" + eventPicture +
                     '}';
         }

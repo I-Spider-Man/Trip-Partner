@@ -58,21 +58,10 @@ public class SpotPicture {
     }
 
     public static class SpotPictures{
-        @Id
-        private String id;
         private URL spotPicture;
 
-        public SpotPictures(String id, URL spotPicture) {
-            this.id = id;
+        public SpotPictures(URL spotPicture) {
             this.spotPicture = spotPicture;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
         }
 
         public URL getSpotPicture() {
@@ -89,7 +78,6 @@ public class SpotPicture {
         @Override
         public String toString() {
             return "SpotPictures{" +
-                    "id='" + id + '\'' +
                     ", spotPicture=" + spotPicture +
                     '}';
         }

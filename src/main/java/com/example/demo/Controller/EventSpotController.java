@@ -1,10 +1,7 @@
 package com.example.demo.Controller;
 
 
-import com.example.demo.Model.Event;
-import com.example.demo.Model.EventPicture;
-import com.example.demo.Model.Group;
-import com.example.demo.Model.TouristSpot;
+import com.example.demo.Model.*;
 import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.Event.EventServiceImpl;
 import com.example.demo.Service.GroupServices.GroupService;
@@ -91,6 +88,10 @@ public class EventSpotController {
     @GetMapping("/spot/{spotName}")
     public ResponseEntity<TouristSpot> getSpotBySpotName(@PathVariable String spotName){
         return spotService.getSpotBySpotName(spotName);
+    }
+    @GetMapping("/spot/pictureList/{spotId}")
+    public List<SpotPicture.SpotPictures> getAllPicturesBySpotId(@PathVariable Integer spotId){
+        return spotService.getSpotPictureById(spotId);
     }
     @GetMapping("/spot/group/{spotName}")
     public List<Group> getGrpBySpotName(@PathVariable String spotName){

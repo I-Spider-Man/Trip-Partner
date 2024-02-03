@@ -3,6 +3,8 @@ package com.example.demo.Service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.example.demo.Model.EventPicture;
+import com.example.demo.Model.SpotPicture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 @Service
 public class StorageService {
@@ -43,29 +46,37 @@ public class StorageService {
         }
 
     }
-    public URL getPublicUrl(String objectKey){
-        GeneratePresignedUrlRequest request=new GeneratePresignedUrlRequest(bucketName,objectKey);
-        URL path= (s3Client.generatePresignedUrl(request));
-        System.out.println(path);
-        return path;
+//    public URL getPublicUrl(String objectKey){
+//        GeneratePresignedUrlRequest request=new GeneratePresignedUrlRequest(bucketName,objectKey);
+//        URL path= (s3Client.generatePresignedUrl(request));
+//        System.out.println(path);
+//        return path;
+//    }
+//    public byte[] viewFile(String fileName) {
+//        if(fileName.isEmpty()){
+//            return null;
+//        }
+//        try {
+//            S3Object s3Object = s3Client.getObject(bucketName, fileName);
+//            try (S3ObjectInputStream inputStream = s3Object.getObjectContent()) {
+//                return IoUtils.toByteArray(inputStream);
+//            }
+//        } catch (IOException e) {
+//            logger.error("Error viewing file", e);
+//            throw new RuntimeException("Error viewing file", e);
+//        }
+//    }
+    public void deleteFile(EventPicture eventPicture){
+        List<EventPicture.EventPictures> eventPictures=eventPicture.getEventPictures();
+        eventPictures.forEach(eventPictures1 -> deleteFile(eventPictures1.getEventPicture()));
     }
-    public byte[] viewFile(String fileName) {
-        if(fileName.isEmpty()){
-            return null;
-        }
-        try {
-            S3Object s3Object = s3Client.getObject(bucketName, fileName);
-            try (S3ObjectInputStream inputStream = s3Object.getObjectContent()) {
-                return IoUtils.toByteArray(inputStream);
-            }
-        } catch (IOException e) {
-            logger.error("Error viewing file", e);
-            throw new RuntimeException("Error viewing file", e);
-        }
+    public void deleteFile(SpotPicture spotPicture){
+        List<SpotPicture.SpotPictures> spotPicturesList=spotPicture.getSpotPicturesList();
+        spotPicturesList.forEach(spotPictures -> deleteFile(spotPictures.getSpotPicture()));
     }
-
-    public String deleteFile(String fileName) {
-        if(fileName!=null){
+    public String deleteFile(URL fileUrl) {
+        if(fileUrl!=null){
+            String fileName=fileUrl.getPath().substring(1);
             try {
                 s3Client.deleteObject(bucketName, fileName);
                 return "File " + fileName + " deleted.";

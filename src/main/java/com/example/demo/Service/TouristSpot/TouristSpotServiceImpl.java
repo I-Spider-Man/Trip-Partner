@@ -97,7 +97,9 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
     public ResponseEntity<String> removeSpotById(Integer spotId) {
         Optional<TouristSpot> spot=touristSpotRepository.findById(spotId);
         if(spot.isPresent()){
-            storageService.deleteFile(spot.get().getSpotPicture());
+            Optional<SpotPicture> spotPicture=spotImageRepository.findBySpotId(spotId);
+            spotPicture.ifPresent(spotPicture1 -> storageService.deleteFile(spotPicture1));
+
             touristSpotRepository.deleteById(spotId);
             return ResponseEntity.ok().body("Tourist spot with id "+spotId+" is removed successfully.");
         }

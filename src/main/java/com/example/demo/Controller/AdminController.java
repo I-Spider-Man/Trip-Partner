@@ -77,12 +77,12 @@ public class AdminController {
 //
 //        return new ResponseEntity<>(storageService.uploadFile(file), HttpStatus.OK);
 //    }
-    @GetMapping("/S3/{fileName}")
-    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
-        byte [] data=storageService.viewFile(fileName);
-        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
-    }
+//    @GetMapping("/S3/{fileName}")
+//    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
+//        byte [] data=storageService.viewFile(fileName);
+//        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
+//        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
+//    }
     @GetMapping("/participants")
     public List<Participant> getAllParticipants(){
         return adminService.getAllParticipant();
@@ -193,9 +193,9 @@ public class AdminController {
     public String removeOrganizer(@PathVariable Integer organizerId) {
     	return adminService.removeOrganizerById(organizerId);
     }
-
-    @DeleteMapping("/S3/{fileName}")
-    public ResponseEntity<String> photoDelete(@PathVariable String fileName){
-        return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
-    }
+//
+//    @DeleteMapping("/S3/{fileName}")
+//    public ResponseEntity<String> photoDelete(@PathVariable String fileName){
+//        return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
+//    }
 }
