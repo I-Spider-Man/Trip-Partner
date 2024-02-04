@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.Model.GroupMessage;
+import com.example.demo.Model.Organizer;
 import com.example.demo.Service.GroupMessage.GroupMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ public class GroupController {
 	public void saveMessageToGroup(@PathVariable Integer groupId,@RequestBody GroupMessage.Message message){
 		groupMessageService.saveMessageToGroupId(groupId,message);
 	}
+
 	@GetMapping("/groupId/{groupId}")
 	public ResponseEntity<Group> getGroupById(@PathVariable Integer groupId){
 		Group grp=grpService.getActiveGroupById(groupId);
