@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.example.demo.Model.Organizer;
@@ -51,7 +52,7 @@ public class UserController {
 		return userServ.addUser(newUser);
 	}
 	@PostMapping("/updateProfile/{userId}")
-	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profile")MultipartFile profilePicture){
+	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profile")MultipartFile profilePicture) throws IOException {
 		return userServ.updateUserProfile(userId,profilePicture);
 	}
 	@GetMapping("/otp/{email}")

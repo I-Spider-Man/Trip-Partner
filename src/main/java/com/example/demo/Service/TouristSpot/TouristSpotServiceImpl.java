@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,28 +43,16 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
     }
 
     @Override
-    public ResponseEntity<?> addSpot(TouristSpot newSpot,MultipartFile spotPicture) {
+    public ResponseEntity<?> addSpot(TouristSpot newSpot,MultipartFile spotPicture) throws IOException {
         Optional<TouristSpot> touristSpot=touristSpotRepository.findBySpotName(newSpot.getSpotName());
         if(touristSpot.isPresent()){
             return ResponseEntity.badRequest().body("spot already present");
         }else{
             touristSpotRepository.save(newSpot);
-            String fileName=System.currentTimeMillis()+"_"+newSpot.getSpotId()+"_"+newSpot.getSpotName()+"_Spot";
-            URL spotPicUrl=storageService.uploadFile(fileName,spotPicture);
-
-            SpotPicture.SpotPictures spotPictures=new SpotPicture.SpotPictures();
-            spotPictures.setSpotPicture(spotPicUrl);
-
-            List<SpotPicture.SpotPictures> spotPicturesList=new ArrayList<>();
-            spotPicturesList.add(spotPictures);
-
-            SpotPicture spotPicture1=new SpotPicture();
-            spotPicture1.setSpotId(newSpot.getSpotId());
-            spotPicture1.setSpotPicturesList(spotPicturesList);
-            spotImageRepository.save((spotPicture1));
-            newSpot.setSpotPicture(spotPicture1.getId());
-                touristSpotRepository.save(newSpot);
-                return new ResponseEntity<>("New spot added",HttpStatus.CREATED);
+            String PictureId=storageService.addSpotImage(newSpot.getSpotId(),spotPicture);
+            newSpot.setSpotPicture(PictureId);
+            touristSpotRepository.save(newSpot);
+            return new ResponseEntity<>("New spot added",HttpStatus.CREATED);
         }
     }
 
@@ -97,9 +86,7 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
     public ResponseEntity<String> removeSpotById(Integer spotId) {
         Optional<TouristSpot> spot=touristSpotRepository.findById(spotId);
         if(spot.isPresent()){
-            Optional<SpotPicture> spotPicture=spotImageRepository.findBySpotId(spotId);
-            spotPicture.ifPresent(spotPicture1 -> storageService.deleteFile(spotPicture1));
-
+            storageService.deleteSpotImage(spotId);
             touristSpotRepository.deleteById(spotId);
             return ResponseEntity.ok().body("Tourist spot with id "+spotId+" is removed successfully.");
         }
@@ -119,27 +106,15 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
     }
 
     @Override
-    public void addSpotPictures(Integer spotId, MultipartFile file) {
+    public void addSpotPictures(Integer spotId, MultipartFile file) throws IOException {
         Optional<TouristSpot> spot=touristSpotRepository.findById(spotId);
         if(spot.isPresent()){
-            Optional<SpotPicture> spotPicture=spotImageRepository.findBySpotId(spotId);
-            String fileName=System.currentTimeMillis()+"_"+spotId+"_"+spot.get().getSpotName()+"_spot";
-            if(spotPicture.isPresent() ){
-                URL pictureUrl=storageService.uploadFile(fileName,file);
-                SpotPicture.SpotPictures spotPictures=new SpotPicture.SpotPictures();
-                spotPictures.setSpotPicture(pictureUrl);
-                spotPicture.get().setSpotPicturesList(spotPictures);
-                spotImageRepository.save(spotPicture.get());
+            storageService.addSpotImage(spotId,file);
             }
         }
-    }
 
     @Override
-    public List<SpotPicture.SpotPictures> getSpotPictureById(Integer spotId) {
-        Optional<SpotPicture> spotPicture=spotImageRepository.findBySpotId(spotId);
-        if(spotPicture.isPresent()){
-            return spotPicture.get().getSpotPicturesList();
-        }
-        return null;
+    public List<String> getSpotPictureById(Integer spotId) {
+        return storageService.getSpotImage(spotId);
     }
 }

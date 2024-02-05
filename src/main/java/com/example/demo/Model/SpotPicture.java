@@ -58,17 +58,17 @@ public class SpotPicture {
     }
 
     public static class SpotPictures{
-        private URL spotPicture;
+        private byte[] spotPicture;
 
-        public SpotPictures(URL spotPicture) {
+        public SpotPictures(byte[] spotPicture) {
             this.spotPicture = spotPicture;
         }
 
-        public URL getSpotPicture() {
+        public byte[] getSpotPicture() {
             return spotPicture;
         }
 
-        public void setSpotPicture(URL spotPicture) {
+        public void setSpotPicture(byte[] spotPicture) {
             this.spotPicture = spotPicture;
         }
 

@@ -1,5 +1,6 @@
 package com.example.demo.Service.UserServices;
 
+import java.io.IOException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.List;
@@ -41,13 +42,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) {
-		String fileName = System.currentTimeMillis() + "_" + userId;
-		URL userProfileUrl=storageService.uploadFile(fileName,file);
-			User user=getUserById(userId);
-			user.setUserProfile(userProfileUrl);
-			userRepo.save(user);
+	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException {
+		Optional<User> user=userRepo.findById(userId);
+		if(user.isPresent()){
+			String profileId=storageService.addUserProfile(userId,file);
+			user.get().setUserProfile(profileId);
+			userRepo.save(user.get());
 			return new ResponseEntity<>("User profile updated",HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>("userId not found",HttpStatus.NOT_FOUND);
+		}
+
 	}
 
 	@Override
@@ -60,7 +65,19 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<User> updateUser(Integer userId, User updateUser) {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
-			userRepo.save(updateUser);
+			if(updateUser.getUserName()!=null){
+				user.get().setUserName(updateUser.getUserName());
+			}
+			if(updateUser.getAboutUser()!=null){
+				user.get().setAboutUser(updateUser.getAboutUser());
+			}
+			if(updateUser.getGender()!=null){
+				user.get().setGender(updateUser.getGender());
+			}
+			if(updateUser.getDateOfBirth()!=null){
+				user.get().setDateOfBirth(updateUser.getDateOfBirth());
+			}
+			userRepo.save(user.get());
 			Optional<User> user1=userRepo.findById(userId);
 			return new ResponseEntity<>(user1.get(),HttpStatus.CREATED);
 		}

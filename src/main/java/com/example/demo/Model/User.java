@@ -21,7 +21,7 @@ public class User {
 	private LocalDate dateOfBirth;
 	private Role role=Role.User_Role;
 	private String userPassword;
-	private URL userProfile;
+	private String userProfile;
 	public User() {
 		super();
 	}
@@ -105,15 +105,15 @@ public class User {
 		this.userPassword = userPassword;
 	}
 
-	public URL getUserProfile() {
+	public String getUserProfile() {
 		return userProfile;
 	}
 
-	public void setUserProfile(URL userProfile) {
+	public void setUserProfile(String userProfile) {
 		this.userProfile = userProfile;
 	}
 
-	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, URL userProfile) {
+	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, String userProfile) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userEmail = userEmail;

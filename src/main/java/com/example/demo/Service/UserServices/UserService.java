@@ -1,5 +1,6 @@
 package com.example.demo.Service.UserServices;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.example.demo.Model.Organizer;
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 	List<User> getAllUser();
-	ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file);
+	ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException;
 	User getUserById(Integer userId);
 	ResponseEntity<User> updateUser(Integer userId, User updateUser);
 	ResponseEntity<Organizer> getOrganizerData(Integer userId);

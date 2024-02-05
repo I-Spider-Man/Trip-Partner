@@ -4,6 +4,7 @@ import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 @Document("eventPicture")
@@ -13,17 +14,7 @@ public class EventPicture {
     private Integer eventId;
     private List<EventPictures> eventPictures;
     public static class EventPictures{
-        private URL eventPicture;
-        public URL getEventPicture() {
-            return eventPicture;
-        }
-        public void setEventPicture(URL eventPicture) {
-            this.eventPicture = eventPicture;
-        }
-
-        public EventPictures(URL eventPicture) {
-            this.eventPicture = eventPicture;
-        }
+        private byte[] eventPicture;
 
         public EventPictures() {
         }
@@ -31,8 +22,21 @@ public class EventPicture {
         @Override
         public String toString() {
             return "EventPictures{" +
-                    ", eventPicture=" + eventPicture +
+                    "eventPicture=" + Arrays.toString(eventPicture) +
                     '}';
+        }
+
+        public byte[] getEventPicture() {
+            return eventPicture;
+        }
+
+
+        public void setEventPicture(byte[] eventPicture) {
+            this.eventPicture = eventPicture;
+        }
+
+        public EventPictures(byte[] eventPicture) {
+            this.eventPicture = eventPicture;
         }
     }
 

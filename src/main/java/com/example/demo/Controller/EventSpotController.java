@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class EventSpotController {
         return groupService.getAllGroupByEventName(eventName);
     }
     @GetMapping("/event/pictureList/{eventId}")
-    public List<EventPicture.EventPictures> getAllEventPictureById(@PathVariable Integer eventId){
+    public List<String> getAllEventPictureById(@PathVariable Integer eventId){
         return eventService.getAllPicturesByEventId(eventId);
     }
 //    @GetMapping("/Picture/{fileName}")
@@ -70,11 +71,11 @@ public class EventSpotController {
 //        }
 //    }
     @PostMapping("/updateEventPicture")
-    public void updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture) throws MalformedURLException {
+    public void updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture) throws IOException {
         eventService.addEventPicture(eventId,eventPicture);
     }
     @PostMapping("/updateSpotPicture")
-    public void updateSpotPicture(@RequestParam(value = "spotId") Integer spotId, @RequestParam(value = "picture") MultipartFile spotPicture) throws MalformedURLException {
+    public void updateSpotPicture(@RequestParam(value = "spotId") Integer spotId, @RequestParam(value = "picture") MultipartFile spotPicture) throws IOException {
         spotService.addSpotPictures(spotId,spotPicture);
     }
     @GetMapping("/spots")
@@ -90,7 +91,7 @@ public class EventSpotController {
         return spotService.getSpotBySpotName(spotName);
     }
     @GetMapping("/spot/pictureList/{spotId}")
-    public List<SpotPicture.SpotPictures> getAllPicturesBySpotId(@PathVariable Integer spotId){
+    public List<String> getAllPicturesBySpotId(@PathVariable Integer spotId){
         return spotService.getSpotPictureById(spotId);
     }
     @GetMapping("/spot/group/{spotName}")

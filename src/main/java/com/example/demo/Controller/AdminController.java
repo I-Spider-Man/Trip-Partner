@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -51,6 +52,8 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     @PostMapping("/manyEvents")
@@ -67,6 +70,8 @@ public class AdminController {
             return adminService.addSpot(newSpot,spotSpicture);
         }catch(JsonProcessingException e){
             return ResponseEntity.badRequest().body("Entered newSpot values are not correct.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }

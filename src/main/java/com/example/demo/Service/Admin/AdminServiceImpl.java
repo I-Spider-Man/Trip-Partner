@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) throws MalformedURLException {
+    public ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) throws IOException {
         return eventService.addEvent(newEvent,file);
     }
 
@@ -58,7 +59,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture ) {
+    public ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture ) throws IOException {
         return touristSpotService.addSpot(spot, spotPicture);
     }
 
