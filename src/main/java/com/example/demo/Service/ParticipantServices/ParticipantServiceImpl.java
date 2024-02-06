@@ -3,6 +3,7 @@ package com.example.demo.Service.ParticipantServices;
 import com.amazonaws.Response;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.GroupRepository;
+import com.example.demo.Repository.OrganizerRepository;
 import com.example.demo.Repository.ParticipantRepository;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
@@ -23,6 +24,8 @@ public class ParticipantServiceImpl implements ParticipantService{
     private SMTP_mailService mailService;
     @Autowired
     private Scheduling scheduling;
+    @Autowired
+    private OrganizerRepository organizerRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -57,10 +60,10 @@ public class ParticipantServiceImpl implements ParticipantService{
                 if (participant.isPresent()) {
                     if (participant.get().getParticipantStatus() == UserStatus.Free) {
                         newParticipant.setParticipantId(participant.get().getParticipantId());
-                        newParticipant.setParticipationCount(participant.get().getParticipationCount());
-                        newParticipant.increaseParticipationCount();
+                        newParticipant.increaseParticipationCount(participant.get().getParticipationCount());
                         newParticipant.setParticipantStatus(UserStatus.Busy);
                         participantRepo.save(newParticipant);
+                        Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
                         grp.get().participantAdded(grp.get().getParticipantsCount());
                         grpRepo.save(grp.get());
                         try {
@@ -68,6 +71,11 @@ public class ParticipantServiceImpl implements ParticipantService{
                             String Subject="Group Joining";
                             String Content="Hi "+user.get().getUserName()+",\n you have been successfully joined in "+grp.get().getGroupName();
                             mailService.sendMailService(participantEmail,Subject,Content);
+                            if(organizer.isPresent()) {
+                                String Subject1 = "New participant joined";
+                                String Content1 = "Hi " + organizer.get().getUserName() + ", \n A new Participant have been added to your group. Check your Group page on our website for more details.\n\n\n\n\nThank you, Trip partner.";
+                                mailService.sendMailService(organizer.get().getUserEmail(), Subject1, Content1);
+                            }
                         } catch (MessagingException e) {
                             e.printStackTrace();
                         }
@@ -78,12 +86,18 @@ public class ParticipantServiceImpl implements ParticipantService{
                 } else {
                     grp.get().participantAdded(grp.get().getParticipantsCount());
                     grpRepo.save(grp.get());
-                    newParticipant.increaseParticipationCount();
+                    Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
+                    newParticipant.increaseParticipationCount(newParticipant.getParticipationCount());
                     participantRepo.save(newParticipant);
                     try {
                         String Subject="Group Joining";
                         String Content="Hi "+user.get().getUserName()+",\n you have been successfully joined in "+grp.get().getGroupName();
                         mailService.sendMailService(participantEmail,Subject,Content);
+                        if(organizer.isPresent()) {
+                            String Subject1 = "New participant joined";
+                            String Content1 = "Hi " + organizer.get().getUserName() + ", \n A new Participant have been added to your group. Check your Group page on our website for more details.\n\n\n\n\nThank you, Trip partner.";
+                            mailService.sendMailService(organizer.get().getUserEmail(), Subject1, Content1);
+                        }
                     } catch (MessagingException e) {
                         e.printStackTrace();
                     }
@@ -103,8 +117,9 @@ public class ParticipantServiceImpl implements ParticipantService{
         if(participant.isPresent()){
             Optional<Group> grp=grpRepo.findById(participant.get().getGroupId());
             if(grp.isPresent()) {
-                grp.get().participantRemoved(1);
+                grp.get().participantRemoved(grp.get().getParticipantsCount());
                 grpRepo.save(grp.get());
+
             }
             participantRepo.deleteById(participantId);
             return "participant with id: "+participantId+" removed successfully";
@@ -112,6 +127,37 @@ public class ParticipantServiceImpl implements ParticipantService{
         else{
             return "participant with id: "+participantId+" is not found";
         }
+    }
+
+    @Override
+    public ResponseEntity<String> leaveGroupByParticipantId(Integer participantId, Integer groupId) {
+        Optional<Participant> participant=participantRepo.findById(participantId);
+        Optional<Group> group=grpRepo.findAllByGroupStatus(GroupStatus.Active).stream().filter(group1 -> group1.getGroupId().equals(groupId)).findAny();
+        if(participant.isPresent() && group.isPresent()){
+            Optional<User> user=userRepository.findById(participant.get().getUserId());
+            String participantEmail=user.get().getUserEmail();
+            Optional<User> organizer=userRepository.findById(organizerRepository.findById(group.get().getOrganizerId()).get().getUserId());
+            participant.get().setGroupId(null);
+            participant.get().setParticipantStatus(UserStatus.Free);
+            participant.get().decreaseParticipationCount(participant.get().getParticipationCount());
+            participantRepo.save(participant.get());
+            try {
+                String Subject="Group Leaving";
+                String Content="Hi "+user.get().getUserName()+",\n you have been successfully removed from "+group.get().getGroupName();
+                mailService.sendMailService(participantEmail,Subject,Content);
+                if(organizer.isPresent()) {
+                    String Subject1 = "Participant left";
+                    String Content1 = "Hi " + organizer.get().getUserName() + ", \n We are sorry to inform you that a participant has left your group. Please check your Group page on our website for more details./n/n/nThank you,\nTrip Partner.";
+                    mailService.sendMailService(organizer.get().getUserEmail(), Subject1, Content1);
+                }
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            group.get().participantRemoved(group.get().getParticipantsCount());
+            grpRepo.save(group.get());
+            return new ResponseEntity<>("Participant left the Group successfully",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Check Group Id, Status and Participant Id",HttpStatus.CONFLICT);
     }
 
     @Override

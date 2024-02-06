@@ -48,8 +48,7 @@ public class Group {
 	}
 
 	public void participantRemoved(Integer numberOfParticipants){
-
-		this.participantsCount =getParticipantsCount() - numberOfParticipants ;
+		this.participantsCount =numberOfParticipants - 1 ;
 	}
 
 	public Integer getGroupId() {

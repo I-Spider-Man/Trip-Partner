@@ -18,6 +18,10 @@ public class ParticipantController {
     public List<Participant> getAllParticipantsInGroup(@PathVariable Integer groupId){
         return participantService.getAllParticipantsByGroupId(groupId);
     }
+    @GetMapping("/leaveGroupByParticipantId")
+    public ResponseEntity<String> leaveGroupByParticipantId(@RequestParam(value = "participantId") Integer participantId,@RequestParam(value = "groupId") Integer groupId){
+        return participantService.leaveGroupByParticipantId(participantId,groupId);
+    }
     @PostMapping
     public ResponseEntity<String> addParticipant(@RequestBody Participant newParticipant){
         return participantService.addParticipant(newParticipant);

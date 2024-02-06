@@ -11,6 +11,7 @@ public interface ParticipantService {
 	List<Participant> getAllParticipantsByGroupId(Integer groupId);
 	ResponseEntity<String> addParticipant(Participant newParticipant);
 	String removeParticipantById(Integer participantId);
+	ResponseEntity<String> leaveGroupByParticipantId(Integer participantId,Integer groupId);
 	boolean requestJoin();
 	
 }
