@@ -93,6 +93,7 @@ public class UserImages {
 
         public static class Posts{
             private byte[] post;
+            private String discription;
 
             public Posts() {
             }
@@ -101,6 +102,7 @@ public class UserImages {
             public String toString() {
                 return "Posts{" +
                         "post=" + Arrays.toString(post) +
+                        ", distription='" + discription + '\'' +
                         '}';
             }
 
@@ -112,8 +114,17 @@ public class UserImages {
                 this.post = post;
             }
 
-            public Posts(byte[] post) {
+            public String getDiscription() {
+                return discription;
+            }
+
+            public void setDiscription(String discription) {
+                this.discription = discription;
+            }
+
+            public Posts(byte[] post, String discription) {
                 this.post = post;
+                this.discription = discription;
             }
         }
     }

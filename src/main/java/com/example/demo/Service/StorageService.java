@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import com.example.demo.Model.EventPicture;
 import com.example.demo.Model.SpotPicture;
+import com.example.demo.Model.UserImageResponse;
 import com.example.demo.Model.UserImages;
 import com.example.demo.Repository.EventImageRepository;
 import com.example.demo.Repository.SpotImageRepository;
@@ -78,11 +79,12 @@ public class StorageService {
             return userImages.get().getId();
         }else{
             UserImages newUserImages=new UserImages();
-            UserImages.Images.Posts posts=new UserImages.Images.Posts(empty);
+            UserImages.Images.Posts posts=new UserImages.Images.Posts(empty,"");
             List<UserImages.Images.Posts> userPost=new ArrayList<>();
             userPost.add(posts);
             UserImages.Images images=new UserImages.Images();
             images.setPostsList(userPost);
+            newUserImages.setUserId(userId);
             newUserImages.setUserImages(images);
             newUserImages.getUserImages().setProfileImage(userProfile);
             userImageRepository.save(newUserImages);
@@ -103,6 +105,23 @@ public class StorageService {
                 .stream()
                 .map(spotPictures -> Base64.getEncoder().encodeToString(spotPictures.getSpotPicture()))
                 .toList()).orElse(null);
+    }
+    public String getUserProfile(Integer userId){
+        Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
+        return userImages.map(images -> Base64.getEncoder().encodeToString(images.getUserImages().getProfileImage())).orElse(null);
+    }
+    public List<UserImageResponse> getUserPosts(Integer userId){
+        Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
+        List<UserImageResponse> userImageResponses=new ArrayList<>();
+        if(userImages.isPresent()){
+            userImages.get().getUserImages().getPostsList().forEach(posts ->
+                    {   UserImageResponse userImageResponse=new UserImageResponse();
+                        userImageResponse.setPost(Base64.getEncoder().encodeToString(posts.getPost()));
+                        userImageResponse.setDescription(posts.getDiscription());
+                        userImageResponses.add(userImageResponse);
+                    });
+        }
+        return userImageResponses;
     }
     public void deleteSpotImage(Integer spotId){
         Optional<SpotPicture> spotPicture=spotImageRepository.findBySpotId(spotId);

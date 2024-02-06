@@ -3,15 +3,14 @@ package com.example.demo.Controller;
 import java.io.IOException;
 import java.util.List;
 
-import com.example.demo.Model.Organizer;
-import com.example.demo.Model.Participant;
+import com.example.demo.Model.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
+import com.example.demo.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.Model.User;
 import com.example.demo.Service.UserServices.UserService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +21,8 @@ public class UserController {
 	private SMTP_mailService mailService;
 	@Autowired
 	private UserService userServ;
+	@Autowired
+	private StorageService storageService;
 	
 	@GetMapping
 	public List<User> getAllUser(){
@@ -54,6 +55,14 @@ public class UserController {
 	@PostMapping("/updateProfile/{userId}")
 	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profile")MultipartFile profilePicture) throws IOException {
 		return userServ.updateUserProfile(userId,profilePicture);
+	}
+	@GetMapping("/userPost/{userId}")
+	public List<UserImageResponse> getUserPosts(@PathVariable Integer userId){
+		return storageService.getUserPosts(userId);
+	}
+	@GetMapping("/userProfile/{userId}")
+	public String getUserProfile(@PathVariable Integer userId){
+		return storageService.getUserProfile(userId);
 	}
 	@GetMapping("/otp/{email}")
 	public String sendEmail(@PathVariable String email){
