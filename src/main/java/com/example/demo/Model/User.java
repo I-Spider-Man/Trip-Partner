@@ -22,6 +22,7 @@ public class User {
 	private Role role=Role.User_Role;
 	private String userPassword;
 	private String userProfile;
+	public String userExtraDetails;
 	public User() {
 		super();
 	}

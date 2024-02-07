@@ -6,27 +6,32 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.Model.Group;
-import com.example.demo.Model.Organizer;
-import com.example.demo.Model.Participant;
+import com.amazonaws.services.apigateway.model.Op;
+import com.example.demo.Model.*;
 import com.example.demo.Repository.OrganizerRepository;
 import com.example.demo.Repository.ParticipantRepository;
+import com.example.demo.Repository.UserExtraDetailsRepostiory;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
 import jakarta.mail.MessagingException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Model.User;
 import com.example.demo.Repository.UserRepository;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
+
+import javax.swing.text.html.Option;
 
 @Service
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
+	@Autowired
+	private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
 	@Autowired
 	private OrganizerRepository organizerRepository;
 	@Autowired
@@ -59,6 +64,62 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(Integer userId) {
 		Optional<User> user=userRepo.findById(userId);
 		return user.orElse(null);
+	}
+
+	@Override
+	public ResponseEntity<String> addingFollower(Integer userId, Integer followingId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		Optional<UserExtraDetails> followingExtraDetails=userExtraDetailsRepostiory.findByUserId(followingId);
+		if(userExtraDetails.isPresent() && followingExtraDetails.isPresent() && !followingExtraDetails.get().getBlockedList().getBlocked().contains(userId)){
+			userExtraDetails.get().getFollowingList().setFollowing(followingId);
+			followingExtraDetails.get().getFollowersList().setFollower(userId);
+			userExtraDetailsRepostiory.save(followingExtraDetails.get());
+			userExtraDetailsRepostiory.save(userExtraDetails.get());
+			return new ResponseEntity<>("You started following the fellow traveler",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("problem on joining",HttpStatus.CONFLICT);
+	}
+
+	@Override
+	public ResponseEntity<String> blockingFollower(Integer userId, Integer blockingId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		Optional<UserExtraDetails> blockingUserExtraDetails=userExtraDetailsRepostiory.findByUserId(blockingId);
+		if(userExtraDetails.isPresent() && blockingUserExtraDetails.isPresent()){
+			userExtraDetails.get().getBlockedList().setBlocked(blockingId);
+			userExtraDetails.get().getFollowersList().getFollower().remove(blockingId);
+			userExtraDetails.get().getFollowingList().getFollowing().remove(blockingId);
+			userExtraDetailsRepostiory.save(userExtraDetails.get());
+//			blockingUserExtraDetails.get().getFollowingList().getFollowing().remove(userId);
+//			blockingUserExtraDetails.get().getFollowersList().getFollower().remove(userId);
+//			userExtraDetailsRepostiory.save(blockingUserExtraDetails.get());
+			return new ResponseEntity<>("blocking done successfully",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("problem on blocking",HttpStatus.CONFLICT);
+	}
+
+	@Override
+	public ResponseEntity<String> unBlockingUser(Integer userId, Integer blockedUserId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		if(userExtraDetails.isPresent() && userExtraDetails.get().getBlockedList().getBlocked().contains(blockedUserId)){
+			userExtraDetails.get().getBlockedList().getBlocked().remove(blockedUserId);
+			userExtraDetailsRepostiory.save(userExtraDetails.get());
+			return new ResponseEntity<>("unblocked",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("problem in unblocking",HttpStatus.CONFLICT);
+	}
+
+	@Override
+	public ResponseEntity<String> unFollowing(Integer userId, Integer followingId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		Optional<UserExtraDetails> followingUserExtraDetails=userExtraDetailsRepostiory.findByUserId(followingId);
+		if(userExtraDetails.isPresent() && followingUserExtraDetails.isPresent() && userExtraDetails.get().getFollowingList().getFollowing().contains(followingId)){
+			userExtraDetails.get().getFollowingList().getFollowing().remove(followingId);
+			userExtraDetailsRepostiory.save(userExtraDetails.get());
+			followingUserExtraDetails.get().getFollowersList().getFollower().remove(userId);
+			userExtraDetailsRepostiory.save(followingUserExtraDetails.get());
+			return new ResponseEntity<>("Successfully removed from following",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("Problem on unfollowing",HttpStatus.CONFLICT);
 	}
 
 	@Override
@@ -102,8 +163,9 @@ public class UserServiceImpl implements UserService {
 		if (user.isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("User mail already exists");
 		} else {
-//			newUser.setUserPassword(passwordEncoder.encode(newUser.getUserPassword()));
 			userRepo.save(newUser);
+			UserExtraDetails extraDetails = getUserExtraDetails(newUser);
+			userExtraDetailsRepostiory.save(extraDetails);
 			try {
 				String mail = newUser.getUserEmail();
 				String subject = "Registration";
@@ -116,18 +178,31 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@NotNull
+	private static UserExtraDetails getUserExtraDetails(User newUser) {
+		UserExtraDetails extraDetails=new UserExtraDetails();
+		extraDetails.setUserId(newUser.getUserId());
+		UserExtraDetails.FollowingList followingList=new UserExtraDetails.FollowingList();
+		followingList.setFollowing(List.of(0));
+		UserExtraDetails.BlockedList blockedList=new UserExtraDetails.BlockedList();
+		blockedList.setBlocked(List.of(0));
+		UserExtraDetails.FollowersList followersList=new UserExtraDetails.FollowersList();
+		followersList.setFollower(List.of(0));
+		extraDetails.setBlockedList(blockedList);
+		extraDetails.setFollowersList(followersList);
+		extraDetails.setFollowingList(followingList);
+		return extraDetails;
+	}
+
 	@Override
 	public String removeUserById(Integer userId) {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
 			Optional<Organizer> organizer=organizerRepository.findByUserId(userId);
 			Optional<Participant> participant=participantRepository.findByUserId(userId);
-			if(organizer.isPresent()){
-				organizerRepository.delete(organizer.get());
-			}
-			if(participant.isPresent()) {
-				participantRepository.delete((participant.get()));
-			}
+            organizer.ifPresent(value -> organizerRepository.delete(value));
+            participant.ifPresent(value -> participantRepository.delete((value)));
+			userExtraDetailsRepostiory.deleteByUserId(userId);
 			userRepo.deleteById(userId);
 			return "user with id: "+userId+" is removed successfully";
 		}

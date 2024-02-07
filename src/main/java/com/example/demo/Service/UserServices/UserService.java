@@ -13,6 +13,10 @@ public interface UserService {
 	List<User> getAllUser();
 	ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException;
 	User getUserById(Integer userId);
+	ResponseEntity<String> addingFollower(Integer userId,Integer followingId);
+	ResponseEntity<String> blockingFollower(Integer userId,Integer blockingId);
+	ResponseEntity<String> unBlockingUser(Integer userId,Integer blockedUserId);
+	ResponseEntity<String> unFollowing(Integer userId,Integer followingId);
 	ResponseEntity<User> updateUser(Integer userId, User updateUser);
 	ResponseEntity<Organizer> getOrganizerData(Integer userId);
 	ResponseEntity<Participant> getParticipantData(Integer userId);

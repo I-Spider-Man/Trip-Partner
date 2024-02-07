@@ -6,6 +6,7 @@ import java.util.List;
 import com.example.demo.Model.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,24 @@ public class UserController {
 		else
 			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
 	}
+	@PostMapping("/userFollowing")
+	public ResponseEntity<String> userFollowingUser(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "followingId") Integer followingId){
+		return userServ.addingFollower(userId,followingId);
+	}
+	@PostMapping("/userUnfollowing")
+	public ResponseEntity<String> userUnFollowing(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "followingId") Integer followingId){
+		return userServ.unFollowing(userId,followingId);
+	}
+	@PostMapping("/userBlocking")
+	public ResponseEntity<String> userBlocking(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "blockingId") Integer blockingId){
+		return userServ.blockingFollower(userId,blockingId);
+	}
+
+	@PostMapping("/userUnBlocking")
+	public ResponseEntity<String> userUnBlocking(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "blockedUserId") Integer blockedUserId){
+		return userServ.unBlockingUser(userId,blockedUserId);
+	}
+
 	@PutMapping("/updateUser/{userId}")
 	public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User updatedUser){
 		return userServ.updateUser(userId,updatedUser);
