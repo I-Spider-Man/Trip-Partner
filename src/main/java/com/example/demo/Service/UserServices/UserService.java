@@ -6,6 +6,7 @@ import java.util.List;
 import com.example.demo.Model.Organizer;
 import com.example.demo.Model.Participant;
 import com.example.demo.Model.User;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,9 @@ public interface UserService {
 	ResponseEntity<String> addingFollower(Integer userId,Integer followingId);
 	ResponseEntity<String> blockingFollower(Integer userId,Integer blockingId);
 	ResponseEntity<String> unBlockingUser(Integer userId,Integer blockedUserId);
+	List<User> getAllFollowers(Integer userId);
+	List<User> getAllFollowing(Integer userId);
+	List<User> getAllBlocked(Integer userId);
 	ResponseEntity<String> unFollowing(Integer userId,Integer followingId);
 	ResponseEntity<User> updateUser(Integer userId, User updateUser);
 	ResponseEntity<Organizer> getOrganizerData(Integer userId);

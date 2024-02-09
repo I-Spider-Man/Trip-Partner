@@ -1,11 +1,9 @@
 package com.example.demo.Service.ParticipantServices;
 
 import com.amazonaws.Response;
+import com.amazonaws.services.apigateway.model.Op;
 import com.example.demo.Model.*;
-import com.example.demo.Repository.GroupRepository;
-import com.example.demo.Repository.OrganizerRepository;
-import com.example.demo.Repository.ParticipantRepository;
-import com.example.demo.Repository.UserRepository;
+import com.example.demo.Repository.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.Scheduling;
 import jakarta.mail.MessagingException;
@@ -14,14 +12,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class ParticipantServiceImpl implements ParticipantService{
     @Autowired
     private ParticipantRepository participantRepo;
     @Autowired
     private SMTP_mailService mailService;
+    @Autowired
+    private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
     @Autowired
     private Scheduling scheduling;
     @Autowired
@@ -30,6 +33,29 @@ public class ParticipantServiceImpl implements ParticipantService{
     private UserRepository userRepository;
     @Autowired
     private GroupRepository grpRepo;
+
+    @Override
+    public List<Group> getAllParticipatedGroups(Integer userId) {
+        List<Group> groupList = new ArrayList<>();
+        Optional<UserExtraDetails> userExtraDetails = userExtraDetailsRepostiory.findByUserId(userId);
+
+        // Check if userExtraDetails is present
+        if (userExtraDetails.isPresent()) {
+            UserExtraDetails userDetails = userExtraDetails.get();
+            List<Integer> participatedGroupIds = userDetails.getParticipatedList().getParticipatedGroupId();
+
+            // Map groupIds to Optional<Group> and collect them into a list of Group
+            groupList = participatedGroupIds.stream()
+                    .map(groupId -> grpRepo.findById(groupId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+
+        return groupList;
+    }
+
+
     @Override
     public List<Participant> getAllParticipants() {
 
@@ -52,6 +78,7 @@ public class ParticipantServiceImpl implements ParticipantService{
 
         Optional<Participant> participant = participantRepo.findByUserId(newParticipant.getUserId());
         Optional<User> user=userRepository.findById(newParticipant.getUserId());
+        Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(newParticipant.getUserId());
         String participantEmail=user.get().getUserEmail();
         Optional<Group> grp=grpRepo.findById(newParticipant.getGroupId());
 
@@ -62,9 +89,12 @@ public class ParticipantServiceImpl implements ParticipantService{
                         newParticipant.setParticipantId(participant.get().getParticipantId());
                         newParticipant.increaseParticipationCount(participant.get().getParticipationCount());
                         newParticipant.setParticipantStatus(UserStatus.Busy);
+
                         participantRepo.save(newParticipant);
                         Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
                         grp.get().participantAdded(grp.get().getParticipantsCount());
+                        userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
+                        userExtraDetailsRepostiory.save(userExtraDetails.get());
                         grpRepo.save(grp.get());
                         try {
 
@@ -85,6 +115,8 @@ public class ParticipantServiceImpl implements ParticipantService{
                     }
                 } else {
                     grp.get().participantAdded(grp.get().getParticipantsCount());
+                    userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
+                    userExtraDetailsRepostiory.save(userExtraDetails.get());
                     grpRepo.save(grp.get());
                     Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
                     newParticipant.increaseParticipationCount(newParticipant.getParticipationCount());

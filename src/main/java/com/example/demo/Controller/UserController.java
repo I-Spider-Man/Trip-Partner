@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Service.UserServices.UserService;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 @RestController
 @RequestMapping("/User")
@@ -62,6 +63,18 @@ public class UserController {
 	@GetMapping("/Organizer/{userId}")
 	public ResponseEntity<Organizer> getOrganizerData(@PathVariable Integer userId){
 		return userServ.getOrganizerData(userId);
+	}
+	@GetMapping("/getAllFollowers/{userId}")
+	public List<User> getAllFollowers(@PathVariable Integer userId){
+		return userServ.getAllFollowers(userId);
+	}
+	@GetMapping("/getAllFollowing/{userId}")
+	public List<User> getAllFollowing(@PathVariable Integer userId){
+		return userServ.getAllFollowing(userId);
+	}
+	@GetMapping("/getAllBlocked/{userId}")
+	public List<User> getAllBlocked(@PathVariable Integer userId){
+		return userServ.getAllBlocked(userId);
 	}
 	@GetMapping("/Participant/{userId}")
 	public ResponseEntity<Participant> getParticipantData(@PathVariable Integer userId){

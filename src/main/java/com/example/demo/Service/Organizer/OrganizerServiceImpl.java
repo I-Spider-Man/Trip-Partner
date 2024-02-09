@@ -1,8 +1,10 @@
 package com.example.demo.Service.Organizer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.amazonaws.services.route53domains.model.ReachabilityStatus;
 import com.example.demo.Model.*;
@@ -30,6 +32,8 @@ public class OrganizerServiceImpl implements OrganizerService{
     @Autowired
     private EventRepository eventRepository;
     @Autowired
+    private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
+    @Autowired
     private TouristSpotRepository spotRepository;
     @Autowired
     private ParticipantRepository participantRepository;
@@ -39,6 +43,23 @@ public class OrganizerServiceImpl implements OrganizerService{
     private GroupService groupService;
     @Autowired
     private SMTP_mailService mailService;
+
+    @Override
+    public List<Group> getAllGroupsOrganizedById(Integer userId) {
+        List<Group> groupList=new ArrayList<>();
+        Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+        if(userExtraDetails.isPresent()){
+            List<Integer> organizedList=userExtraDetails.get().getOrganizedList().getOrganizedGroupId();
+            groupList=organizedList.stream()
+                    .map(group->groupRepository.findById(group))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+
+        }
+
+        return groupList;
+    }
 
     @Override
     public List<Organizer> getAllOrganizer() {

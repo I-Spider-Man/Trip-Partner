@@ -28,6 +28,8 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private MessagesRepository messagesRepository;
 	@Autowired
+	private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
+	@Autowired
 	private EventRepository eventRepository;
 	@Autowired
 	private TouristSpotRepository spotRepository;
@@ -54,39 +56,45 @@ public class GroupServiceImpl implements GroupService {
 			spot.get().increasePeopleCount(newGroup.getParticipantsLimit());
 			spotRepository.save(spot.get());
 		}
-		if(grp.isPresent()) {
-			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
-				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
-				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
-				grpRepo.save(newGroup);
-				organizer.get().setGroupId(newGroup.getGroupId());
-				GroupMessage.Message message=new GroupMessage.Message(0,"");
-				List<GroupMessage.Message> ml=new ArrayList<>();
-				ml.add(message);
-				GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
-				messagesRepository.save(groupMessage);
-				organizerRepository.save(organizer.get());
-				scheduling.addActiveGrpId(newGroup.getGroupId());
-				return "GROUP SUCCESSFULLY CREATED";
-			}
+		if(grp.isEmpty()) {
+			grpRepo.save(newGroup);
+			Optional<Organizer> organizer = organizerRepository.findById(newGroup.getOrganizerId());
+			Optional<UserExtraDetails> userExtraDetails = userExtraDetailsRepostiory.findByUserId(organizer.get().getUserId());
+			userExtraDetails.get().getOrganizedList().setOrganizedGroupId(newGroup.getGroupId());
+			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
+			organizer.get().setGroupId(newGroup.getGroupId());
+			GroupMessage.Message message = new GroupMessage.Message(0, "");
+			List<GroupMessage.Message> ml = new ArrayList<>();
+			ml.add(message);
+			GroupMessage groupMessage = new GroupMessage(newGroup.getGroupId(), ml);
+			messagesRepository.save(groupMessage);
+			organizerRepository.save(organizer.get());
+			userExtraDetailsRepostiory.save(userExtraDetails.get());
+			scheduling.addActiveGrpId(newGroup.getGroupId());
+			return "GROUP SUCCESSFULLY CREATED";
+//			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
+//				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
+//				Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(organizer.get().getUserId());
+//				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
+//				grpRepo.save(newGroup);
+//				userExtraDetails.get().getOrganizedList().setOrganizedGroupId(newGroup.getGroupId());
+//
+//				organizer.get().setGroupId(newGroup.getGroupId());
+//				GroupMessage.Message message=new GroupMessage.Message(0,"");
+//				List<GroupMessage.Message> ml=new ArrayList<>();
+//				ml.add(message);
+//				GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
+//				messagesRepository.save(groupMessage);
+//				organizerRepository.save(organizer.get());
+//				userExtraDetailsRepostiory.save(userExtraDetails.get());
+//				scheduling.addActiveGrpId(newGroup.getGroupId());
+//				return "GROUP SUCCESSFULLY CREATED";
+//			}
+		}
 			else {
 				return "YOU ARE ALREADY ORGANIZING ONE GROUP";
 			}
-		}
-		else {
-			grpRepo.save(newGroup);
-			Optional<Organizer> organizer=organizerRepository.findById(newGroup.getOrganizerId());
-			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
-			organizer.get().setGroupId(newGroup.getGroupId());
-			GroupMessage.Message message=new GroupMessage.Message(0,"");
-			List<GroupMessage.Message> ml=new ArrayList<>();
-			ml.add(message);
-			GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
-			messagesRepository.save(groupMessage);
-			organizerRepository.save(organizer.get());
-			scheduling.addActiveGrpId(newGroup.getGroupId());
-			return "GROUP SUCCESSFULLY CREATED";
-		}
+
 	}
 	@Override
 	public String removeGroupById(Integer groupId) {

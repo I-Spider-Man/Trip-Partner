@@ -3,8 +3,10 @@ package com.example.demo.Service.UserServices;
 import java.io.IOException;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.amazonaws.services.apigateway.model.Op;
 import com.example.demo.Model.*;
@@ -109,6 +111,51 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<User> getAllFollowers(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		List<User> followersList=new ArrayList<>();
+		if(userExtraDetails.isPresent()){
+			List<Integer> followersIdList=userExtraDetails.get().getFollowersList().getFollower();
+			followersList=followersIdList.stream()
+					.map(followersId->userRepo.findById(followersId))
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.collect(Collectors.toList());
+		}
+		return followersList;
+	}
+
+	@Override
+	public List<User> getAllFollowing(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		List<User> followingList=new ArrayList<>();
+		if(userExtraDetails.isPresent()){
+			List<Integer> followingIdList=userExtraDetails.get().getFollowingList().getFollowing();
+			followingList=followingIdList.stream()
+					.map(followingId->userRepo.findById(followingId))
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.collect(Collectors.toList());
+		}
+		return followingList;
+	}
+
+	@Override
+	public List<User> getAllBlocked(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		List<User> blockedList=new ArrayList<>();
+		if(userExtraDetails.isPresent()){
+			List<Integer> blockedIdList=userExtraDetails.get().getBlockedList().getBlocked();
+			blockedList=blockedIdList.stream()
+					.map(blockedId->userRepo.findById(blockedId))
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.collect(Collectors.toList());
+		}
+		return blockedList;
+	}
+
+	@Override
 	public ResponseEntity<String> unFollowing(Integer userId, Integer followingId) {
 		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
 		Optional<UserExtraDetails> followingUserExtraDetails=userExtraDetailsRepostiory.findByUserId(followingId);
@@ -182,12 +229,18 @@ public class UserServiceImpl implements UserService {
 	private static UserExtraDetails getUserExtraDetails(User newUser) {
 		UserExtraDetails extraDetails=new UserExtraDetails();
 		extraDetails.setUserId(newUser.getUserId());
+		UserExtraDetails.OrganizedList organizedList=new UserExtraDetails.OrganizedList();
+		organizedList.setOrganizedGroupId(List.of(0));
+		UserExtraDetails.ParticipatedList participatedList=new UserExtraDetails.ParticipatedList();
+		participatedList.setParticipatedGroupId(List.of(0));
 		UserExtraDetails.FollowingList followingList=new UserExtraDetails.FollowingList();
 		followingList.setFollowing(List.of(0));
 		UserExtraDetails.BlockedList blockedList=new UserExtraDetails.BlockedList();
 		blockedList.setBlocked(List.of(0));
 		UserExtraDetails.FollowersList followersList=new UserExtraDetails.FollowersList();
 		followersList.setFollower(List.of(0));
+		extraDetails.setOrganizedList(organizedList);
+		extraDetails.setParticipatedList(participatedList);
 		extraDetails.setBlockedList(blockedList);
 		extraDetails.setFollowersList(followersList);
 		extraDetails.setFollowingList(followingList);
