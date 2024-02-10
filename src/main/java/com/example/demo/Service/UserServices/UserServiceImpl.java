@@ -49,6 +49,34 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public ResponseEntity<String> updateUserEmail(Integer userId, String userEmail) {
+		Optional<User> user=userRepo.findById(userId);
+		if(userRepo.findByUserEmail(userEmail).isEmpty()){
+				if(user.isPresent()){
+					user.get().setUserEmail(userEmail);
+					userRepo.save(user.get());
+					return new ResponseEntity<>("User email updated successfully",HttpStatus.OK);
+				}
+				return new ResponseEntity<>("user id not found",HttpStatus.NOT_FOUND);
+			}
+		else {
+			return new ResponseEntity<>("user email is already being used.",HttpStatus.CONFLICT);
+		}
+
+}
+
+	@Override
+	public ResponseEntity<String> changePassword(Integer userId, String userPassword) {
+		Optional<User> user=userRepo.findById(userId);
+		if(user.isPresent()){
+			user.get().setUserPassword(userPassword);
+			userRepo.save(user.get());
+			return new ResponseEntity<>("User password updated successfully",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("user id not found ",HttpStatus.NOT_FOUND);
+	}
+
+	@Override
 	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
@@ -153,6 +181,24 @@ public class UserServiceImpl implements UserService {
 					.collect(Collectors.toList());
 		}
 		return blockedList;
+	}
+
+	@Override
+	public List<Integer> getFollowersId(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+        return userExtraDetails.map(extraDetails -> extraDetails.getFollowersList().getFollower()).orElse(null);
+	}
+
+	@Override
+	public List<Integer> getFollowingId(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		return userExtraDetails.map(user->user.getFollowingList().getFollowing()).orElse(null);
+	}
+
+	@Override
+	public List<Integer> getBlockedId(Integer userId) {
+		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+		return userExtraDetails.map(user->user.getBlockedList().getBlocked()).orElse(null);
 	}
 
 	@Override

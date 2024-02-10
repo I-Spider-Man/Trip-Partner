@@ -64,6 +64,18 @@ public class UserController {
 	public ResponseEntity<Organizer> getOrganizerData(@PathVariable Integer userId){
 		return userServ.getOrganizerData(userId);
 	}
+	@GetMapping("/followersId/{userId}")
+	public List<Integer> getFollowersId(@PathVariable Integer userId){
+		return userServ.getFollowersId(userId);
+	}
+	@GetMapping("/followingId/{userId}")
+	public List<Integer> getFollowingId(@PathVariable Integer userId){
+		return userServ.getFollowingId(userId);
+	}
+	@GetMapping("/blockedId/{userId}")
+	public List<Integer> getBlockedId(@PathVariable Integer userId){
+		return userServ.getBlockedId(userId);
+	}
 	@GetMapping("/getAllFollowers/{userId}")
 	public List<User> getAllFollowers(@PathVariable Integer userId){
 		return userServ.getAllFollowers(userId);
@@ -85,8 +97,16 @@ public class UserController {
 		return userServ.addUser(newUser);
 	}
 	@PostMapping("/updateProfile/{userId}")
-	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profile")MultipartFile profilePicture) throws IOException {
+	public ResponseEntity<String> updateProfile(@PathVariable Integer userId ,@RequestParam(value = "profilePicture") MultipartFile profilePicture) throws IOException {
 		return userServ.updateUserProfile(userId,profilePicture);
+	}
+	@PutMapping("/updateEmail/{userId}")
+	public ResponseEntity<String> updateEmail(@PathVariable Integer userId,@RequestParam(value = "userEmail") String userEmail){
+		return userServ.updateUserEmail(userId,userEmail);
+	}
+	@PutMapping("/changePassword/{userId}")
+	public ResponseEntity<String> changePassword(@PathVariable Integer userId,@RequestParam(value = "userPassword") String userPassword){
+		return userServ.changePassword(userId,userPassword);
 	}
 	@GetMapping("/userPost/{userId}")
 	public List<UserImageResponse> getUserPosts(@PathVariable Integer userId){
