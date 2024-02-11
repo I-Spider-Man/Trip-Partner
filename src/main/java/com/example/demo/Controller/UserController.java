@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.amazonaws.util.Base64;
 import com.example.demo.Model.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
@@ -38,6 +39,7 @@ public class UserController {
 		else
 			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
 	}
+
 	@PostMapping("/userFollowing")
 	public ResponseEntity<String> userFollowingUser(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "followingId") Integer followingId){
 		return userServ.addingFollower(userId,followingId);
@@ -124,7 +126,16 @@ public class UserController {
 	public ResponseEntity<String> forgotPassword(@RequestParam(name = "userEmail",required = true) String userEmail){
 		return userServ.forgotPassword(userEmail);
 	}
-	 @GetMapping("email/{userEmail}")
+	@PostMapping("/deletePost/{userId}")
+	public String deletePost(@PathVariable Integer userId,@RequestParam(value = "post") String post){
+		byte[] po= Base64.decode(post);
+		return storageService.deletePost(userId,po);
+	}
+	@PostMapping("/userPost/{userId}")
+	public ResponseEntity<String> postUserPosts(@PathVariable Integer userId,@RequestParam(value = "description") String description,@RequestParam(value = "post") MultipartFile post) throws IOException {
+		return userServ.uploadPost(userId,description,post);
+	}
+	 @GetMapping("/email/{userEmail}")
 	    public ResponseEntity<User> getUserByEmail(@PathVariable String userEmail) {
 	        User user = userServ.getByUserEmail(userEmail);
 	        if (user != null) {
@@ -133,7 +144,8 @@ public class UserController {
 	            return ResponseEntity.notFound().build();
 	        }
 }
-	 @GetMapping("name/{userName}")
+
+	 @GetMapping("/name/{userName}")
 	 public List<User> getAllUserByUserName(@PathVariable String userName){
 		 return userServ.getAllByUserName(userName);
 	 }

@@ -81,7 +81,9 @@ public class UserImages {
         public List<Posts> getPostsList() {
             return postsList;
         }
-
+        public void addPost(Posts post){
+            this.postsList.add(post);
+        }
         public void setPostsList(List<Posts> postsList) {
             this.postsList = postsList;
         }

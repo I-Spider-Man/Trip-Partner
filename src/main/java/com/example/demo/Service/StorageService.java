@@ -8,14 +8,14 @@ import com.example.demo.Repository.EventImageRepository;
 import com.example.demo.Repository.SpotImageRepository;
 import com.example.demo.Repository.UserImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 @Service
 public class StorageService {
@@ -25,8 +25,34 @@ public class StorageService {
     private SpotImageRepository spotImageRepository;
     @Autowired
     private UserImageRepository userImageRepository;
+    public String deletePost(int userId, byte[] post) {
 
+        Optional<UserImages> userImages = userImageRepository.findByUserId(userId);
 
+        if (userImages.isPresent() && userImages.get().getUserImages() != null && userImages.get().getUserImages().getPostsList() != null) {
+
+            userImages.get().getUserImages().getPostsList().removeIf(p -> Arrays.equals(p.getPost(), post));
+            userImageRepository.save(userImages.get());
+            return "post deleted";
+        } else {
+
+            return ("UserImages not found or postsList is null");
+        }
+    }
+    public ResponseEntity<String> addUserPosts(Integer userId, String description, MultipartFile post ) throws IOException{
+
+        Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
+        if(userImages.isPresent()){
+            UserImages.Images.Posts posts=new UserImages.Images.Posts();
+            posts.setPost(post.getBytes());
+            posts.setDiscription(description);
+            userImages.get().getUserImages().getPostsList().add(posts);
+            userImageRepository.save(userImages.get());
+            return new ResponseEntity<>("post uploaded successfully", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("Problem on uploading. try again...",HttpStatus.CONFLICT);
+        }
+    }
     public String addEventImage(Integer eventId, MultipartFile file) throws IOException {
         byte[] eventImage=file.getBytes();
         Optional<EventPicture> eventPicture=eventImageRepository.findByEventId(eventId);

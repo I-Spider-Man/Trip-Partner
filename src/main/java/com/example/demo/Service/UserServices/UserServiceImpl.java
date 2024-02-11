@@ -44,6 +44,15 @@ public class UserServiceImpl implements UserService {
 	private SMTP_mailService mailService;
 
 	@Override
+	public ResponseEntity<String> uploadPost(Integer userId,String description,MultipartFile post) throws IOException {
+		Optional<User> user=userRepo.findById(userId);
+		if(user.isPresent()){
+			return storageService.addUserPosts(userId,description,post);
+		}
+		return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
+	}
+
+	@Override
 	public List<User> getAllUser() {
 		return (List<User>) userRepo.findAll(); 
 	}

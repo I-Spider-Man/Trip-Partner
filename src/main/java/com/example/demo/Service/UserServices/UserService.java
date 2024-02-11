@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 public interface UserService {
+	ResponseEntity<String> uploadPost(Integer userId,String description,MultipartFile post) throws IOException;
 	List<User> getAllUser();
 	ResponseEntity<String> updateUserEmail(Integer userId,String userEmail);
 	ResponseEntity<String> changePassword(Integer userId,String userPassword);
