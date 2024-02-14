@@ -57,9 +57,9 @@ public class Participant {
     public void setParticipationCount(Integer participationCount) {
         this.participationCount = participationCount;
     }
-
-    public void increaseParticipationCount() {
-        this.participationCount = this.participationCount + 1;
+    public void decreaseParticipationCount(Integer participationCount){this.participationCount = participationCount-1;}
+    public void increaseParticipationCount(Integer participationCount) {
+        this.participationCount = participationCount + 1;
     }
 
     public UserStatus getParticipantStatus() {

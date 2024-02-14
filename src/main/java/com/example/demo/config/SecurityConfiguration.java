@@ -51,41 +51,16 @@ public class SecurityConfiguration {
     	http.sessionManagement(management->management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
         .authorizeHttpRequests(Authorize -> Authorize
-        		.requestMatchers("/Admin/**","User/api/**").authenticated()
+        		.requestMatchers("User/api/**","User/**").authenticated()
+        		.requestMatchers("/Admin/**").permitAll()
                 .anyRequest().permitAll())
         .addFilterBefore(new jwtValidator(), BasicAuthenticationFilter.class)
-        .csrf(csrf -> csrf.disable())
-        .cors(cors->cors.configurationSource(corsConfigurationSource()));
-//        
-//
-//        .formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login")
-//				.permitAll())
-//              .logout(form -> form.invalidateHttpSession(true).clearAuthentication(true)
-//		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//		.logoutSuccessUrl("/login?logout").permitAll());
-         
+        .csrf(csrf -> csrf.disable());       
         return http.build();
     }
 
-	private CorsConfigurationSource corsConfigurationSource() {
-		// TODO Auto-generated meth
-		return new  CorsConfigurationSource() {
-			
-			@Override
-			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-				CorsConfiguration cfg=new CorsConfiguration();
-				cfg.setAllowedOrigins(Arrays.asList(
-						"http://localhost:3000/",
-						"http://localhost:3001/"));
-				cfg.setAllowedMethods(Collections.singletonList("*"));
-				cfg.setAllowCredentials(true);
-				cfg.setAllowedHeaders(Arrays.asList("*"));
-				cfg.setExposedHeaders(Arrays.asList("Authorization"));
-				cfg.setMaxAge(3600L);
-				return null;
-			}
-		};
-	}
+	
+	
 	}
 
 

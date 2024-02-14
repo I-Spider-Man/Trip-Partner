@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.net.URL;
+import java.time.LocalDate;
+
 @Entity
 public class User {
 	
@@ -14,32 +17,14 @@ public class User {
 	private String userName;
 	private String userEmail;
 	private String aboutUser;
-	private Role role;
+	private String gender;
+	private LocalDate dateOfBirth;
+	private Role role=Role.User_Role;
 	private String userPassword;
 	private String userProfile;
-	
-
-	public User(Integer userId, String userName, String userEmail, String aboutUser, Role role, String userPassword, String userProfile) {
-		this.userId = userId;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.aboutUser = aboutUser;
-		this.role = role;
-		this.userPassword = userPassword;
-		this.userProfile = userProfile;
-	}
-
-	
+	public String userExtraDetails;
 	public User() {
 		super();
-	}
-
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
 	}
 
 	@Override
@@ -49,10 +34,76 @@ public class User {
 				", userName='" + userName + '\'' +
 				", userEmail='" + userEmail + '\'' +
 				", aboutUser='" + aboutUser + '\'' +
+				", gender='" + gender + '\'' +
+				", dateOfBirth=" + dateOfBirth +
 				", role=" + role +
 				", userPassword='" + userPassword + '\'' +
 				", userProfile='" + userProfile + '\'' +
 				'}';
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public String getAboutUser() {
+		return aboutUser;
+	}
+
+	public void setAboutUser(String aboutUser) {
+		this.aboutUser = aboutUser;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getRole() {
+		return role.toString();
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public String getUserPassword() {
+		return userPassword;
+	}
+
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
 	}
 
 	public String getUserProfile() {
@@ -63,36 +114,15 @@ public class User {
 		this.userProfile = userProfile;
 	}
 
-	public Integer getUserId() {
-		return userId;
-	}
-	public void setUserId(Integer userId) {
+	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, String userProfile) {
 		this.userId = userId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-	public String getUserEmail() {
-		return userEmail;
-	}
-	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
-	}
-	public String getAboutUser() {
-		return aboutUser;
-	}
-	public void setAboutUser(String aboutUser) {
 		this.aboutUser = aboutUser;
-	}
-	public String getUserPassword() {
-		return userPassword;
-	}
-	public void setUserPassword(String userPassword) {
+		this.gender = gender;
+		this.dateOfBirth = dateOfBirth;
+		this.role = role;
 		this.userPassword = userPassword;
+		this.userProfile = userProfile;
 	}
-
-	
 }

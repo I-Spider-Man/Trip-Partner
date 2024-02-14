@@ -3,6 +3,7 @@ package com.example.demo.Service.GroupServices;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.example.demo.Model.*;
@@ -25,6 +26,8 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private OrganizerRepository organizerRepository;
 	@Autowired
+	private MessagesRepository messagesRepository;
+	@Autowired
 	private EventRepository eventRepository;
 	@Autowired
 	private TouristSpotRepository spotRepository;
@@ -40,8 +43,9 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public String addGroup(Group newGroup) {
-		Optional<Group> grp=grpRepo.findByOrganizerId(newGroup.getOrganizerId());
-		if(newGroup.getEventName()!=null){
+		List<Group> activeGrp=grpRepo.findAllByGroupStatus(GroupStatus.Active);
+		Optional<Group> grp=activeGrp.stream().filter(group -> group.getOrganizerId().equals(newGroup.getOrganizerId())).findAny();
+		if(!newGroup.getEventName().isEmpty()){
 			Optional<Event> event=eventRepository.findByEventName(newGroup.getEventName());
 			event.get().increasePeopleCount(newGroup.getParticipantsLimit());
 			eventRepository.save(event.get());
@@ -54,19 +58,31 @@ public class GroupServiceImpl implements GroupService {
 			if(grp.get().getGroupStatus() == GroupStatus.InActive) {
 				Optional<Organizer> organizer=organizerRepository.findById(grp.get().getOrganizerId());
 				organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
-				organizerRepository.save(organizer.get());
 				grpRepo.save(newGroup);
+				organizer.get().setGroupId(newGroup.getGroupId());
+				GroupMessage.Message message=new GroupMessage.Message(0,"");
+				List<GroupMessage.Message> ml=new ArrayList<>();
+				ml.add(message);
+				GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
+				messagesRepository.save(groupMessage);
+				organizerRepository.save(organizer.get());
 				scheduling.addActiveGrpId(newGroup.getGroupId());
 				return "GROUP SUCCESSFULLY CREATED";
 			}
 			else {
-				return "YOU ARE ALREADY ORGANIZING ONE EVENT";
+				return "YOU ARE ALREADY ORGANIZING ONE GROUP";
 			}
 		}
 		else {
 			grpRepo.save(newGroup);
 			Optional<Organizer> organizer=organizerRepository.findById(newGroup.getOrganizerId());
 			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
+			organizer.get().setGroupId(newGroup.getGroupId());
+			GroupMessage.Message message=new GroupMessage.Message(0,"");
+			List<GroupMessage.Message> ml=new ArrayList<>();
+			ml.add(message);
+			GroupMessage groupMessage=new GroupMessage(newGroup.getGroupId(),ml);
+			messagesRepository.save(groupMessage);
 			organizerRepository.save(organizer.get());
 			scheduling.addActiveGrpId(newGroup.getGroupId());
 			return "GROUP SUCCESSFULLY CREATED";
@@ -76,7 +92,7 @@ public class GroupServiceImpl implements GroupService {
 	public String removeGroupById(Integer groupId) {
 		Optional<Group> grp=grpRepo.findById(groupId);
 		if(grp.isPresent()){
-			if(grp.get().getEventName()!=null){
+			if(!grp.get().getEventName().isEmpty()){
 				Optional<Event> event=eventRepository.findByEventName(grp.get().getEventName());
 				event.get().decreasePeopleCount(grp.get().getParticipantsLimit());
 				eventRepository.save(event.get());
@@ -92,6 +108,7 @@ public class GroupServiceImpl implements GroupService {
 			organizer.get().setOrganizerStatus(UserStatus.Free);
 			organizerRepository.save(organizer.get());
 			scheduling.getActiveGrpId().remove(groupId);
+			messagesRepository.deleteByGroupId(groupId);
 			grpRepo.deleteById(groupId);
 			return "Group with id: "+groupId+" is removed successfully";
 		}
@@ -104,10 +121,27 @@ public class GroupServiceImpl implements GroupService {
 		Optional<Group> grp=grpRepo.findById(grpId);
         return grp.orElse(null);
 	}
+
+	@Override
+	public Group getActiveGroupById(Integer grpId) {
+		Optional<Group> group=grpRepo.findAllByGroupStatus(GroupStatus.Active).stream().filter(group1 -> Objects.equals(group1.getGroupId(), grpId)).findAny();
+		 return group.orElse(null);
+	}
+
 	@Override
 	public Group getGroupByOrganizerId(Integer orgId) {
 		 List<Group> activeGrp=grpRepo.findAllByGroupStatus(GroupStatus.Active);
 		Optional<Group> grp=activeGrp.stream().filter(group -> group.getOrganizerId().equals(orgId)).findAny();
         return grp.orElse(null);
+	}
+
+	@Override
+	public List<Group> getAllGroupBySpotName(String spotName) {
+		return grpRepo.findAllBySpotName(spotName);
+	}
+
+	@Override
+	public List<Group> getAllGroupByEventName(String eventName) {
+		return grpRepo.findAllByEventName(eventName);
 	}
 }

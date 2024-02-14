@@ -3,11 +3,12 @@ package com.example.demo.Controller;
 import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.AdminService;
 import com.example.demo.Service.Event.EventService;
-import com.example.demo.Service.Organizer.OrganizerService;
+import com.example.demo.Service.GroupMessage.MessageService;
+import com.example.demo.Service.Admin.*;
 import com.example.demo.Service.StorageService;
-import com.example.demo.Service.TouristSpot.TouristSpotService;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.apache.logging.log4j.util.PerformanceSensitive;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.FileStore;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
+
 @RestController
 @RequestMapping("/Admin")
 public class AdminController {
     @Autowired
     private AdminService adminService;
     @Autowired
+    private MessageService messageService;
+    @Autowired
     private StorageService storageService;
+    @Autowired
+    private EventService eventService;
 
     @PostMapping("/manyUsers")
     public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
@@ -33,30 +40,64 @@ public class AdminController {
         return adminService.removeAllUser();
     }
     @PostMapping("/events")
-    public String addEvent(@RequestBody Event newEvent){
-        return adminService.addEvent(newEvent);
+    public ResponseEntity<String> addEvent(@RequestParam(value = "newEvent") String newEventJson,@RequestParam(value = "eventPicture") MultipartFile file){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        System.out.println(newEventJson);
+        try{
+            Event newEvent=objectMapper.readValue(newEventJson,Event.class);
+
+            return adminService.addEvent(newEvent,file);
+        }catch(JsonProcessingException e){
+            System.out.println(newEventJson);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+    @PostMapping("/signin")
+	public AuthResponse signin(@RequestBody LoginRequest LoginRequest) {
+		return adminService.sigin(LoginRequest);
+	}
     @PostMapping("/manyEvents")
     public String addManyEvents(@RequestBody List<Event> events){
         return adminService.addAllEvents(events);
     }
     @PostMapping("/touristSpot")
-    public String addTouristSpot(@RequestBody TouristSpot newSpot){
-        return adminService.addSpot(newSpot);
+    public ResponseEntity<?> addTouristSpot(@RequestParam(value = "newSpot") String newTouristSpot,@RequestParam(value = "spotPicture") MultipartFile spotSpicture){
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        try{
+            TouristSpot newSpot=objectMapper.readValue(newTouristSpot,TouristSpot.class);
+
+            return adminService.addSpot(newSpot,spotSpicture);
+        }catch(JsonProcessingException e){
+            return ResponseEntity.badRequest().body("Entered newSpot values are not correct.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
+    @PostMapping
+	public AuthResponse addUser(@RequestBody User newUser) throws Exception {
+		return adminService.addUser(newUser);
+	}
+    
     @PostMapping("/manySpots")
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
 //    @PostMapping("/S3")
 //    public ResponseEntity<String> uploadPhoto(@RequestParam(value = "file")MultipartFile file){
+//
 //        return new ResponseEntity<>(storageService.uploadFile(file), HttpStatus.OK);
 //    }
-    @GetMapping("/S3/{fileName}")
-    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
-
-        byte [] data=storageService.viewFile(fileName);
-        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
-    }
+//    @GetMapping("/S3/{fileName}")
+//    public ResponseEntity<?> viewPhoto(@PathVariable String fileName){
+//        byte [] data=storageService.viewFile(fileName);
+//        ByteArrayResource byteArrayResource=new ByteArrayResource(data);
+//        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(data);
+//    }
     @GetMapping("/participants")
     public List<Participant> getAllParticipants(){
         return adminService.getAllParticipant();
@@ -143,7 +184,6 @@ public class AdminController {
         return adminService.removeUserById(userId);
     }
 
-
     @DeleteMapping("/participants/{participantId}")
     public String removeParticipant(@PathVariable Integer participantId){
         return adminService.removeParticipantById(participantId);
@@ -161,16 +201,16 @@ public class AdminController {
         return adminService.removeAllInActiveEvents();
     }
     @DeleteMapping("/touristSpots/{spotId}")
-    public String removeTouristSpot(@PathVariable Integer spotId){
+    public ResponseEntity<String> removeTouristSpot(@PathVariable Integer spotId){
         return adminService.removeTouristSpotById(spotId);
     }
     @DeleteMapping("/organizers/{organizerId}")
     public String removeOrganizer(@PathVariable Integer organizerId) {
     	return adminService.removeOrganizerById(organizerId);
     }
-
-    @DeleteMapping("/S3/{fileName}")
-    public ResponseEntity<String> photoDelete(@PathVariable String fileName){
-        return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
-    }
+//
+//    @DeleteMapping("/S3/{fileName}")
+//    public ResponseEntity<String> photoDelete(@PathVariable String fileName){
+//        return new ResponseEntity<>(storageService.deleteFile(fileName),HttpStatus.OK);
+//    }
 }

@@ -24,7 +24,6 @@ public class jwtValidator extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String jwt = request.getHeader(jwtConstant.JWT_HEADER);
-		
 		if(jwt!=null) {
 			try {
 				String email=JwtProvider.getEmailFromJwtToken(jwt);

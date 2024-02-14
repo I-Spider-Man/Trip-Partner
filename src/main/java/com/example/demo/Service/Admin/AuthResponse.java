@@ -1,4 +1,4 @@
-package com.example.demo.Service.UserServices;
+package com.example.demo.Service.Admin;
 
 public class AuthResponse {
 	private String token;

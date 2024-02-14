@@ -14,7 +14,8 @@ public class TouristSpot {
     private String location;
     private String description;
     private Integer peopleCount=0;
-    private String spotUrl;
+
+    private String spotPicture;
 
     @Override
     public String toString() {
@@ -23,9 +24,26 @@ public class TouristSpot {
                 ", spotName='" + spotName + '\'' +
                 ", location='" + location + '\'' +
                 ", description='" + description + '\'' +
-                ", peopleCount=" + peopleCount + '\'' +
-                ", spotUrl=" +spotUrl +
+                ", peopleCount=" + peopleCount +
+                ", spotPicture='" + spotPicture + '\'' +
                 '}';
+    }
+
+    public String getSpotPicture() {
+        return spotPicture;
+    }
+
+    public void setSpotPicture(String spotPicture) {
+        this.spotPicture = spotPicture;
+    }
+
+    public TouristSpot(Integer spotId, String spotName, String location, String description, Integer peopleCount, String spotPicture) {
+        this.spotId = spotId;
+        this.spotName = spotName;
+        this.location = location;
+        this.description = description;
+        this.peopleCount = peopleCount;
+        this.spotPicture = spotPicture;
     }
 
     public Integer getPeopleCount() {
@@ -40,21 +58,7 @@ public class TouristSpot {
         this.peopleCount -= peopleCount;
     }
 
-
-    
-
-    public TouristSpot(Integer spotId, String spotName, String location, String description, Integer peopleCount,
-			String spotUrl) {
-		super();
-		this.spotId = spotId;
-		this.spotName = spotName;
-		this.location = location;
-		this.description = description;
-		this.peopleCount = peopleCount;
-		this.spotUrl = spotUrl;
-	}
-
-	public TouristSpot() {
+    public TouristSpot() {
     }
 
     public Integer getSpotId() {
@@ -88,14 +92,6 @@ public class TouristSpot {
     public void setDescription(String description) {
         this.description = description;
     }
-
-	public String getSpotUrl() {
-		return spotUrl;
-	}
-
-	public void setSpotUrl(String spotUrl) {
-		this.spotUrl = spotUrl;
-	}
 
 
 }

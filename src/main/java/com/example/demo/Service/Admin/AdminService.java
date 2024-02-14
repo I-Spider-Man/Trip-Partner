@@ -1,22 +1,23 @@
 package com.example.demo.Service.Admin;
 
 import com.example.demo.Model.*;
-import com.example.demo.Service.Organizer.OrganizerService;
-import com.example.demo.Service.TouristSpot.TouristSpotService;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.jws.soap.SOAPBinding;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.servlet.http.Part;
+import com.example.demo.Service.Admin.AuthResponse;
+import com.example.demo.Service.Admin.LoginRequest;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Optional;
 
 public interface AdminService {
     String addManyUsers(List<User> users);
-    String addEvent(Event newEvent);
+    ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) throws IOException;
     String addAllEvents(List<Event> events);
-    String addSpot(TouristSpot spot);
+    ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture) throws IOException;
     String addAllSpots(List<TouristSpot> spots);
+//    ResponseEntity<String> addadmin(User user);
     List<Participant> getAllParticipant();
     List<Participant> getAllBusyParticipants();
     List<Participant> getAllFreeParticipants();
@@ -39,7 +40,7 @@ public interface AdminService {
     String removeParticipantById(Integer participantId);
     String removeGroupById(Integer groupId);
     String removeEventById(Integer eventId);
-    String removeTouristSpotById(Integer spotId);
+    ResponseEntity<String> removeTouristSpotById(Integer spotId);
     String removeOrganizerById(Integer organizerId);
     String removeAllInActiveEvents();
 
@@ -49,4 +50,10 @@ public interface AdminService {
     Event getEventById(Integer eventId);
     TouristSpot getSpotById(Integer spotId);
     Organizer getOrganizerById(Integer organizerId);
+    
+    
+	AuthResponse addUser(User user) throws Exception;
+	AuthResponse sigin(LoginRequest LoginRequest);
+	User findUserByJwt(String jwt);
+	
 }

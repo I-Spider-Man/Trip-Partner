@@ -2,10 +2,8 @@ package com.example.demo.Model;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 @Entity
 public class Event {
 	@Id
@@ -18,7 +16,19 @@ public class Event {
     private String description;
     private EventStatus eventStatus=EventStatus.Active;
     private Integer peopleCount=0;
-    private String eventUrl;
+    private String eventPicture;
+
+    public void setPeopleCount(Integer peopleCount) {
+        this.peopleCount = peopleCount;
+    }
+
+    public String getEventPicture() {
+        return eventPicture;
+    }
+
+    public void setEventPicture(String eventPicture) {
+        this.eventPicture = eventPicture;
+    }
 
     @Override
     public String toString() {
@@ -31,7 +41,20 @@ public class Event {
                 ", description='" + description + '\'' +
                 ", eventStatus=" + eventStatus +
                 ", peopleCount=" + peopleCount +
+                ", eventPicture='" + eventPicture + '\'' +
                 '}';
+    }
+
+    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount, String eventPicture) {
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.eventStatus = eventStatus;
+        this.peopleCount = peopleCount;
+        this.eventPicture = eventPicture;
     }
 
     public Integer getPeopleCount() {
@@ -45,23 +68,7 @@ public class Event {
         this.peopleCount -= peopleCount;
     }
 
-   
-
-    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate,
-			String description, EventStatus eventStatus, Integer peopleCount, String eventUrl) {
-		super();
-		this.eventId = eventId;
-		this.eventName = eventName;
-		this.location = location;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.description = description;
-		this.eventStatus = eventStatus;
-		this.peopleCount = peopleCount;
-		this.eventUrl = eventUrl;
-	}
-
-	public EventStatus getEventStatus() {
+    public EventStatus getEventStatus() {
         return eventStatus;
     }
 
@@ -119,13 +126,5 @@ public class Event {
     public void setDescription(String description) {
         this.description = description;
     }
-
-	public String getEventUrl() {
-		return eventUrl;
-	}
-
-	public void setEventUrl(String eventUrl) {
-		this.eventUrl = eventUrl;
-	}
 
 }

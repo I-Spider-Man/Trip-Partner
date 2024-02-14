@@ -82,7 +82,7 @@ public class OrganizerServiceImpl implements OrganizerService{
                     return new ResponseEntity<>(newGroup, HttpStatus.CREATED);
                 }
                 else {
-                    return new ResponseEntity<>("organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId()),HttpStatus.CONFLICT);//;
+                    return new ResponseEntity<>("organizer already organizing "+groupService.getGroupByOrganizerId(organizer.get().getOrganizerId()).getGroupName(),HttpStatus.CONFLICT);//;
                 }
             }
             else {
@@ -115,7 +115,7 @@ public class OrganizerServiceImpl implements OrganizerService{
             Optional<Group> group=groupRepository.findByOrganizerId(organizer.get().getOrganizerId());
             group.ifPresent(value -> {
                 value.setGroupStatus(GroupStatus.InActive);
-                if(value.getEventName()!=null){
+                if(!value.getEventName().isEmpty()){
                     Optional<Event> event=eventRepository.findByEventName(value.getEventName());
                     event.get().decreasePeopleCount(value.getParticipantsLimit());
                     eventRepository.save(event.get());
