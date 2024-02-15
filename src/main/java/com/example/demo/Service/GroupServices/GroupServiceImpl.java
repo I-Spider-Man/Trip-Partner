@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
@@ -145,11 +146,14 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> getAllGroupBySpotName(String spotName) {
-		return grpRepo.findAllBySpotName(spotName);
+		List<Group> activeGroup=grpRepo.findAllByGroupStatus(GroupStatus.Active);
+		return activeGroup.stream()
+				.filter(group -> group.getSpotName().equals(spotName)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Group> getAllGroupByEventName(String eventName) {
-		return grpRepo.findAllByEventName(eventName);
+		List<Group> activeGroup=grpRepo.findAllByGroupStatus(GroupStatus.Active);
+		 return activeGroup.stream().filter(group -> group.getEventName().equals(eventName)).collect(Collectors.toList());
 	}
 }
