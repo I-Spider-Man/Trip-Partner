@@ -93,6 +93,7 @@ public class ParticipantServiceImpl implements ParticipantService{
                         participantRepo.save(newParticipant);
                         Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
                         grp.get().participantAdded(grp.get().getParticipantsCount());
+                        grp.get().setGroupStatus(grp.get().getParticipantsLimit());
                         userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
                         userExtraDetailsRepostiory.save(userExtraDetails.get());
                         grpRepo.save(grp.get());
@@ -115,6 +116,7 @@ public class ParticipantServiceImpl implements ParticipantService{
                     }
                 } else {
                     grp.get().participantAdded(grp.get().getParticipantsCount());
+                    grp.get().setGroupStatus(grp.get().getParticipantsLimit());
                     userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
                     userExtraDetailsRepostiory.save(userExtraDetails.get());
                     grpRepo.save(grp.get());
