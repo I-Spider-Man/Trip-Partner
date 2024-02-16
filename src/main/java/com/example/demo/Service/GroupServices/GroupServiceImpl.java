@@ -133,7 +133,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Group getActiveGroupById(Integer grpId) {
-		Optional<Group> group=grpRepo.findAllByGroupStatus(GroupStatus.Active).stream().filter(group1 -> Objects.equals(group1.getGroupId(), grpId)).findAny();
+		Optional<Group> group=grpRepo.findById(grpId);
 		 return group.orElse(null);
 	}
 

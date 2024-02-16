@@ -91,10 +91,11 @@ public class Group {
 	public GroupStatus getGroupStatus() {
 		return groupStatus;
 	}
-
-	public void setGroupStatus(GroupStatus groupStatus) {
-		this.groupStatus = groupStatus;
-		if(Objects.equals(this.participantsCount, this.participantsLimit)){
+	public void setGroupStatus(GroupStatus status) {
+		this.groupStatus=status;
+	}
+	public void setGroupStatus(Integer participantsLimit) {
+		if(this.participantsCount<=participantsLimit){
 			this.groupStatus=GroupStatus.Full;
 		}
 	}
