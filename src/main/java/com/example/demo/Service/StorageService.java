@@ -9,14 +9,12 @@ import com.example.demo.Repository.SpotImageRepository;
 import com.example.demo.Repository.UserImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 @Service
 public class StorageService {
     @Autowired
@@ -29,9 +27,8 @@ public class StorageService {
 
         Optional<UserImages> userImages = userImageRepository.findByUserId(userId);
 
-        if (userImages.isPresent() && userImages.get().getUserImages() != null && userImages.get().getUserImages().getPostsList() != null) {
-
-            userImages.get().getUserImages().getPostsList().removeIf(p -> Arrays.equals(p.getPost(), post));
+        if (userImages.isPresent() && userImages.get().getPostsList() != null) {
+            userImages.get().getPostsList().removeIf(p -> Arrays.equals(p.getPost(), post));
             userImageRepository.save(userImages.get());
             return "post deleted";
         } else {
@@ -43,10 +40,10 @@ public class StorageService {
 
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
         if(userImages.isPresent()){
-            UserImages.Images.Posts posts=new UserImages.Images.Posts();
+            UserImages.Posts posts=new UserImages.Posts();
+            posts.setDescription(description);
             posts.setPost(post.getBytes());
-            posts.setDiscription(description);
-            userImages.get().getUserImages().getPostsList().add(posts);
+            userImages.get().getPostsList().add(posts);
             userImageRepository.save(userImages.get());
             return new ResponseEntity<>("post uploaded successfully", HttpStatus.OK);
         }else {
@@ -65,10 +62,8 @@ public class StorageService {
         else{
             EventPicture eventPicture1=new EventPicture();
             EventPicture.EventPictures eventPictures=new EventPicture.EventPictures(eventImage);
-            List<EventPicture.EventPictures> eventPicturesList=new ArrayList<>();
-            eventPicturesList.add(eventPictures);
             eventPicture1.setEventId(eventId);
-            eventPicture1.setEventPictures(eventPicturesList);
+            eventPicture1.setEventPictures(eventPictures);
             eventImageRepository.save(eventPicture1);
             return eventPicture1.getId();
         }
@@ -95,26 +90,12 @@ public class StorageService {
         }
     }
 
-    public String addUserProfile(Integer userId,MultipartFile file) throws IOException {
+    public void addUserProfile(Integer userId,MultipartFile file) throws IOException {
         byte[] userProfile= file.getBytes();
-        byte[] empty=new byte[0];
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
         if(userImages.isPresent()){
-            userImages.get().getUserImages().setProfileImage(userProfile);
+            userImages.get().setProfile(userProfile);
             userImageRepository.save(userImages.get());
-            return userImages.get().getId();
-        }else{
-            UserImages newUserImages=new UserImages();
-            UserImages.Images.Posts posts=new UserImages.Images.Posts(empty,"");
-            List<UserImages.Images.Posts> userPost=new ArrayList<>();
-            userPost.add(posts);
-            UserImages.Images images=new UserImages.Images();
-            images.setPostsList(userPost);
-            newUserImages.setUserId(userId);
-            newUserImages.setUserImages(images);
-            newUserImages.getUserImages().setProfileImage(userProfile);
-            userImageRepository.save(newUserImages);
-            return newUserImages.getId();
         }
     }
 
@@ -134,19 +115,18 @@ public class StorageService {
     }
     public String getUserProfile(Integer userId){
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
-        return userImages.map(images -> Base64.getEncoder().encodeToString(images.getUserImages().getProfileImage())).orElse(null);
+        return userImages.map(images -> Base64.getEncoder().encodeToString(images.getProfile())).orElse(null);
     }
     public List<UserImageResponse> getUserPosts(Integer userId){
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
         List<UserImageResponse> userImageResponses=new ArrayList<>();
-        if(userImages.isPresent()){
-            userImages.get().getUserImages().getPostsList().forEach(posts ->
-                    {   UserImageResponse userImageResponse=new UserImageResponse();
-                        userImageResponse.setPost(Base64.getEncoder().encodeToString(posts.getPost()));
-                        userImageResponse.setDescription(posts.getDiscription());
-                        userImageResponses.add(userImageResponse);
-                    });
-        }
+        userImages.ifPresent(images -> images.getPostsList().forEach(posts ->
+        {
+            UserImageResponse userImageResponse = new UserImageResponse();
+            userImageResponse.setPost(Base64.getEncoder().encodeToString(posts.getPost()));
+            userImageResponse.setDescription(posts.getDescription());
+            userImageResponses.add(userImageResponse);
+        }));
         return userImageResponses;
     }
     public void deleteSpotImage(Integer spotId){

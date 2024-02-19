@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.Group;
 import com.example.demo.Model.Participant;
+import com.example.demo.Model.ParticipantRating;
 import com.example.demo.Service.ParticipantServices.ParticipantService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.Part;
@@ -24,6 +25,14 @@ public class ParticipantController {
     public List<Group> allGroups(@PathVariable Integer userId){
 
         return participantService.getAllParticipatedGroups(userId);
+    }
+    @PostMapping("/rating/{participantId}")
+    public void addRating(@PathVariable Integer participantId, @RequestBody ParticipantRating.Ratings ratings){
+        participantService.setRating(participantId,ratings);
+    }
+    @GetMapping("/rating/{participantId}")
+    public ParticipantRating getRating(@PathVariable Integer participantId){
+        return participantService.getRatings(participantId);
     }
     @GetMapping("/leaveGroupByParticipantId")
     public ResponseEntity<String> leaveGroupByParticipantId(@RequestParam(value = "participantId") Integer participantId,@RequestParam(value = "groupId") Integer groupId){

@@ -14,8 +14,8 @@ public class TouristSpot {
     private String location;
     private String description;
     private Integer peopleCount=0;
-
     private String spotPicture;
+    private String spotFeedback;
 
     @Override
     public String toString() {
@@ -26,7 +26,26 @@ public class TouristSpot {
                 ", description='" + description + '\'' +
                 ", peopleCount=" + peopleCount +
                 ", spotPicture='" + spotPicture + '\'' +
+                ", spotFeedback='" + spotFeedback + '\'' +
                 '}';
+    }
+
+    public String getSpotFeedback() {
+        return spotFeedback;
+    }
+
+    public void setSpotFeedback(String spotFeedback) {
+        this.spotFeedback = spotFeedback;
+    }
+
+    public TouristSpot(Integer spotId, String spotName, String location, String description, Integer peopleCount, String spotPicture, String spotFeedback) {
+        this.spotId = spotId;
+        this.spotName = spotName;
+        this.location = location;
+        this.description = description;
+        this.peopleCount = peopleCount;
+        this.spotPicture = spotPicture;
+        this.spotFeedback = spotFeedback;
     }
 
     public String getSpotPicture() {

@@ -4,6 +4,7 @@ import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class EventPicture {
     @Id
     private String id;
     private Integer eventId;
-    private List<EventPictures> eventPictures;
+    private List<EventPictures> eventPictures=new ArrayList<>(1);
     public static class EventPictures{
         private byte[] eventPicture;
 
@@ -70,10 +71,6 @@ public class EventPicture {
     }
     public void setEventPictures(EventPictures eventPictures) {
         this.eventPictures.add(eventPictures);
-    }
-
-    public void setEventPictures(List<EventPictures> eventPictures) {
-        this.eventPictures = eventPictures;
     }
 
     public EventPicture() {

@@ -1,6 +1,8 @@
 package com.example.demo.Model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -17,6 +19,7 @@ public class Event {
     private EventStatus eventStatus=EventStatus.Active;
     private Integer peopleCount=0;
     private String eventPicture;
+    private String eventFeedback;
 
     public void setPeopleCount(Integer peopleCount) {
         this.peopleCount = peopleCount;
@@ -28,6 +31,14 @@ public class Event {
 
     public void setEventPicture(String eventPicture) {
         this.eventPicture = eventPicture;
+    }
+
+    public Integer getPeopleCount() {
+        return peopleCount;
+    }
+
+    public void increasePeopleCount(Integer peopleCount) {
+        this.peopleCount += peopleCount;
     }
 
     @Override
@@ -42,10 +53,19 @@ public class Event {
                 ", eventStatus=" + eventStatus +
                 ", peopleCount=" + peopleCount +
                 ", eventPicture='" + eventPicture + '\'' +
+                ", eventFeedback='" + eventFeedback + '\'' +
                 '}';
     }
 
-    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount, String eventPicture) {
+    public String getEventFeedback() {
+        return eventFeedback;
+    }
+
+    public void setEventFeedback(String eventFeedback) {
+        this.eventFeedback = eventFeedback;
+    }
+
+    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount, String eventPicture, String eventFeedback) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.location = location;
@@ -55,15 +75,9 @@ public class Event {
         this.eventStatus = eventStatus;
         this.peopleCount = peopleCount;
         this.eventPicture = eventPicture;
+        this.eventFeedback = eventFeedback;
     }
 
-    public Integer getPeopleCount() {
-        return peopleCount;
-    }
-
-    public void increasePeopleCount(Integer peopleCount) {
-        this.peopleCount += peopleCount;
-    }
     public void decreasePeopleCount(Integer peopleCount) {
         this.peopleCount -= peopleCount;
     }

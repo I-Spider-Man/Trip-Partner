@@ -39,7 +39,29 @@ public class User {
 				", role=" + role +
 				", userPassword='" + userPassword + '\'' +
 				", userProfile='" + userProfile + '\'' +
+				", userExtraDetails='" + userExtraDetails + '\'' +
 				'}';
+	}
+
+	public String getUserExtraDetails() {
+		return userExtraDetails;
+	}
+
+	public void setUserExtraDetails(String userExtraDetails) {
+		this.userExtraDetails = userExtraDetails;
+	}
+
+	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, String userProfile, String userExtraDetails) {
+		this.userId = userId;
+		this.userName = userName;
+		this.userEmail = userEmail;
+		this.aboutUser = aboutUser;
+		this.gender = gender;
+		this.dateOfBirth = dateOfBirth;
+		this.role = role;
+		this.userPassword = userPassword;
+		this.userProfile = userProfile;
+		this.userExtraDetails = userExtraDetails;
 	}
 
 	public Integer getUserId() {
@@ -114,15 +136,4 @@ public class User {
 		this.userProfile = userProfile;
 	}
 
-	public User(Integer userId, String userName, String userEmail, String aboutUser, String gender, LocalDate dateOfBirth, Role role, String userPassword, String userProfile) {
-		this.userId = userId;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.aboutUser = aboutUser;
-		this.gender = gender;
-		this.dateOfBirth = dateOfBirth;
-		this.role = role;
-		this.userPassword = userPassword;
-		this.userProfile = userProfile;
-	}
 }

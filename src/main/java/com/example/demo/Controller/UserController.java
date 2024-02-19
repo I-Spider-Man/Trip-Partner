@@ -1,13 +1,11 @@
 package com.example.demo.Controller;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
-
-import com.amazonaws.util.Base64;
 import com.example.demo.Model.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Service.UserServices.UserService;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 @RestController
 @RequestMapping("/User")
@@ -128,7 +125,7 @@ public class UserController {
 	}
 	@PostMapping("/deletePost/{userId}")
 	public String deletePost(@PathVariable Integer userId,@RequestParam(value = "post") String post){
-		byte[] po= Base64.decode(post);
+		byte[] po= Base64.getDecoder().decode(post);
 		return storageService.deletePost(userId,po);
 	}
 	@PostMapping("/userPost/{userId}")

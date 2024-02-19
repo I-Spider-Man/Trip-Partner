@@ -42,6 +42,14 @@ public class EventSpotController {
     public ResponseEntity<Event> getEventByName(@PathVariable String eventName){
         return eventService.getEventByEventName(eventName);
     }
+    @PostMapping("/event/{eventId}/feedback")
+    public ResponseEntity<String> submitEventFeedBack(@PathVariable Integer eventId, @RequestBody EventFeedback.Feedback feedback){
+        return eventService.feedBackSubmission(eventId,feedback);
+    }
+    @GetMapping("/event/{eventId}/feedback")
+    public ResponseEntity<List<EventFeedback.Feedback>> eventFeedBack(@PathVariable Integer eventId){
+        return eventService.getAllFeedBackByEventId(eventId);
+    }
     @GetMapping("/activeEvents/{id}")
     public Event getEventById(@PathVariable Integer id){
         return eventService.getEventById(id);
@@ -49,6 +57,10 @@ public class EventSpotController {
     @GetMapping("/event/group/{eventName}")
     public List<Group> getGrpByEventName(@PathVariable String eventName){
         return groupService.getAllGroupByEventName(eventName);
+    }
+    @GetMapping("/spot/{spotId}/feedback")
+    public ResponseEntity<List<TouristSpotFeedback.Feedback>> getAllFeedBackOfSpot(@PathVariable Integer spotId){
+        return spotService.getAllFeedbackBySpotId(spotId);
     }
     @GetMapping("/event/pictureList/{eventId}")
     public List<String> getAllEventPictureById(@PathVariable Integer eventId){
@@ -73,6 +85,10 @@ public class EventSpotController {
     @PostMapping("/updateEventPicture")
     public void updateEventPicture(@RequestParam(value = "eventId") Integer eventId, @RequestParam(value = "picture") MultipartFile eventPicture) throws IOException {
         eventService.addEventPicture(eventId,eventPicture);
+    }
+    @PostMapping("/spot/{spotId}/feedback")
+    public ResponseEntity<String> getAllSpotFeedBack(@PathVariable Integer spotId, @RequestBody TouristSpotFeedback.Feedback feedback){
+        return spotService.submitFeedback(spotId,feedback);
     }
     @PostMapping("/updateSpotPicture")
     public void updateSpotPicture(@RequestParam(value = "spotId") Integer spotId, @RequestParam(value = "picture") MultipartFile spotPicture) throws IOException {

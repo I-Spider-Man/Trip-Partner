@@ -1,7 +1,5 @@
 package com.example.demo.Service.ParticipantServices;
 
-import com.amazonaws.Response;
-import com.amazonaws.services.apigateway.model.Op;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
@@ -25,6 +23,8 @@ public class ParticipantServiceImpl implements ParticipantService{
     private SMTP_mailService mailService;
     @Autowired
     private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
+    @Autowired
+    private ParticipantRatingRepository participantRatingRepository;
     @Autowired
     private Scheduling scheduling;
     @Autowired
@@ -55,10 +55,25 @@ public class ParticipantServiceImpl implements ParticipantService{
         return groupList;
     }
 
+    @Override
+    public void setRating(Integer participantId, ParticipantRating.Ratings ratings) {
+        Optional<ParticipantRating> rating =participantRatingRepository.findByParticipantId(participantId);
+        if(rating.isPresent()){
+            rating.get().setRatingsList(ratings);
+            participantRatingRepository.save(rating.get());
+        }
+    }
+
+
+    @Override
+    public ParticipantRating getRatings(Integer participantId) {
+        Optional<ParticipantRating> participantRating=participantRatingRepository.findByParticipantId(participantId);
+        return participantRating.orElse(null);
+    }
+
 
     @Override
     public List<Participant> getAllParticipants() {
-
         return (List<Participant>) participantRepo.findAll();
     }
 
@@ -86,14 +101,14 @@ public class ParticipantServiceImpl implements ParticipantService{
             if(!scheduling.getActiveOrganizerId().contains(newParticipant.getUserId())) {
                 if (participant.isPresent()) {
                     if (participant.get().getParticipantStatus() == UserStatus.Free) {
-                        newParticipant.setParticipantId(participant.get().getParticipantId());
-                        newParticipant.increaseParticipationCount(participant.get().getParticipationCount());
-                        newParticipant.setParticipantStatus(UserStatus.Busy);
+                        participant.get().setParticipantStatus(UserStatus.Busy);
+                        participant.get().setGroupId(newParticipant.getGroupId());
+                        participant.get().increaseParticipationCount();
+                        participantRepo.save(participant.get());
 
-                        participantRepo.save(newParticipant);
                         Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
                         grp.get().participantAdded(grp.get().getParticipantsCount());
-                        grp.get().setGroupStatus(grp.get().getParticipantsLimit());
+                        grp.get().setGroupStatusByParticipantsLimit(grp.get().getParticipantsLimit());
                         userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
                         userExtraDetailsRepostiory.save(userExtraDetails.get());
                         grpRepo.save(grp.get());
@@ -116,12 +131,17 @@ public class ParticipantServiceImpl implements ParticipantService{
                     }
                 } else {
                     grp.get().participantAdded(grp.get().getParticipantsCount());
-                    grp.get().setGroupStatus(grp.get().getParticipantsLimit());
-                    userExtraDetails.get().getParticipatedList().setParticipatedGroupId(grp.get().getGroupId());
+                    grp.get().setGroupStatusByParticipantsLimit(grp.get().getParticipantsLimit());
+                    userExtraDetails.ifPresent(value->value.getParticipatedList().setParticipatedGroupId(grp.get().getGroupId()));
                     userExtraDetailsRepostiory.save(userExtraDetails.get());
                     grpRepo.save(grp.get());
                     Optional<User> organizer=userRepository.findById(organizerRepository.findById(grp.get().getOrganizerId()).get().getUserId());
-                    newParticipant.increaseParticipationCount(newParticipant.getParticipationCount());
+                    newParticipant.increaseParticipationCount();
+                    participantRepo.save(newParticipant);
+                    ParticipantRating participantRating=new ParticipantRating();
+                    participantRating.setParticipantId(newParticipant.getParticipantId());
+                    participantRatingRepository.save(participantRating);
+                    newParticipant.setParticipantRating(participantRating.getId());
                     participantRepo.save(newParticipant);
                     try {
                         String Subject="Group Joining";
@@ -150,6 +170,8 @@ public class ParticipantServiceImpl implements ParticipantService{
         Optional<Participant> participant=participantRepo.findById(participantId);
         if(participant.isPresent()){
             Optional<Group> grp=grpRepo.findById(participant.get().getGroupId());
+            Optional<ParticipantRating> participantRating=participantRatingRepository.findByParticipantId(participantId);
+            participantRating.ifPresent(value->participantRatingRepository.delete(value));
             if(grp.isPresent()) {
                 grp.get().participantRemoved(grp.get().getParticipantsCount());
                 grpRepo.save(grp.get());

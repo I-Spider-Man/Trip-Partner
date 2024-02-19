@@ -7,12 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.amazonaws.services.apigateway.model.Op;
 import com.example.demo.Model.*;
-import com.example.demo.Repository.OrganizerRepository;
-import com.example.demo.Repository.ParticipantRepository;
-import com.example.demo.Repository.UserExtraDetailsRepostiory;
+import com.example.demo.Repository.*;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
 import jakarta.mail.MessagingException;
@@ -22,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.Repository.UserRepository;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
@@ -32,6 +27,8 @@ import javax.swing.text.html.Option;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
+	@Autowired
+	private UserImageRepository userImageRepository;
 	@Autowired
 	private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
 	@Autowired
@@ -89,9 +86,7 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
-			String profileId=storageService.addUserProfile(userId,file);
-			user.get().setUserProfile(profileId);
-			userRepo.save(user.get());
+			storageService.addUserProfile(userId,file);
 			return new ResponseEntity<>("User profile updated",HttpStatus.OK);
 		}else {
 			return new ResponseEntity<>("userId not found",HttpStatus.NOT_FOUND);
@@ -266,8 +261,14 @@ public class UserServiceImpl implements UserService {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("User mail already exists");
 		} else {
 			userRepo.save(newUser);
+			UserImages userImages=new UserImages();
+			userImages.setUserId(newUser.getUserId());
+			userImageRepository.save(userImages);
 			UserExtraDetails extraDetails = getUserExtraDetails(newUser);
 			userExtraDetailsRepostiory.save(extraDetails);
+			newUser.setUserExtraDetails(extraDetails.getId());
+			newUser.setUserProfile(userImages.getId());
+			userRepo.save(newUser);
 			try {
 				String mail = newUser.getUserEmail();
 				String subject = "Registration";
@@ -308,6 +309,10 @@ public class UserServiceImpl implements UserService {
 		if(user.isPresent()){
 			Optional<Organizer> organizer=organizerRepository.findByUserId(userId);
 			Optional<Participant> participant=participantRepository.findByUserId(userId);
+			Optional<UserExtraDetails> extraDetails=userExtraDetailsRepostiory.findByUserId(userId);
+			Optional<UserImages> images=userImageRepository.findByUserId(userId);
+			extraDetails.ifPresent(value -> userExtraDetailsRepostiory.delete(value));
+			images.ifPresent(value->userImageRepository.delete(value));
             organizer.ifPresent(value -> organizerRepository.delete(value));
             participant.ifPresent(value -> participantRepository.delete((value)));
 			userExtraDetailsRepostiory.deleteByUserId(userId);

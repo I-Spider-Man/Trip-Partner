@@ -94,7 +94,7 @@ public class Group {
 	public void setGroupStatus(GroupStatus status) {
 		this.groupStatus=status;
 	}
-	public void setGroupStatus(Integer participantsLimit) {
+	public void setGroupStatusByParticipantsLimit(Integer participantsLimit) {
 		if(this.participantsCount<=participantsLimit){
 			this.groupStatus=GroupStatus.Full;
 		}

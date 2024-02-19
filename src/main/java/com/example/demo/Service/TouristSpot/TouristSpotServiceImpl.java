@@ -1,10 +1,8 @@
 package com.example.demo.Service.TouristSpot;
 
-import com.amazonaws.services.apigateway.model.Op;
-import com.amazonaws.services.dynamodbv2.xspec.S;
-import com.example.demo.Model.Event;
-import com.example.demo.Model.SpotPicture;
 import com.example.demo.Model.TouristSpot;
+import com.example.demo.Model.TouristSpotFeedback;
+import com.example.demo.Repository.SpotFeedbackRepository;
 import com.example.demo.Repository.SpotImageRepository;
 import com.example.demo.Repository.TouristSpotRepository;
 import com.example.demo.Service.StorageService;
@@ -28,12 +26,31 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
     @Autowired
     private TouristSpotRepository touristSpotRepository;
     @Autowired
+    private SpotFeedbackRepository spotFeedbackRepository;
+    @Autowired
     private SpotImageRepository spotImageRepository;
     @Autowired
     private StorageService storageService;
     @Override
     public List<TouristSpot> getAllSpots() {
         return (List<TouristSpot>) touristSpotRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity<List<TouristSpotFeedback.Feedback>> getAllFeedbackBySpotId(Integer spotId) {
+        Optional<TouristSpotFeedback> touristSpotFeedback=spotFeedbackRepository.findBySpotId(spotId);
+        return touristSpotFeedback.map(spotFeedback -> new ResponseEntity<>(spotFeedback.getFeedbackList(), HttpStatus.OK)).orElse(null);
+    }
+
+    @Override
+    public ResponseEntity<String> submitFeedback(Integer spotId, TouristSpotFeedback.Feedback feedback) {
+        Optional<TouristSpotFeedback> touristSpotFeedback=spotFeedbackRepository.findBySpotId(spotId);
+        if(touristSpotFeedback.isPresent()){
+            touristSpotFeedback.get().setFeedbackList(feedback);
+            spotFeedbackRepository.save(touristSpotFeedback.get());
+            return new ResponseEntity<>("Feed Back Submitted.",HttpStatus.OK);
+        }
+        return null;
     }
 
     @Override
@@ -51,11 +68,15 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
             touristSpotRepository.save(newSpot);
             String PictureId=storageService.addSpotImage(newSpot.getSpotId(),spotPicture);
             newSpot.setSpotPicture(PictureId);
+            TouristSpotFeedback feedback=new TouristSpotFeedback();
+            feedback.setSpotId(newSpot.getSpotId());
+            spotFeedbackRepository.save(feedback);
+            newSpot.setSpotFeedback(feedback.getId());
             touristSpotRepository.save(newSpot);
             return new ResponseEntity<>("New spot added",HttpStatus.CREATED);
         }
     }
-
+    
     @Override
     public ResponseEntity<TouristSpot> getSpotBySpotName(String spotName) {
         Optional<TouristSpot> spot=touristSpotRepository.findBySpotName(spotName);
@@ -87,6 +108,7 @@ public class TouristSpotServiceImpl implements TouristSpotService,SpotPicturesSe
         Optional<TouristSpot> spot=touristSpotRepository.findById(spotId);
         if(spot.isPresent()){
             storageService.deleteSpotImage(spotId);
+            spotFeedbackRepository.deleteBySpotId(spotId);
             touristSpotRepository.deleteById(spotId);
             return ResponseEntity.ok().body("Tourist spot with id "+spotId+" is removed successfully.");
         }

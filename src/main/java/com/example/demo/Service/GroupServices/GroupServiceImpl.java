@@ -62,12 +62,10 @@ public class GroupServiceImpl implements GroupService {
 			Optional<Organizer> organizer = organizerRepository.findById(newGroup.getOrganizerId());
 			Optional<UserExtraDetails> userExtraDetails = userExtraDetailsRepostiory.findByUserId(organizer.get().getUserId());
 			userExtraDetails.get().getOrganizedList().setOrganizedGroupId(newGroup.getGroupId());
-			organizer.get().increseOrganizedCount(organizer.get().getOrganizedCount());
+			organizer.get().increseOrganizedCount();
 			organizer.get().setGroupId(newGroup.getGroupId());
-			GroupMessage.Message message = new GroupMessage.Message(0, "");
-			List<GroupMessage.Message> ml = new ArrayList<>();
-			ml.add(message);
-			GroupMessage groupMessage = new GroupMessage(newGroup.getGroupId(), ml);
+			GroupMessage groupMessage = new GroupMessage();
+			groupMessage.setGroupId(newGroup.getGroupId());
 			messagesRepository.save(groupMessage);
 			organizerRepository.save(organizer.get());
 			userExtraDetailsRepostiory.save(userExtraDetails.get());

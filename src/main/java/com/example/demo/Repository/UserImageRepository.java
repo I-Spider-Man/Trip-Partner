@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface UserImageRepository extends MongoRepository<UserImages,String> {
     Optional<UserImages> findByUserId(Integer userId);
-    void deletePostByUserIdAndUserImagesPostsListPost(byte[] post);
 }

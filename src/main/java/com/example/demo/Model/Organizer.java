@@ -12,6 +12,7 @@ public class Organizer {
     private UserStatus organizerStatus=UserStatus.Busy;
     private Integer groupId;
     private Integer organizedCount=0;
+    private String organizerRating;
 
     @Override
     public String toString() {
@@ -21,8 +22,27 @@ public class Organizer {
                 ", organizerStatus=" + organizerStatus +
                 ", groupId=" + groupId +
                 ", organizedCount=" + organizedCount +
+                ", organizerRating='" + organizerRating + '\'' +
                 ", role=" + role +
                 '}';
+    }
+
+    public String getOrganizerRating() {
+        return organizerRating;
+    }
+
+    public void setOrganizerRating(String organizerRating) {
+        this.organizerRating = organizerRating;
+    }
+
+    public Organizer(Integer organizerId, Integer userId, UserStatus organizerStatus, Integer groupId, Integer organizedCount, String organizerRating, Role role) {
+        this.organizerId = organizerId;
+        this.userId = userId;
+        this.organizerStatus = organizerStatus;
+        this.groupId = groupId;
+        this.organizedCount = organizedCount;
+        this.organizerRating = organizerRating;
+        this.role = role;
     }
 
     public Integer getGroupId() {
@@ -31,15 +51,6 @@ public class Organizer {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
-    }
-
-    public Organizer(Integer organizerId, Integer userId, UserStatus organizerStatus, Integer groupId, Integer organizedCount, Role role) {
-        this.organizerId = organizerId;
-        this.userId = userId;
-        this.organizerStatus = organizerStatus;
-        this.groupId = groupId;
-        this.organizedCount = organizedCount;
-        this.role = role;
     }
 
     private Role role=Role.Organizer_Role;
@@ -55,8 +66,8 @@ public class Organizer {
     public Organizer() {
     }
 
-    public void increseOrganizedCount(Integer organizedCount) {
-        this.organizedCount = organizedCount + 1;
+    public void increseOrganizedCount() {
+        this.organizedCount = this.organizedCount + 1;
     }
 
     public Integer getOrganizerId() {

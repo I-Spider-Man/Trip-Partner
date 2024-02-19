@@ -3,6 +3,7 @@ package com.example.demo.Model;
 import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +12,44 @@ public class UserImages {
     @Id
     private String id;
     private Integer userId;
-    private Images userImages;
+    private byte[] profile;
+    private List<Posts> postsList=new ArrayList<>(1);
+    public static class Posts{
+        private byte[] post;
+        private String description;
+
+        public Posts() {
+        }
+
+        @Override
+        public String toString() {
+            return "Posts{" +
+                    "post=" + Arrays.toString(post) +
+                    ", description='" + description + '\'' +
+                    '}';
+        }
+
+        public byte[] getPost() {
+            return post;
+        }
+
+        public void setPost(byte[] post) {
+            this.post = post;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Posts(byte[] post, String description) {
+            this.post = post;
+            this.description = description;
+        }
+    }
 
     public UserImages() {
     }
@@ -21,7 +59,8 @@ public class UserImages {
         return "UserImages{" +
                 "id='" + id + '\'' +
                 ", userId=" + userId +
-                ", userImages=" + userImages +
+                ", profile=" + Arrays.toString(profile) +
+                ", postsList=" + postsList +
                 '}';
     }
 
@@ -41,93 +80,26 @@ public class UserImages {
         this.userId = userId;
     }
 
-    public Images getUserImages() {
-        return userImages;
+    public byte[] getProfile() {
+        return profile;
     }
 
-    public void setUserImages(Images userImages) {
-        this.userImages = userImages;
+    public void setProfile(byte[] profile) {
+        this.profile = profile;
     }
 
-    public UserImages(String id, Integer userId, Images userImages) {
+    public List<Posts> getPostsList() {
+        return postsList;
+    }
+
+    public void setPostsList(List<Posts> postsList) {
+        this.postsList = postsList;
+    }
+
+    public UserImages(String id, Integer userId, byte[] profile, List<Posts> postsList) {
         this.id = id;
         this.userId = userId;
-        this.userImages = userImages;
-    }
-
-    public static class Images{
-        private byte[] profileImage;
-        private List<Posts> postsList;
-
-        public Images() {
-        }
-
-        @Override
-        public String toString() {
-            return "Images{" +
-                    "profileImage=" + Arrays.toString(profileImage) +
-                    ", postsList=" + postsList +
-                    '}';
-        }
-
-        public byte[] getProfileImage() {
-            return profileImage;
-        }
-
-        public void setProfileImage(byte[] profileImage) {
-            this.profileImage = profileImage;
-        }
-
-        public List<Posts> getPostsList() {
-            return postsList;
-        }
-        public void addPost(Posts post){
-            this.postsList.add(post);
-        }
-        public void setPostsList(List<Posts> postsList) {
-            this.postsList = postsList;
-        }
-
-        public Images(byte[] profileImage, List<Posts> postsList) {
-            this.profileImage = profileImage;
-            this.postsList = postsList;
-        }
-
-        public static class Posts{
-            private byte[] post;
-            private String discription;
-
-            public Posts() {
-            }
-
-            @Override
-            public String toString() {
-                return "Posts{" +
-                        "post=" + Arrays.toString(post) +
-                        ", distription='" + discription + '\'' +
-                        '}';
-            }
-
-            public byte[] getPost() {
-                return post;
-            }
-
-            public void setPost(byte[] post) {
-                this.post = post;
-            }
-
-            public String getDiscription() {
-                return discription;
-            }
-
-            public void setDiscription(String discription) {
-                this.discription = discription;
-            }
-
-            public Posts(byte[] post, String discription) {
-                this.post = post;
-                this.discription = discription;
-            }
-        }
+        this.profile = profile;
+        this.postsList = postsList;
     }
 }

@@ -2,8 +2,10 @@ package com.example.demo.Service.Event;
 
 
 import com.example.demo.Model.Event;
+import com.example.demo.Model.EventFeedback;
 import com.example.demo.Model.EventPicture;
 import com.example.demo.Model.EventStatus;
+import com.example.demo.Repository.EventFeedBackRepository;
 import com.example.demo.Repository.EventImageRepository;
 import com.example.demo.Repository.EventRepository;
 import com.example.demo.Service.Scheduling;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +27,8 @@ public class EventServiceImpl implements EventService,EventPictureService{
     private EventRepository eventRepository;
     @Autowired
     private EventImageRepository eventImageRepository;
+    @Autowired
+    private EventFeedBackRepository eventFeedBackRepository;
     @Autowired
     private Scheduling scheduling;
     @Autowired
@@ -56,8 +59,12 @@ public class EventServiceImpl implements EventService,EventPictureService{
             if(event.get().getEventStatus() == EventStatus.InActive){
                 eventRepository.save(newEvent);
                 String pictureId=storageService.addEventImage(newEvent.getEventId(),eventImage);
-                event.get().setEventPicture(pictureId);
-                eventRepository.save(event.get());
+                newEvent.setEventPicture(pictureId);
+                EventFeedback feedback=new EventFeedback();
+                feedback.setEventId(newEvent.getEventId());
+                eventFeedBackRepository.save(feedback);
+                newEvent.setEventFeedback(feedback.getId());
+                eventRepository.save(newEvent);
                 scheduling.addActiveEventId(newEvent.getEventId());
                 return new ResponseEntity<>("Event added successfully", HttpStatus.CREATED);
             }
@@ -69,6 +76,10 @@ public class EventServiceImpl implements EventService,EventPictureService{
             eventRepository.save(newEvent);
             String pictureId=storageService.addEventImage(newEvent.getEventId(),eventImage);
             newEvent.setEventPicture(pictureId);
+            EventFeedback feedback=new EventFeedback();
+            feedback.setEventId(newEvent.getEventId());
+            eventFeedBackRepository.save(feedback);
+            newEvent.setEventFeedback(feedback.getId());
             eventRepository.save(newEvent);
 
             scheduling.addActiveEventId(newEvent.getEventId());
@@ -88,6 +99,7 @@ public class EventServiceImpl implements EventService,EventPictureService{
         Optional<Event> event=eventRepository.findById(eventId);
         if(event.isPresent()){
             storageService.deleteEventImage(eventId);
+            eventFeedBackRepository.deleteByEventId(eventId);
             eventRepository.deleteById(eventId);
             return "Event "+event.get().getEventName()+" Removed Successfully";
         }else{
@@ -102,9 +114,26 @@ public class EventServiceImpl implements EventService,EventPictureService{
     }
 
     @Override
+    public ResponseEntity<String> feedBackSubmission(Integer eventId, EventFeedback.Feedback feedback) {
+        Optional<EventFeedback> feedback1=eventFeedBackRepository.findByEventId(eventId);
+        if(feedback1.isPresent()){
+            feedback1.get().setFeedbackList(feedback);
+            eventFeedBackRepository.save(feedback1.get());
+            return new ResponseEntity<>("feedBackSubmitted Successfully",HttpStatus.OK);
+        }
+        return new ResponseEntity<>("EventFeedBack not Found",HttpStatus.NOT_FOUND);
+    }
+
+    @Override
     public ResponseEntity<Event> getEventByEventName(String eventName) {
         Optional<Event> event=eventRepository.findByEventName(eventName);
         return new ResponseEntity<>(event.orElse(null),HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<EventFeedback.Feedback>> getAllFeedBackByEventId(Integer eventId) {
+        Optional<EventFeedback> eventFeedback=eventFeedBackRepository.findByEventId(eventId);
+        return eventFeedback.map(feedback -> new ResponseEntity<>(feedback.getFeedbackList(), HttpStatus.OK)).orElse(null);
     }
 
 //    @Override

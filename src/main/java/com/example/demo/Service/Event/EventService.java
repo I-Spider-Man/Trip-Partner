@@ -1,6 +1,7 @@
 package com.example.demo.Service.Event;
 
 import com.example.demo.Model.Event;
+import com.example.demo.Model.EventFeedback;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,5 +17,7 @@ public interface EventService {
     String addAllEvents(List<Event> events);
     String deleteEventById(Integer eventId);
     Event getEventById(Integer eventId);
+    ResponseEntity<String> feedBackSubmission(Integer eventId, EventFeedback.Feedback feedback);
     ResponseEntity<Event> getEventByEventName(String eventName);
+    ResponseEntity<List<EventFeedback.Feedback>> getAllFeedBackByEventId(Integer eventId);
 }

@@ -13,6 +13,7 @@ public class Participant {
     private Integer participationCount = 0;
     private UserStatus participantStatus =UserStatus.Busy;
     private Role role=Role.Participant_Role;
+    private String participantRating;
 
     @Override
     public String toString() {
@@ -23,7 +24,26 @@ public class Participant {
                 ", participationCount=" + participationCount +
                 ", participantStatus=" + participantStatus +
                 ", role=" + role +
+                ", participantRating='" + participantRating + '\'' +
                 '}';
+    }
+
+    public String getParticipantRating() {
+        return participantRating;
+    }
+
+    public void setParticipantRating(String participantRating) {
+        this.participantRating = participantRating;
+    }
+
+    public Participant(Integer participantId, Integer userId, Integer groupId, Integer participationCount, UserStatus participantStatus, Role role, String participantRating) {
+        this.participantId = participantId;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.participationCount = participationCount;
+        this.participantStatus = participantStatus;
+        this.role = role;
+        this.participantRating = participantRating;
     }
 
     public Role getRole() {
@@ -58,8 +78,8 @@ public class Participant {
         this.participationCount = participationCount;
     }
     public void decreaseParticipationCount(Integer participationCount){this.participationCount = participationCount-1;}
-    public void increaseParticipationCount(Integer participationCount) {
-        this.participationCount = participationCount + 1;
+    public void increaseParticipationCount() {
+        this.participationCount = this.participationCount + 1;
     }
 
     public UserStatus getParticipantStatus() {
@@ -81,12 +101,4 @@ public class Participant {
     public Participant() {
     }
 
-    public Participant(Integer participantId, Integer userId, Integer groupId, Integer participationCount, UserStatus participantStatus, Role role) {
-        this.participantId = participantId;
-        this.userId = userId;
-        this.groupId = groupId;
-        this.participationCount = participationCount;
-        this.participantStatus = participantStatus;
-        this.role = role;
-    }
 }

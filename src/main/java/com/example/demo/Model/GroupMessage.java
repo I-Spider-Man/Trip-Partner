@@ -4,6 +4,7 @@ import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,10 @@ public class GroupMessage {
     @Id
     private String id;
     private Integer groupId;
-    private List<Message> messages;
+    private List<Message> messages=new ArrayList<>(1);
+
+    public GroupMessage() {
+    }
 
     @Override
     public String toString() {
@@ -32,10 +36,6 @@ public class GroupMessage {
 
     public List<Message> getMessages() {
         return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
     }
 
     public GroupMessage(Integer groupId, List<Message> messages) {

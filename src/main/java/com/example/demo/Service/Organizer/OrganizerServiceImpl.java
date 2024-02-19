@@ -2,11 +2,8 @@ package com.example.demo.Service.Organizer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.amazonaws.services.route53domains.model.ReachabilityStatus;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
 import com.example.demo.Service.Scheduling;
@@ -27,6 +24,8 @@ public class OrganizerServiceImpl implements OrganizerService{
     private OrganizerRepository organizerRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrganizerRatingRepository organizerRatingRepository;
     @Autowired
     private Scheduling scheduling;
     @Autowired
@@ -67,10 +66,26 @@ public class OrganizerServiceImpl implements OrganizerService{
     }
 
     @Override
+    public OrganizerRating getOrganizerRatings(Integer organizerId) {
+        Optional<OrganizerRating> organizerRating=organizerRatingRepository.findByOrganizerId(organizerId);
+        return organizerRating.orElse(null);
+    }
+
+    @Override
+    public void addRatings(Integer organizerId, OrganizerRating.Ratings ratings) {
+        Optional<OrganizerRating> organizerRating=organizerRatingRepository.findByOrganizerId(organizerId);
+        if(organizerRating.isPresent()){
+            organizerRating.get().setRatingList(ratings);
+            organizerRatingRepository.save(organizerRating.get());
+        }
+    }
+
+    @Override
     public Organizer getOrganizerById(Integer organizerId) {
         Optional<Organizer> organizer=organizerRepository.findById(organizerId);
         return organizer.orElse(null);
     }
+
 
     @Override
     public Organizer getOrganizerByUserId(Integer userId) {
@@ -86,12 +101,10 @@ public class OrganizerServiceImpl implements OrganizerService{
         if(!scheduling.getActiveParticipantId().contains(newOrganizer.getUserId())){
             if(organizer.isPresent()){
                 if(organizer.get().getOrganizerStatus() == UserStatus.Free){
-                    newOrganizer.setOrganizerId(organizer.get().getOrganizerId());
-                    newOrganizer.setOrganizedCount(organizer.get().getOrganizedCount());
-                    newOrganizer.setOrganizerStatus(UserStatus.Busy);
+                    organizer.get().setOrganizerStatus(UserStatus.Busy);
                     organizerRepository.save(newOrganizer);
                     scheduling.addActiveOrganizerUserId(newOrganizer.getUserId());
-                    newGroup.setOrganizerId(newOrganizer.getOrganizerId());
+                    newGroup.setOrganizerId(organizer.get().getOrganizerId());
                     groupService.addGroup(newGroup);
                     try {
                         String Subject="Group Creation";
@@ -109,6 +122,11 @@ public class OrganizerServiceImpl implements OrganizerService{
             else {
 
                 //newOrganizer.increseOrganizedCount();
+                organizerRepository.save(newOrganizer);
+                OrganizerRating organizerRating=new OrganizerRating();
+                organizerRating.setOrganizerId(newOrganizer.getOrganizerId());
+                organizerRatingRepository.save(organizerRating);
+                newOrganizer.setOrganizerRating(organizerRating.getId());
                 organizerRepository.save(newOrganizer);
                 newGroup.setOrganizerId(newOrganizer.getOrganizerId());
                 groupService.addGroup(newGroup);
@@ -133,6 +151,8 @@ public class OrganizerServiceImpl implements OrganizerService{
         Optional<Organizer> organizer=organizerRepository.findById(organizerId);
         if(organizer.isPresent()){
             User Organizeruser=userService.getUserById(organizer.get().getUserId());
+            Optional<OrganizerRating> rating=organizerRatingRepository.findByOrganizerId(organizerId);
+            rating.ifPresent(value->organizerRatingRepository.delete(value));
             Optional<Group> group=groupRepository.findByOrganizerId(organizer.get().getOrganizerId());
             group.ifPresent(value -> {
                 value.setGroupStatus(GroupStatus.InActive);

@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.Model.OrganizerRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,14 @@ public class OrganizerController {
 		Organizer organizer=wrapper.getOrganizer();
 		Group group=wrapper.getGroup();
 		return organizerService.addOrganizer(organizer,group);
+	}
+	@PostMapping("/ratings/{organizerId}")
+	public void giveRatings(@PathVariable Integer organizerId, @RequestBody OrganizerRating.Ratings ratings){
+		organizerService.addRatings(organizerId,ratings);
+	}
+	@GetMapping("/ratings/{organizerId}")
+	public OrganizerRating organizerRating(@PathVariable Integer organizerId){
+		return organizerService.getOrganizerRatings(organizerId);
 	}
 	@GetMapping("/allGroupsOrganizedByOrganizer/{userId}")
 	public List<Group> allGroups(@PathVariable Integer userId){
