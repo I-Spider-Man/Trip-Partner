@@ -1,8 +1,6 @@
 package com.example.demo.Model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -12,7 +10,9 @@ public class Event {
 	@GeneratedValue
     private Integer eventId;
     private String eventName;
-    private String location;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id",referencedColumnName = "addressId")
+    private EventAddress location;
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
@@ -65,7 +65,7 @@ public class Event {
         this.eventFeedback = eventFeedback;
     }
 
-    public Event(Integer eventId, String eventName, String location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount, String eventPicture, String eventFeedback) {
+    public Event(Integer eventId, String eventName, EventAddress location, LocalDate startDate, LocalDate endDate, String description, EventStatus eventStatus, Integer peopleCount, String eventPicture, String eventFeedback) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.location = location;
@@ -109,11 +109,11 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public String getLocation() {
+    public EventAddress getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(EventAddress location) {
         this.location = location;
     }
 

@@ -115,7 +115,12 @@ public class StorageService {
     }
     public String getUserProfile(Integer userId){
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
-        return userImages.map(images -> Base64.getEncoder().encodeToString(images.getProfile())).orElse(null);
+        if(userImages.isPresent()){
+            if(userImages.get().getProfile()!=null){
+                return Base64.getEncoder().encodeToString(userImages.get().getProfile());
+            }
+        }
+        return null;
     }
     public List<UserImageResponse> getUserPosts(Integer userId){
         Optional<UserImages> userImages=userImageRepository.findByUserId(userId);
