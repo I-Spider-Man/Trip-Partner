@@ -6,6 +6,7 @@ import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.Event.EventServiceImpl;
 import com.example.demo.Service.GroupServices.GroupService;
 import com.example.demo.Service.StorageService;
+import com.example.demo.Service.Suggestions.SuggestionService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import com.example.demo.Service.TouristSpot.TouristSpotServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +28,8 @@ public class EventSpotController {
     private EventServiceImpl eventService;
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private SuggestionService suggestionService;
     @Autowired
     private GroupService groupService;
 
@@ -121,6 +125,22 @@ public class EventSpotController {
     @GetMapping("/PopularEvents")
     public List<Event> getAllPopularEvents(){
         return eventService.getAllPopularEvents();
+    }
+    @GetMapping("/nearByEventsForEvents/{eventId}")
+    public List<Event> getAllNearByEventsForEvents(@PathVariable Integer eventId){
+        return suggestionService.nearByEventsForEvents(eventId);
+    }
+    @GetMapping("/nearBySpotsForEvents/{eventId}")
+    public List<TouristSpot> getAllNearBySpotsForEvents(@PathVariable Integer eventId){
+        return suggestionService.nearByTouristSpotsForEvents(eventId);
+    }
+    @GetMapping("/nearByEventsForSpots/{spotId}")
+    public List<Event> getAllNearByEventsForSpot(@PathVariable Integer spotId){
+        return  suggestionService.nearByEventsForTouristSpot(spotId);
+    }
+    @GetMapping("/nearBySpotsForSpots/{spotId}")
+    public List<TouristSpot> getAllNearBySpotsForSpots(@PathVariable Integer spotId){
+        return suggestionService.nearByTouristSpotsForTouristSpot(spotId);
     }
 
 }
