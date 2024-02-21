@@ -1,6 +1,7 @@
 package com.example.demo.Service.Suggestions;
 
 import com.example.demo.Model.Event;
+import com.example.demo.Model.EventStatus;
 import com.example.demo.Model.TouristSpot;
 import com.example.demo.Repository.EventRepository;
 import com.example.demo.Repository.TouristSpotRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SuggestionServiceImpl implements  SuggestionService{
@@ -44,7 +46,9 @@ public class SuggestionServiceImpl implements  SuggestionService{
                 }
             }
         }
-        return suggestingEventList;
+        return suggestingEventList.stream()
+                .filter(event1 -> event1.getEventStatus().equals(EventStatus.Active) && !event1.getEventId().equals(eventId))
+                .toList();
     }
 
     @Override
@@ -104,7 +108,7 @@ public class SuggestionServiceImpl implements  SuggestionService{
                 }
             }
         }
-        return suggestingEventList;
+        return suggestingEventList.stream().filter(event -> event.getEventStatus().equals(EventStatus.Active)).toList();
     }
 
     @Override
@@ -134,6 +138,6 @@ public class SuggestionServiceImpl implements  SuggestionService{
                 }
             }
         }
-        return suggestionSpotList;
+        return suggestionSpotList.stream().filter(spot-> !spot.getSpotId().equals(spotId) ).toList();
     }
 }

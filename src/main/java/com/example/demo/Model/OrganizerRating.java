@@ -54,15 +54,6 @@ public class OrganizerRating {
     public OrganizerRating() {
     }
 
-    @Override
-    public String toString() {
-        return "OrganizerRating{" +
-                "id='" + id + '\'' +
-                ", organizerId=" + organizerId +
-                ", ratingsList=" + ratingsList +
-                '}';
-    }
-
     public String getId() {
         return id;
     }
@@ -90,12 +81,31 @@ public class OrganizerRating {
         this.ratingsList = ratingsList;
         updateRating();
     }
+    @Override
+    public String toString() {
+        return "OrganizerRating{" +
+                "id='" + id + '\'' +
+                ", organizerId=" + organizerId +
+                ", ratingsList=" + ratingsList +
+                ", rating=" + rating +
+                '}';
+    }
 
-    public OrganizerRating(String id, Integer organizerId, List<Ratings> ratingsList) {
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public OrganizerRating(String id, Integer organizerId, List<Ratings> ratingsList, double rating) {
         this.id = id;
         this.organizerId = organizerId;
         this.ratingsList = ratingsList;
+        this.rating = rating;
     }
+
     private void updateRating() {
         if (ratingsList.isEmpty()) {
             rating = 0.0; // Set rating to 0 if no ratings available

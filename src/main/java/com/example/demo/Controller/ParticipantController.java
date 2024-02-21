@@ -7,6 +7,7 @@ import com.example.demo.Service.ParticipantServices.ParticipantService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,14 @@ public class ParticipantController {
     @GetMapping("/leaveGroupByParticipantId")
     public ResponseEntity<String> leaveGroupByParticipantId(@RequestParam(value = "participantId") Integer participantId,@RequestParam(value = "groupId") Integer groupId){
         return participantService.leaveGroupByParticipantId(participantId,groupId);
+    }
+    @GetMapping("/userId/{userId}")
+    public Participant getParticipantByUserId(@PathVariable Integer userId){
+        return participantService.getParticipantByUserId(userId);
+    }
+    @GetMapping("/participantId/{participantId}")
+    public Participant getParticipantById(@PathVariable Integer participantId){
+        return participantService.getParticipantById(participantId);
     }
     @PostMapping
     public ResponseEntity<String> addParticipant(@RequestBody Participant newParticipant){

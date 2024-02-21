@@ -121,11 +121,9 @@ public class UserServiceImpl implements UserService {
 		if(userExtraDetails.isPresent() && blockingUserExtraDetails.isPresent()){
 			userExtraDetails.get().getBlockedList().setBlocked(blockingId);
 			userExtraDetails.get().getFollowersList().getFollower().remove(blockingId);
-			userExtraDetails.get().getFollowingList().getFollowing().remove(blockingId);
 			userExtraDetailsRepostiory.save(userExtraDetails.get());
-//			blockingUserExtraDetails.get().getFollowingList().getFollowing().remove(userId);
-//			blockingUserExtraDetails.get().getFollowersList().getFollower().remove(userId);
-//			userExtraDetailsRepostiory.save(blockingUserExtraDetails.get());
+			blockingUserExtraDetails.get().getFollowingList().getFollowing().remove(userId);
+			userExtraDetailsRepostiory.save(blockingUserExtraDetails.get());
 			return new ResponseEntity<>("blocking done successfully",HttpStatus.OK);
 		}
 		return new ResponseEntity<>("problem on blocking",HttpStatus.CONFLICT);

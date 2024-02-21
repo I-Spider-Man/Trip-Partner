@@ -78,6 +78,11 @@ public class ParticipantServiceImpl implements ParticipantService{
     }
 
     @Override
+    public Participant getParticipantByUserId(Integer userId) {
+        return participantRepo.findByUserId(userId).orElse(null);
+    }
+
+    @Override
     public Participant getParticipantById(Integer participantId) {
         Optional<Participant> participant=participantRepo.findById(participantId);
         return participant.orElse(null);

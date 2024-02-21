@@ -13,6 +13,32 @@ public class ParticipantRating {
     private Integer participantId;
     private List<Ratings> ratingsList= new ArrayList<>(1);
     private double rating;
+
+    public ParticipantRating(String id, Integer participantId, List<Ratings> ratingsList, double rating) {
+        this.id = id;
+        this.participantId = participantId;
+        this.ratingsList = ratingsList;
+        this.rating = rating;
+    }
+
+    @Override
+    public String toString() {
+        return "ParticipantRating{" +
+                "id='" + id + '\'' +
+                ", participantId=" + participantId +
+                ", ratingsList=" + ratingsList +
+                ", rating=" + rating +
+                '}';
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
     public static class Ratings{
         private Integer userId;
         private double rating;
@@ -53,15 +79,6 @@ public class ParticipantRating {
     public ParticipantRating() {
     }
 
-    @Override
-    public String toString() {
-        return "ParticipantRating{" +
-                "id='" + id + '\'' +
-                ", participantId=" + participantId +
-                ", ratingsList=" + ratingsList +
-                '}';
-    }
-
     public String getId() {
         return id;
     }
@@ -89,12 +106,6 @@ public class ParticipantRating {
     public void setRatingsList(List<Ratings> ratingsList) {
         this.ratingsList = ratingsList;
         updateRating();
-    }
-
-    public ParticipantRating(String id, Integer participantId, List<Ratings> ratingsList) {
-        this.id = id;
-        this.participantId = participantId;
-        this.ratingsList = ratingsList;
     }
     private void updateRating() {
         if (ratingsList.isEmpty()) {

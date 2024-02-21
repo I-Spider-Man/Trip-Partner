@@ -75,8 +75,10 @@ public class OrganizerServiceImpl implements OrganizerService{
     public void addRatings(Integer organizerId, OrganizerRating.Ratings ratings) {
         Optional<OrganizerRating> organizerRating=organizerRatingRepository.findByOrganizerId(organizerId);
         if(organizerRating.isPresent()){
-            organizerRating.get().setRatingList(ratings);
-            organizerRatingRepository.save(organizerRating.get());
+            if(organizerRating.get().getRatingsList().stream().filter(value->value.getUserId().equals(ratings.getUserId())).findAny().isEmpty()){
+                organizerRating.get().setRatingList(ratings);
+                organizerRatingRepository.save(organizerRating.get());
+            }
         }
     }
 

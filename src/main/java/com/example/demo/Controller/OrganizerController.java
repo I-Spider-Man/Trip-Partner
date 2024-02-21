@@ -35,5 +35,13 @@ public class OrganizerController {
 	public List<Group> allGroups(@PathVariable Integer userId){
 		return organizerService.getAllGroupsOrganizedById(userId);
 	}
+	@GetMapping("/organizerId/{orgId}")
+	public Organizer getOrganizerById(@PathVariable Integer orgId){
+		return organizerService.getOrganizerById(orgId);
+	}
+	@GetMapping("/userId/{userId}")
+	public Organizer getOrganizerByUserId(@PathVariable Integer userId){
+		return organizerService.getOrganizerByUserId(userId);
+	}
 
 }
