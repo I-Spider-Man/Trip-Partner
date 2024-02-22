@@ -91,6 +91,11 @@ public class UserController {
 	public ResponseEntity<Participant> getParticipantData(@PathVariable Integer userId){
 		return userServ.getParticipantData(userId);
 	}
+	@PostMapping("/adminFeedBack")
+	public String postAdminFeedBack(@RequestBody AdminFeedback feedback){
+
+		return userServ.postAdminFeedBack(feedback);
+	}
 	@PostMapping
 	public ResponseEntity<String> addUser(@RequestBody User newUser) {
 		return userServ.addUser(newUser);

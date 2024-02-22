@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
 	@Autowired
+	private AdminFeedBackRepository adminFeedBackRepository;
+	@Autowired
 	private UserImageRepository userImageRepository;
 	@Autowired
 	private UserExtraDetailsRepostiory userExtraDetailsRepostiory;
@@ -169,7 +171,25 @@ public class UserServiceImpl implements UserService {
 		}
 		return followingList;
 	}
-
+	@Override
+	public String postAdminFeedBack(AdminFeedback feedback) {
+		System.out.println(feedback);
+		List<User> admin=userRepo.findAllByRole(Role.Admin_Role);
+		Optional<User> user=userRepo.findById(feedback.getUserId());
+		adminFeedBackRepository.save(feedback);
+		if(user.isPresent() && feedback.getIndicate()){
+			String Subject="User Feedback";
+			String content="User - "+user.get().getUserName()+", Have sent this feedback.\n"+feedback.getFeedBack();
+			admin.forEach(adminUser-> {
+				try {
+					mailService.sendMailService(adminUser.getUserEmail(),Subject,content);
+				} catch (MessagingException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		}
+		return "Feed Back submitted successfully";
+	}
 	@Override
 	public List<User> getAllBlocked(Integer userId) {
 		Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(userId);

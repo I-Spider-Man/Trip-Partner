@@ -3,6 +3,7 @@ package com.example.demo.Service.UserServices;
 import java.io.IOException;
 import java.util.List;
 
+import com.example.demo.Model.AdminFeedback;
 import com.example.demo.Model.Organizer;
 import com.example.demo.Model.Participant;
 import com.example.demo.Model.User;
@@ -23,6 +24,7 @@ public interface UserService {
 	ResponseEntity<String> unBlockingUser(Integer userId,Integer blockedUserId);
 	List<User> getAllFollowers(Integer userId);
 	List<User> getAllFollowing(Integer userId);
+	String postAdminFeedBack(AdminFeedback feedback);
 	List<User> getAllBlocked(Integer userId);
 	List<Integer> getFollowersId(Integer userId);
 	List<Integer> getFollowingId(Integer userId);

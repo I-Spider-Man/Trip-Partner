@@ -5,22 +5,30 @@ import com.example.demo.Repository.*;
 import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.GroupServices.GroupService;
 import com.example.demo.Service.Organizer.OrganizerService;
+import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.ParticipantServices.ParticipantService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import com.example.demo.Service.UserServices.UserService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService{
     @Autowired
     private UserService userService;
+    @Autowired
+    private AdminFeedBackRepository adminFeedBackRepository;
+    @Autowired
+    private SMTP_mailService mailService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -46,6 +54,29 @@ public class AdminServiceImpl implements AdminService{
     public String addManyUsers(List<User> users) {
         userRepository.saveAll(users);
         return "Success";
+    }
+
+    @Override
+    public String replyForUserFeedback(AdminFeedback feedback) throws MessagingException {
+
+        adminFeedBackRepository.save(feedback);
+        Optional<User> user=userRepository.findById(feedback.getUserId());
+        if(feedback.getIndicate() && user.isPresent()){
+            String subject="Admin's Reply,\n";
+            mailService.sendMailService(user.get().getUserEmail(),subject,feedback.getAdminReply());
+        }
+        return "Reply successful";
+    }
+
+
+    @Override
+    public List<AdminFeedback> getAdminFeedBackByUserId(Integer userId) {
+        return adminFeedBackRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public List<AdminFeedback> getAllAdminFeedBack() {
+        return adminFeedBackRepository.findAll();
     }
 
     @Override
@@ -200,6 +231,13 @@ public class AdminServiceImpl implements AdminService{
     public TouristSpot getSpotById(Integer spotId) {
         return touristSpotService.getSpotById(spotId);
     }
+
+    @Override
+    public String deleteFeedBack(String id) {
+        adminFeedBackRepository.deleteById(id);
+        return "Feed Back Deleted.";
+    }
+
     @Override
     public Organizer getOrganizerById(Integer organizerId) {
         return organizerService.getOrganizerById(organizerId);

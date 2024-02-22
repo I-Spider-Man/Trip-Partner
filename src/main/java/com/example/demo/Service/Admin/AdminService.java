@@ -1,6 +1,7 @@
 package com.example.demo.Service.Admin;
 
 import com.example.demo.Model.*;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +11,9 @@ import java.util.List;
 
 public interface AdminService {
     String addManyUsers(List<User> users);
+    String replyForUserFeedback(AdminFeedback feedback) throws MessagingException;
+    List<AdminFeedback> getAdminFeedBackByUserId(Integer userId);
+    List<AdminFeedback> getAllAdminFeedBack();
     ResponseEntity<String> addEvent(Event newEvent, MultipartFile file) throws IOException;
     String addAllEvents(List<Event> events);
     ResponseEntity<?> addSpot(TouristSpot spot, MultipartFile spotPicture) throws IOException;
@@ -45,5 +49,6 @@ public interface AdminService {
     Group getGroupById(Integer groupId);
     Event getEventById(Integer eventId);
     TouristSpot getSpotById(Integer spotId);
+    String deleteFeedBack(String id);
     Organizer getOrganizerById(Integer organizerId);
 }

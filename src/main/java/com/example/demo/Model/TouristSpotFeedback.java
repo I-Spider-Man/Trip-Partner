@@ -58,8 +58,8 @@ public class TouristSpotFeedback {
             return submissionDate;
         }
 
-        public void setSubmissionDate(LocalDate submissionDate) {
-            this.submissionDate = submissionDate;
+        public void setSubmissionDate() {
+            this.submissionDate = LocalDate.now();
         }
 
         public Feedback(Integer userId, String feedback, Integer ratings, LocalDate submissionDate) {

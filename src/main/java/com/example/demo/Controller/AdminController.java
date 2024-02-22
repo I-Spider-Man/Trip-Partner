@@ -8,6 +8,7 @@ import com.example.demo.Service.StorageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,10 @@ public class AdminController {
         }
 
     }
+    @PostMapping("/postReplyAdminFeedBack")
+    public String postReply(@RequestBody AdminFeedback feedback) throws MessagingException {
+        return adminService.replyForUserFeedback(feedback);
+    }
     @PostMapping("/manySpots")
     public String addManySpots(@RequestBody List<TouristSpot> spots){return adminService.addAllSpots(spots);}
 //    @PostMapping("/S3")
@@ -101,6 +106,14 @@ public class AdminController {
     @GetMapping("/organizers/{organizerId}")
     public Organizer getOrganizerById(@PathVariable Integer organizerId){
         return adminService.getOrganizerById(organizerId);
+    }
+    @GetMapping("/AdminFeedBack")
+    public List<AdminFeedback> getAllAdminFeedBack(){
+        return adminService.getAllAdminFeedBack();
+    }
+    @GetMapping("/AdminFeedBack/{userId}")
+    public List<AdminFeedback> getAllAdminFeedBackByUserId(@PathVariable Integer userId){
+        return adminService.getAdminFeedBackByUserId(userId);
     }
     @GetMapping("/busyOrganizers")
     public List<Organizer> getAllBusyOrganizer(){
@@ -193,6 +206,10 @@ public class AdminController {
     @DeleteMapping("/touristSpots/{spotId}")
     public ResponseEntity<String> removeTouristSpot(@PathVariable Integer spotId){
         return adminService.removeTouristSpotById(spotId);
+    }
+    @DeleteMapping("/AdminFeedBack/{id}")
+    public String removeFeedBack(@PathVariable String id){
+        return adminService.deleteFeedBack(id);
     }
     @DeleteMapping("/organizers/{organizerId}")
     public String removeOrganizer(@PathVariable Integer organizerId) {
