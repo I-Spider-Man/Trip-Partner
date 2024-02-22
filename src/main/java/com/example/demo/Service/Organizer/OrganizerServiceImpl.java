@@ -104,9 +104,9 @@ public class OrganizerServiceImpl implements OrganizerService{
             if(organizer.isPresent()){
                 if(organizer.get().getOrganizerStatus() == UserStatus.Free){
                     organizer.get().setOrganizerStatus(UserStatus.Busy);
-                    organizerRepository.save(newOrganizer);
-                    scheduling.addActiveOrganizerUserId(newOrganizer.getUserId());
                     newGroup.setOrganizerId(organizer.get().getOrganizerId());
+                    organizerRepository.save(organizer.get());
+                    scheduling.addActiveOrganizerUserId(organizer.get().getUserId());
                     groupService.addGroup(newGroup);
                     try {
                         String Subject="Group Creation";
