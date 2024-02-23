@@ -18,8 +18,10 @@ import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -76,7 +78,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<AdminFeedback> getAllAdminFeedBack() {
-        return adminFeedBackRepository.findAll();
+        List<AdminFeedback> feedbacks=adminFeedBackRepository.findAll();
+        Comparator<AdminFeedback> feedbackComparator = Comparator
+                .comparing((AdminFeedback feedback) -> !feedback.getIndicate()) // Sort indicate true first
+                .thenComparing((AdminFeedback feedback) -> feedback.getAdminReply() == null); // Sort by adminReply presence
+        return feedbacks.stream()
+                .sorted(feedbackComparator)
+                .collect(Collectors.toList());
     }
 
     @Override
