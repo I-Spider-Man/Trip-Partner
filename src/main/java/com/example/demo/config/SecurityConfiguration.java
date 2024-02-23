@@ -39,7 +39,7 @@ public class SecurityConfiguration {
 
         .authorizeHttpRequests(Authorize -> Authorize
         		.requestMatchers("User/api/**","User/**").authenticated()
-        		.requestMatchers("/Admin/**").permitAll()
+        		.requestMatchers("/Admin/**").authenticated()
                 .anyRequest().permitAll())
         .addFilterBefore(new jwtValidator(), BasicAuthenticationFilter.class)
         .csrf(csrf -> csrf.disable());       
