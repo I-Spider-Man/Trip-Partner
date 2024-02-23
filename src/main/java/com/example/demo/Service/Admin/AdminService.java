@@ -51,4 +51,8 @@ public interface AdminService {
     TouristSpot getSpotById(Integer spotId);
     String deleteFeedBack(String id);
     Organizer getOrganizerById(Integer organizerId);
+
+    AuthResponse addUser(User user) throws Exception;
+    AuthResponse sigin(LoginRequest LoginRequest);
+    User findUserByJwt(String jwt);
 }

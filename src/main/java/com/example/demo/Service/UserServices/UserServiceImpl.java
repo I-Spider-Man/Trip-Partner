@@ -1,7 +1,6 @@
 package com.example.demo.Service.UserServices;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-
-import javax.swing.text.html.Option;
 
 @Service
 public class UserServiceImpl implements UserService {

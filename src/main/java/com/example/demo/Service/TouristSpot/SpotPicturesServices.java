@@ -1,9 +1,6 @@
 package com.example.demo.Service.TouristSpot;
 
-import com.example.demo.Model.SpotPicture;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-
 import java.io.IOException;
 import java.util.List;
 

@@ -7,10 +7,8 @@ import com.example.demo.Model.AdminFeedback;
 import com.example.demo.Model.Organizer;
 import com.example.demo.Model.Participant;
 import com.example.demo.Model.User;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 public interface UserService {
 	ResponseEntity<String> uploadPost(Integer userId,String description,MultipartFile post) throws IOException;

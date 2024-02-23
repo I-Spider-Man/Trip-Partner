@@ -2,6 +2,8 @@ package com.example.demo.Controller;
 
 import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.AdminService;
+import com.example.demo.Service.Admin.AuthResponse;
+import com.example.demo.Service.Admin.LoginRequest;
 import com.example.demo.Service.Event.EventService;
 import com.example.demo.Service.GroupMessage.MessageService;
 import com.example.demo.Service.StorageService;
@@ -32,7 +34,14 @@ public class AdminController {
     private StorageService storageService;
     @Autowired
     private EventService eventService;
-
+    @PostMapping("/signin")
+    public AuthResponse signin(@RequestBody LoginRequest LoginRequest) {
+        return adminService.sigin(LoginRequest);
+    }
+    @PostMapping
+    public AuthResponse addUser(@RequestBody User newUser) throws Exception {
+        return adminService.addUser(newUser);
+    }
     @PostMapping("/manyUsers")
     public String manyUsers(@RequestBody List<User> users){return adminService.addManyUsers(users);}
     @DeleteMapping("/removeAllUsers")

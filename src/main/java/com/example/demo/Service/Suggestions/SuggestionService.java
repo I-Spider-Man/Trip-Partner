@@ -2,8 +2,6 @@ package com.example.demo.Service.Suggestions;
 
 import com.example.demo.Model.Event;
 import com.example.demo.Model.TouristSpot;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-
 import java.util.List;
 
 public interface SuggestionService {

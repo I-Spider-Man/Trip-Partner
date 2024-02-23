@@ -9,15 +9,19 @@ import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.ParticipantServices.ParticipantService;
 import com.example.demo.Service.TouristSpot.TouristSpotService;
 import com.example.demo.Service.UserServices.UserService;
+import com.example.demo.config.CustomUserDetailsService;
+import com.example.demo.config.JwtProvider;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,10 @@ public class AdminServiceImpl implements AdminService{
     private UserService userService;
     @Autowired
     private AdminFeedBackRepository adminFeedBackRepository;
+    @Autowired
+    private CustomUserDetailsService customerUserDetails;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private SMTP_mailService mailService;
     @Autowired
@@ -245,9 +253,52 @@ public class AdminServiceImpl implements AdminService{
         adminFeedBackRepository.deleteById(id);
         return "Feed Back Deleted.";
     }
-
     @Override
     public Organizer getOrganizerById(Integer organizerId) {
         return organizerService.getOrganizerById(organizerId);
+    }
+    @Override
+    public AuthResponse addUser(User newUser) throws Exception {
+        Optional<User> user = userRepository.findByUserEmail(newUser.getUserEmail());
+        if (user.isPresent()) {
+            throw new Exception("User is already exit");
+        } else {
+            String temp = passwordEncoder.encode(newUser.getUserPassword());
+            newUser.setUserPassword(temp);
+            newUser.setRole(Role.Admin_Role);
+            User saveduser = userRepository.save(newUser);
+            Authentication authentication= new UsernamePasswordAuthenticationToken(saveduser.getUserEmail(), saveduser.getUserPassword());
+            String token = JwtProvider.generateToken(authentication);
+
+            AuthResponse res=new AuthResponse(token, "Register Success");
+            return res;
+        }
+
+    }
+
+    @Override
+    public User findUserByJwt(String jwt) {
+        String email= JwtProvider.getEmailFromJwtToken(jwt);
+        Optional<User> user=userRepository.findByUserEmail(email);
+        return user.orElse(null);
+    }
+    @Override
+    public AuthResponse sigin(LoginRequest LoginRequest ) {
+        Authentication authentication = authencate(LoginRequest.getEmail(), LoginRequest.getPassword());
+        String token = JwtProvider.generateToken(authentication);
+        AuthResponse res=new AuthResponse(token, "Login Sucess");
+        return res;
+    }
+
+    private Authentication authencate(String email, String password) {
+        UserDetails userDetails = customerUserDetails.loadUserByUsername(email);
+        if(userDetails==null) {
+            throw new BadCredentialsException("Invalid Username");
+
+        }
+        if(!passwordEncoder.matches(password,  userDetails.getPassword())) {
+            throw new BadCredentialsException("password not match");
+        }
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
