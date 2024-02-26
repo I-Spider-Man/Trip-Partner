@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import com.example.demo.Model.*;
+import com.example.demo.Service.Admin.LoginRequest;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Service.UserServices.UserService;
@@ -21,6 +23,8 @@ public class UserController {
 	private SMTP_mailService mailService;
 	@Autowired
 	private UserService userServ;
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private StorageService storageService;
 	
@@ -146,9 +150,13 @@ public class UserController {
 	            return ResponseEntity.notFound().build();
 	        }
 }
-
 	 @GetMapping("/name/{userName}")
 	 public List<User> getAllUserByUserName(@PathVariable String userName){
 		 return userServ.getAllByUserName(userName);
 	 }
+	@PostMapping("/SigninUser")
+	public ResponseEntity<?> signinUser(@RequestBody LoginRequest userLoginRequest) {
+		return userServ.signinUser(userLoginRequest);
+
+	}
 }

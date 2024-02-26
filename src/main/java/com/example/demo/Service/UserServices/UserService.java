@@ -7,6 +7,7 @@ import com.example.demo.Model.AdminFeedback;
 import com.example.demo.Model.Organizer;
 import com.example.demo.Model.Participant;
 import com.example.demo.Model.User;
+import com.example.demo.Service.Admin.LoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,4 +37,5 @@ public interface UserService {
 	List<User> getAllByUserName(String userName);
 	User getByUserEmail(String userEmail);
 	ResponseEntity<String> forgotPassword(String userEmail);
+	ResponseEntity<?> signinUser(LoginRequest loginrequest);
 }

@@ -8,13 +8,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
+import com.example.demo.Service.Admin.LoginRequest;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
+import com.example.demo.config.CustomUserDetailsService;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepo;
+	@Autowired
+	private CustomUserDetailsService customerUserDetails;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private AdminFeedBackRepository adminFeedBackRepository;
 	@Autowired
@@ -95,6 +104,23 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(Integer userId) {
 		Optional<User> user=userRepo.findById(userId);
 		return user.orElse(null);
+	}
+	@Override
+	public ResponseEntity<?> signinUser(LoginRequest loginrequest) {
+		try {
+			String email = loginrequest.getEmail();
+			String password = loginrequest.getPassword();
+
+			// Authenticate user
+			UserDetails user = customerUserDetails.loadUserByUsername(email);
+			if (user == null || !passwordEncoder.matches(password, user.getUsername())) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");
+			}
+
+			return ResponseEntity.ok(user);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while signing in");
+		}
 	}
 
 	@Override
