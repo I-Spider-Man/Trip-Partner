@@ -15,6 +15,8 @@ import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.config.CustomUserDetailsService;
 import com.example.demo.config.JwtProvider;
 import com.example.demo.Service.StorageService;
+import com.example.demo.Service.Admin.LoginRequest;
+
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,11 @@ public class UserServiceImpl implements UserService {
 	private StorageService storageService;
 	@Autowired
 	private SMTP_mailService mailService;
+	@Autowired
+	private CustomUserDetailsService customerUserDetails;
 
+	@Autowired
+	 private BCryptPasswordEncoder passwordEncoder;
 	
 	@Override
 	public List<User> getAllUser() {
@@ -171,6 +177,8 @@ public class UserServiceImpl implements UserService {
 		if (user.isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("User mail already exists");
 		} else {
+			String temp =newUser.getUserPassword();
+			newUser.setUserPassword(passwordEncoder.encode(temp));
 			userRepo.save(newUser);
 			UserExtraDetails extraDetails = getUserExtraDetails(newUser);
 			userExtraDetailsRepostiory.save(extraDetails);
@@ -265,6 +273,24 @@ public class UserServiceImpl implements UserService {
 	        }
 	        return password.toString();
 	    }
+
+		@Override
+		public ResponseEntity<?> signinUser(LoginRequest loginrequest) {
+			try {
+	            String email = loginrequest.getEmail();
+	            String password = loginrequest.getPassword();
+	            
+	            // Authenticate user
+	            UserDetails user = customerUserDetails.loadUserByUsername(email);
+	            if (user == null || !passwordEncoder.matches(password, user.getUsername())) {
+	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");
+	            }
+
+	            return ResponseEntity.ok(user);
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while signing in");
+	        }
+		}
 
 
 }

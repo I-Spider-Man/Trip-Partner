@@ -51,8 +51,8 @@ public class SecurityConfiguration {
     	http.sessionManagement(management->management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
         .authorizeHttpRequests(Authorize -> Authorize
-        		.requestMatchers("User/api/**","User/**").authenticated()
-        		.requestMatchers("/Admin/**").permitAll()
+        		.requestMatchers("/Admin","/Admin/signin").permitAll()
+        		.requestMatchers("/Admin/**").authenticated()
                 .anyRequest().permitAll())
         .addFilterBefore(new jwtValidator(), BasicAuthenticationFilter.class)
         .csrf(csrf -> csrf.disable());       

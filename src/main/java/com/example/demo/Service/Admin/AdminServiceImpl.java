@@ -253,9 +253,9 @@ public class AdminServiceImpl implements AdminService{
            throw new Exception("User is already exit");
         } else {
         	String temp = passwordEncoder.encode(newUser.getUserPassword());
-			newUser.setUserPassword(temp);
-            newUser.setRole(Role.Admin_Role);
+        	newUser.setUserPassword(temp);
             User saveduser = userRepository.save(newUser);
+            
             Authentication authentication= new UsernamePasswordAuthenticationToken(saveduser.getUserEmail(), saveduser.getUserPassword());
             String token = JwtProvider.generateToken(authentication);
 
