@@ -154,9 +154,8 @@ public class UserController {
 	 public List<User> getAllUserByUserName(@PathVariable String userName){
 		 return userServ.getAllByUserName(userName);
 	 }
-	@PostMapping("/SigninUser")
-	public ResponseEntity<?> signinUser(@RequestBody LoginRequest userLoginRequest) {
+	@PostMapping("/SignInUser")
+	public ResponseEntity<?> signInUser(@RequestBody LoginRequest userLoginRequest) {
 		return userServ.signinUser(userLoginRequest);
-
 	}
 }
