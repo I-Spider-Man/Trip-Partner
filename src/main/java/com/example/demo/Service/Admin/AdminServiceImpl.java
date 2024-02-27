@@ -1,5 +1,6 @@
 package com.example.demo.Service.Admin;
 
+import com.example.demo.Exception.UnAuthorizedAccessException;
 import com.example.demo.Model.*;
 import com.example.demo.Repository.*;
 import com.example.demo.Service.Event.EventService;
@@ -284,17 +285,21 @@ public class AdminServiceImpl implements AdminService{
     }
     @Override
     public AuthResponse sigin(LoginRequest LoginRequest ) {
-        Authentication authentication = authencate(LoginRequest.getEmail(), LoginRequest.getPassword());
+        Authentication authentication = authenticate(LoginRequest.getEmail(), LoginRequest.getPassword());
         String token = JwtProvider.generateToken(authentication);
         AuthResponse res=new AuthResponse(token, "Login Sucess");
         return res;
     }
 
-    private Authentication authencate(String email, String password) {
+    private Authentication authenticate(String email, String password) {
         UserDetails userDetails = customerUserDetails.loadUserByUsername(email);
-        if(userDetails==null) {
-            throw new BadCredentialsException("Invalid Username");
 
+        if(userDetails==null ) {
+            throw new BadCredentialsException("Invalid Username");
+        }
+        boolean role=userDetails.getAuthorities().stream().anyMatch(auth->auth.getAuthority().equals("User_Role"));
+        if (role){
+            throw new UnAuthorizedAccessException("User is not Authorized to access this page.");
         }
         if(!passwordEncoder.matches(password,  userDetails.getPassword())) {
             throw new BadCredentialsException("password not match");
