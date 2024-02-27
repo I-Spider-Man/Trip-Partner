@@ -1,8 +1,8 @@
 FROM maven:3.8.3-openjdk-17 as builder
 WORKDIR /app
 COPY pom.xml .
-RUN mvn -B dependency:go-offline dependency:resolve-plugins
 COPY src ./src
+RUN mvn -B dependency:go-offline dependency:resolve-plugins
 RUN mvn -o -B package -DskipTests
 FROM openjdk:17
 WORKDIR /app
