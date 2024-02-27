@@ -21,7 +21,7 @@ public class DemoApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://65.0.124.164:3001","http://65.0.124.164:3000")
+						.allowedOrigins("http://13.127.117.206:3001","http://13.127.117.206:3000")
 						.allowedMethods("GET", "POST", "PUT", "DELETE")
 						.allowedHeaders("*");
 			}
