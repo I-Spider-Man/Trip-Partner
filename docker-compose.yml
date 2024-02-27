@@ -18,7 +18,7 @@ services:
     image: backend:latest
     restart: on-failure
     ports:
-      - "8081:8081"
+      - "8079:8079"
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url" : "jdbc:mysql://mysqldb:3306/tripPartner",
