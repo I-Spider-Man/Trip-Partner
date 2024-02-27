@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -106,19 +107,25 @@ public class UserServiceImpl implements UserService {
 		return user.orElse(null);
 	}
 	@Override
-	public ResponseEntity<?> signinUser(LoginRequest loginrequest) {
+	public ResponseEntity<?> signinUser(LoginRequest loginRequest) {
 		try {
-			String email = loginrequest.getEmail();
-			String password = loginrequest.getPassword();
+			String email = loginRequest.getEmail();
+			String password = loginRequest.getPassword();
 
 			// Authenticate user
-			UserDetails user = customerUserDetails.loadUserByUsername(email);
-			if (user == null || !passwordEncoder.matches(password, user.getUsername())) {
+			Optional<User> user = userRepo.findByUserEmail(email);
+			if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getUserPassword())) {
+				// Do not expose specific reason for authentication failure to the client
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");
 			}
+			// Clear sensitive information before returning the response
 
 			return ResponseEntity.ok(user);
+		} catch (AuthenticationException e) {
+			// Handle specific authentication exceptions separately
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");
 		} catch (Exception e) {
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while signing in");
 		}
 	}
@@ -299,6 +306,7 @@ public class UserServiceImpl implements UserService {
 		if (user.isPresent()) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("User mail already exists");
 		} else {
+			newUser.setUserPassword(passwordEncoder.encode(newUser.getUserPassword()));
 			userRepo.save(newUser);
 			UserImages userImages=new UserImages();
 			userImages.setUserId(newUser.getUserId());
@@ -374,9 +382,9 @@ public class UserServiceImpl implements UserService {
 		Optional<User> user=userRepo.findByUserEmail(userEmail);
 		if(user.isPresent()){
 			String Password=PasswordGenerator();
-			user.get().setUserPassword(Password);
+			user.get().setUserPassword(passwordEncoder.encode(Password));
 			try{
-				mailService.sendMailService(userEmail,"Password Changed","Your new Password is : "+user.get().getUserPassword());
+				mailService.sendMailService(userEmail,"Password Changed","Your new Password is : "+Password);
 				userRepo.save(user.get());
 				return new ResponseEntity<>("New password has been sent to the user's email",HttpStatus.ACCEPTED);
 			} catch (MessagingException e) {
