@@ -7,6 +7,6 @@ RUN mvn -o -B package -DskipTests
 FROM openjdk:17
 WORKDIR /app
 COPY --from=builder /app/target/Trip-Partner-0.0.1-SNAPSHOT.jar ./app.jar
-EXPOSE 8081
+EXPOSE 8079
 CMD ["java", "-jar", "app.jar"]
 
