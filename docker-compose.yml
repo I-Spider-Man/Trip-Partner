@@ -15,7 +15,7 @@ services:
     depends_on:
       - mysqldb
       - mongodb
-    image: backend:latest
+    image: backend:0.1
     restart: on-failure
     ports:
       - "8079:8079"
