@@ -2,6 +2,8 @@ package com.example.demo.Model;
 
 import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Document("userExtraDetails")
@@ -9,14 +11,14 @@ public class UserExtraDetails {
     @Id
     private String id;
     private Integer userId;
-    private OrganizedList organizedList;
-    private ParticipatedList participatedList;
-    private FollowersList followersList;
-    private BlockedList blockedList;
-    private FollowingList followingList;
+    private OrganizedList organizedList=new OrganizedList();
+    private ParticipatedList participatedList=new ParticipatedList();
+    private FollowersList followersList=new FollowersList();
+    private BlockedList blockedList=new BlockedList();
+    private FollowingList followingList=new FollowingList();
 
     public static class OrganizedList{
-        private List<Integer> organizedGroupId;
+        private List<Integer> organizedGroupId=new ArrayList<>(1);
 
         public OrganizedList() {
         }
@@ -43,7 +45,7 @@ public class UserExtraDetails {
         }
     }
     public static class ParticipatedList{
-        private List<Integer> participatedGroupId;
+        private List<Integer> participatedGroupId=new ArrayList<>(1);
 
         public ParticipatedList() {
         }
@@ -70,7 +72,7 @@ public class UserExtraDetails {
         }
     }
     public static  class FollowingList{
-       private List<Integer> following;
+       private List<Integer> following =new ArrayList<>(1);
 
        public FollowingList() {
        }
@@ -100,7 +102,7 @@ public class UserExtraDetails {
     public UserExtraDetails() {
     }
     public static class FollowersList{
-        private List<Integer> follower;
+        private List<Integer> follower=new ArrayList<>(1);
 
         public FollowersList() {
         }
@@ -127,7 +129,7 @@ public class UserExtraDetails {
         }
     }
     public static class BlockedList{
-        private List<Integer> blocked;
+        private List<Integer> blocked=new ArrayList<>(1);
 
         public BlockedList() {
         }

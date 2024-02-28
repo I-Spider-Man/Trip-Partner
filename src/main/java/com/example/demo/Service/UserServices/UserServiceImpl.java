@@ -311,7 +311,8 @@ public class UserServiceImpl implements UserService {
 			UserImages userImages=new UserImages();
 			userImages.setUserId(newUser.getUserId());
 			userImageRepository.save(userImages);
-			UserExtraDetails extraDetails = getUserExtraDetails(newUser);
+			UserExtraDetails extraDetails = new UserExtraDetails();
+			extraDetails.setUserId(newUser.getUserId());
 			userExtraDetailsRepostiory.save(extraDetails);
 			newUser.setUserExtraDetails(extraDetails.getId());
 			newUser.setUserProfile(userImages.getId());
