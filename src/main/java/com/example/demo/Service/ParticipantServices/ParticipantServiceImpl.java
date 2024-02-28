@@ -175,6 +175,9 @@ public class ParticipantServiceImpl implements ParticipantService{
         Optional<Participant> participant=participantRepo.findById(participantId);
         if(participant.isPresent()){
             Optional<Group> grp=grpRepo.findById(participant.get().getGroupId());
+            Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(participant.get().getUserId());
+            userExtraDetails.get().getParticipatedList().getParticipatedGroupId().remove(participant.get().getGroupId());
+            userExtraDetailsRepostiory.save(userExtraDetails.get());
             Optional<ParticipantRating> participantRating=participantRatingRepository.findByParticipantId(participantId);
             participantRating.ifPresent(value->participantRatingRepository.delete(value));
             if(grp.isPresent()) {
@@ -196,6 +199,9 @@ public class ParticipantServiceImpl implements ParticipantService{
         Optional<Group> group=grpRepo.findAllByGroupStatus(GroupStatus.Active).stream().filter(group1 -> group1.getGroupId().equals(groupId)).findAny();
         if(participant.isPresent() && group.isPresent()){
             Optional<User> user=userRepository.findById(participant.get().getUserId());
+            Optional<UserExtraDetails> userExtraDetails=userExtraDetailsRepostiory.findByUserId(participant.get().getUserId());
+            userExtraDetails.get().getParticipatedList().getParticipatedGroupId().remove(groupId);
+            userExtraDetailsRepostiory.save(userExtraDetails.get());
             String participantEmail=user.get().getUserEmail();
             Optional<User> organizer=userRepository.findById(organizerRepository.findById(group.get().getOrganizerId()).get().getUserId());
             participant.get().setGroupId(null);

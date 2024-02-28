@@ -48,6 +48,14 @@ public class UserServiceImpl implements UserService {
 	private SMTP_mailService mailService;
 
 	@Override
+	public ResponseEntity<String> CheckUserPassword(Integer userId, String password) {
+		Optional<User> user=userRepo.findById(userId);
+		if(user.isPresent() && passwordEncoder.matches(password,user.get().getUserPassword()))
+			return new ResponseEntity<>("Verification success",HttpStatus.OK);
+		return new ResponseEntity<>("Wrong Password",HttpStatus.CONFLICT);
+	}
+
+	@Override
 	public ResponseEntity<String> uploadPost(Integer userId,String description,MultipartFile post) throws IOException {
 		Optional<User> user=userRepo.findById(userId);
 		if(user.isPresent()){
@@ -79,14 +87,14 @@ public class UserServiceImpl implements UserService {
 }
 
 	@Override
-	public ResponseEntity<String> changePassword(Integer userId, String userPassword) {
+	public ResponseEntity<String> changePassword(Integer userId, String oldPassword,String newPassword) {
 		Optional<User> user=userRepo.findById(userId);
-		if(user.isPresent()){
-			user.get().setUserPassword(userPassword);
+		if(user.isPresent() && passwordEncoder.matches(oldPassword,user.get().getUserPassword())){
+			user.get().setUserPassword(passwordEncoder.encode(newPassword));
 			userRepo.save(user.get());
 			return new ResponseEntity<>("User password updated successfully",HttpStatus.OK);
 		}
-		return new ResponseEntity<>("user id not found ",HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Check your old password",HttpStatus.CONFLICT);
 	}
 
 	@Override
@@ -329,27 +337,27 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	@NotNull
-	private static UserExtraDetails getUserExtraDetails(User newUser) {
-		UserExtraDetails extraDetails=new UserExtraDetails();
-		extraDetails.setUserId(newUser.getUserId());
-		UserExtraDetails.OrganizedList organizedList=new UserExtraDetails.OrganizedList();
-		organizedList.setOrganizedGroupId(List.of(0));
-		UserExtraDetails.ParticipatedList participatedList=new UserExtraDetails.ParticipatedList();
-		participatedList.setParticipatedGroupId(List.of(0));
-		UserExtraDetails.FollowingList followingList=new UserExtraDetails.FollowingList();
-		followingList.setFollowing(List.of(0));
-		UserExtraDetails.BlockedList blockedList=new UserExtraDetails.BlockedList();
-		blockedList.setBlocked(List.of(0));
-		UserExtraDetails.FollowersList followersList=new UserExtraDetails.FollowersList();
-		followersList.setFollower(List.of(0));
-		extraDetails.setOrganizedList(organizedList);
-		extraDetails.setParticipatedList(participatedList);
-		extraDetails.setBlockedList(blockedList);
-		extraDetails.setFollowersList(followersList);
-		extraDetails.setFollowingList(followingList);
-		return extraDetails;
-	}
+//	@NotNull
+//	private static UserExtraDetails getUserExtraDetails(User newUser) {
+//		UserExtraDetails extraDetails=new UserExtraDetails();
+//		extraDetails.setUserId(newUser.getUserId());
+//		UserExtraDetails.OrganizedList organizedList=new UserExtraDetails.OrganizedList();
+//		organizedList.setOrganizedGroupId(List.of(0));
+//		UserExtraDetails.ParticipatedList participatedList=new UserExtraDetails.ParticipatedList();
+//		participatedList.setParticipatedGroupId(List.of(0));
+//		UserExtraDetails.FollowingList followingList=new UserExtraDetails.FollowingList();
+//		followingList.setFollowing(List.of(0));
+//		UserExtraDetails.BlockedList blockedList=new UserExtraDetails.BlockedList();
+//		blockedList.setBlocked(List.of(0));
+//		UserExtraDetails.FollowersList followersList=new UserExtraDetails.FollowersList();
+//		followersList.setFollower(List.of(0));
+//		extraDetails.setOrganizedList(organizedList);
+//		extraDetails.setParticipatedList(participatedList);
+//		extraDetails.setBlockedList(blockedList);
+//		extraDetails.setFollowersList(followersList);
+//		extraDetails.setFollowingList(followingList);
+//		return extraDetails;
+//	}
 
 	@Override
 	public String removeUserById(Integer userId) {

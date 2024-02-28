@@ -12,10 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
+	ResponseEntity<String> CheckUserPassword(Integer userId,String password);
 	ResponseEntity<String> uploadPost(Integer userId,String description,MultipartFile post) throws IOException;
 	List<User> getAllUser();
 	ResponseEntity<String> updateUserEmail(Integer userId,String userEmail);
-	ResponseEntity<String> changePassword(Integer userId,String userPassword);
+	ResponseEntity<String> changePassword(Integer userId,String oldPassword, String newPassword);
 	ResponseEntity<String> updateUserProfile(Integer userId, MultipartFile file) throws IOException;
 	User getUserById(Integer userId);
 	ResponseEntity<String> addingFollower(Integer userId,Integer followingId);

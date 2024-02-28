@@ -7,9 +7,11 @@ import com.example.demo.Model.*;
 import com.example.demo.Service.Admin.LoginRequest;
 import com.example.demo.Service.OtpMailService.SMTP_mailService;
 import com.example.demo.Service.StorageService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,8 +115,12 @@ public class UserController {
 		return userServ.updateUserEmail(userId,userEmail);
 	}
 	@PutMapping("/changePassword/{userId}")
-	public ResponseEntity<String> changePassword(@PathVariable Integer userId,@RequestParam(value = "userPassword") String userPassword){
-		return userServ.changePassword(userId,userPassword);
+	public ResponseEntity<String> changePassword(@PathVariable Integer userId,@RequestParam(value = "oldPassword") String oldPassword,@RequestParam(value = "newPassword") String newPassword){
+		return userServ.changePassword(userId,oldPassword,newPassword);
+	}
+	@PutMapping("/checkPassword/{userId}")
+	public ResponseEntity<String> checkPassword(@PathVariable Integer userId, @RequestParam(value = "password") String password){
+		return userServ.CheckUserPassword(userId,password);
 	}
 	@GetMapping("/userPost/{userId}")
 	public List<UserImageResponse> getUserPosts(@PathVariable Integer userId){

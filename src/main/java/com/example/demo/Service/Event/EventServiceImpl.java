@@ -120,8 +120,9 @@ public class EventServiceImpl implements EventService,EventPictureService{
             feedback1.get().setFeedbackList(feedback);
             eventFeedBackRepository.save(feedback1.get());
             return new ResponseEntity<>("feedBackSubmitted Successfully",HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("EventFeedBack not Found",HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("EventFeedBack not Found",HttpStatus.NOT_FOUND);
     }
 
     @Override
